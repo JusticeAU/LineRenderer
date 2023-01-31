@@ -159,6 +159,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="GLFWCallbacks.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
+    <ClCompile Include="ParticleApp.cpp" />
     <ClCompile Include="PhysicsApplication.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
     <ClCompile Include="PhysicsScene.cpp" />
@@ -189,10 +190,13 @@
     <ClInclude Include="khrplatform.h" />
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Maths.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleApp.h" />
     <ClInclude Include="PhysicsApplication.h" />
     <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="PhysicsScene.h" />
     <ClInclude Include="Projectile.h" />
+    <ClInclude Include="Repulser.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="ApplicationHarness.h" />

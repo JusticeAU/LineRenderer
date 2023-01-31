@@ -65,6 +65,9 @@
     <ClCompile Include="PhysicsObject.cpp">
       <Filter>Game\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleApp.cpp">
+      <Filter>Game\Particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFWCallbacks.h">
@@ -151,6 +154,15 @@
     <ClInclude Include="PhysicsObject.h">
       <Filter>Game\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleApp.h">
+      <Filter>Game\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Game\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Repulser.h">
+      <Filter>Game\Particles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -176,6 +188,9 @@
     </Filter>
     <Filter Include="Game\Tests">
       <UniqueIdentifier>{93caa5d2-d738-44d9-9cf5-eb0be315b52e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Particles">
+      <UniqueIdentifier>{e9fd3ca3-c32c-41ff-9026-3bec69a8fbcc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
