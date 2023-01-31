@@ -18,8 +18,7 @@ public:
 		//for each particle in list
 		for (Particle& p : particles)
 		{
-			float distance = glm::distance(m_position, p.m_position);
-			if (distance < m_radius)
+			if (PointIsInside(p.m_position))
 			{
 				Vec2 direction = glm::normalize(p.m_position - m_position);
 				p.Applyforce(direction * m_force * delta);

@@ -20,8 +20,8 @@ public:
 	Vec3 m_colour = { 1, 1, 1 };
 	float m_lifeTime = 0.0f;
 private:
-	//Vec2 m_gravity = { 0, -9.81 };
-	Vec2 m_gravity = { 0, 0 };
+	Vec2 m_gravity = { 0, -9.81 };
+	//Vec2 m_gravity = { 0, 0 };
 
 public:
 

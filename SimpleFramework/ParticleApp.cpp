@@ -40,7 +40,7 @@ void ParticleApp::Update(float deltaTime)
 			m_repulsers.erase(repulser);
 		}
 		else
-			m_repulsers.push_back(Repulser(cursorPos, 1, 1));
+			m_repulsers.push_back(Repulser(cursorPos, 1, 100));
 	}
 
 	if (!rightMouseDown)
