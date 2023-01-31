@@ -68,6 +68,12 @@
     <ClCompile Include="ParticleApp.cpp">
       <Filter>Game\Particles</Filter>
     </ClCompile>
+    <ClCompile Include="CircleCollision.cpp">
+      <Filter>Game\CircleCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="Circle.cpp">
+      <Filter>Game\CircleCollision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFWCallbacks.h">
@@ -163,6 +169,15 @@
     <ClInclude Include="Repulser.h">
       <Filter>Game\Particles</Filter>
     </ClInclude>
+    <ClInclude Include="CircleCollision.h">
+      <Filter>Game\CircleCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleCollisionData.h">
+      <Filter>Game\CircleCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>Game\CircleCollision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -191,6 +206,9 @@
     </Filter>
     <Filter Include="Game\Particles">
       <UniqueIdentifier>{e9fd3ca3-c32c-41ff-9026-3bec69a8fbcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\CircleCollision">
+      <UniqueIdentifier>{2aa2367d-b489-4f53-80ae-b9e885e523b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
