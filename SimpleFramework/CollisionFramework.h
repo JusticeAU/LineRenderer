@@ -12,4 +12,5 @@ public:
 	Circle* yourCircle = new Circle({ -5,0 }, 2.0f, { 1,0,0 });
 	std::vector<Circle*> shapes;
 	bool rightDown = false;
+	const int MAX_COLLISION_PASSES = 3;
 };

@@ -20,33 +20,28 @@ void CollisionFramework::Update(float delta)
 	else if (!rightMouseDown && rightDown)
 		rightDown = false;
 
-	/*CollisionData col = m_CircleA->CollisionWithCircle(m_CircleB);
-	col.Resolve();
-	col.DebugDraw(*lines);*/
-
 	// Perform collision tests and resolution 1 pass against all shapes.
 	if (shapes.size() >= 2)
 	{
-		for (int a = 0; a < shapes.size(); a++)
+		for (int i = 0; i < MAX_COLLISION_PASSES; i++)
 		{
-			for (int b = a + 1; b < shapes.size(); b++)
+			for (int a = 0; a < shapes.size(); a++)
 			{
-				CollisionData col = shapes[a]->CollisionWithCircle(shapes[b]);
-				col.Resolve();
-				col.DebugDraw(*lines);
+				for (int b = a + 1; b < shapes.size(); b++)
+				{
+					CollisionData col = shapes[a]->CollisionWithCircle(shapes[b]);
+					col.Resolve();
+					col.DebugDraw(*lines);
+				}
 			}
-
 		}
 	}
 
 
 	//Draw
-
 	for (auto s : shapes)
 	{
 		s->Draw(*lines);
 	}
-	/*m_CircleA->Draw(*lines);
-	m_CircleB->Draw(*lines);*/
 
 }
