@@ -1,3 +1,4 @@
+#pragma once
 #include "Maths.h"
 
 class Circle;

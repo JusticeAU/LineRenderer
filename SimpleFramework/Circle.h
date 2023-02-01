@@ -1,18 +1,14 @@
 #pragma once
 #include "Maths.h"
+#include "Shape.h"
 
-class CollisionData;
-class LineRenderer;
-
-class Circle
+class Circle : public Shape
 {
 public:
-	Circle(Vec2 position, float radius, Vec3 colour = { 1,1,1 }) : m_position(position), m_radius(radius), m_colour(colour) {}
-	Vec2 m_position = { 0,0 };
+	Circle(Vec2 position, float radius, Vec3 colour = { 1,1,1 })
+		: Shape(SHAPE_CIRCLE, position, colour), m_radius(radius) {}
+
 	float m_radius = 0;
-	Vec3 m_colour = { 1,1,1 };
 
-	void Draw(LineRenderer& lines) const;
-
-	CollisionData CollisionWithCircle(Circle* shapeB);
+	void Draw(LineRenderer& lines) const override;
 };

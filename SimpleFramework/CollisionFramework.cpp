@@ -1,5 +1,6 @@
 #include "CollisionFramework.h"
 #include "CollisionData.h"
+#include "CollisionFunctions.h"
 
 CollisionFramework::CollisionFramework()
 {
@@ -15,7 +16,10 @@ void CollisionFramework::Update(float delta)
 	if (rightMouseDown && !rightDown)
 	{
 		rightDown = true;
-		shapes.push_back(new Circle(cursorPos, 1));
+		float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+		float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+		float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+		shapes.push_back(new Circle(cursorPos, 1, {r,g,b}));
 	}
 	else if (!rightMouseDown && rightDown)
 		rightDown = false;
@@ -25,11 +29,14 @@ void CollisionFramework::Update(float delta)
 	{
 		for (int i = 0; i < MAX_COLLISION_PASSES; i++)
 		{
-			for (int a = 0; a < shapes.size(); a++)
+			for (int a = 0; a < shapes.size()-1; a++)
 			{
 				for (int b = a + 1; b < shapes.size(); b++)
 				{
-					CollisionData col = shapes[a]->CollisionWithCircle(shapes[b]);
+					Circle* circleA = dynamic_cast<Circle*>(shapes[a]);
+					Circle* circleB = dynamic_cast<Circle*>(shapes[b]);
+
+					CollisionData col = CircleOnCircle(*circleA, *circleB);
 					col.Resolve();
 					col.DebugDraw(*lines);
 				}
@@ -43,5 +50,8 @@ void CollisionFramework::Update(float delta)
 	{
 		s->Draw(*lines);
 	}
+
+	AABB aabb = AABB({0,0}, 5, 2);
+	aabb.Draw(*lines);
 
 }
