@@ -154,7 +154,7 @@
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="CircleCollision.cpp" />
+    <ClCompile Include="CollisionFramework.cpp" />
     <ClCompile Include="CollisionData.cpp" />
     <ClCompile Include="DotClicker.cpp" />
     <ClCompile Include="EntryPoint.cpp" />

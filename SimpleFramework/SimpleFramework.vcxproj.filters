@@ -68,7 +68,7 @@
     <ClCompile Include="ParticleApp.cpp">
       <Filter>Game\Particles</Filter>
     </ClCompile>
-    <ClCompile Include="CircleCollision.cpp">
+    <ClCompile Include="CollisionFramework.cpp">
       <Filter>Game\CollisionFramework</Filter>
     </ClCompile>
     <ClCompile Include="Circle.cpp">
