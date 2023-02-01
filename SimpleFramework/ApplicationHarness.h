@@ -35,8 +35,8 @@ public:
 	ApplicationHarness(Application* appInit);
 	~ApplicationHarness();
 
-	ApplicationHarness(const ApplicationHarness& other) = delete;
-	ApplicationHarness& operator=(const ApplicationHarness& other) = delete;
+	ApplicationHarness(const ApplicationHarness& shapeB) = delete;
+	ApplicationHarness& operator=(const ApplicationHarness& shapeB) = delete;
 
 
 	void Run();

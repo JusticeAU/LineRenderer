@@ -155,6 +155,7 @@
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="CircleCollision.cpp" />
+    <ClCompile Include="CollisionData.cpp" />
     <ClCompile Include="DotClicker.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="Example.cpp" />
@@ -185,8 +186,8 @@
     <ClInclude Include="..\imgui\imstb_truetype.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Circle.h" />
-    <ClInclude Include="CircleCollision.h" />
-    <ClInclude Include="CircleCollisionData.h" />
+    <ClInclude Include="CollisionFramework.h" />
+    <ClInclude Include="CollisionData.h" />
     <ClInclude Include="DotClicker.h" />
     <ClInclude Include="Example.h" />
     <ClInclude Include="glad.h" />

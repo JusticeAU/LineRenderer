@@ -22,12 +22,12 @@ public:
 	~ShaderProgram();
 
 	//We don't want to be duplicating our shader around - that will screw us over.
-	ShaderProgram(const ShaderProgram& other) = delete;
-	ShaderProgram& operator= (const ShaderProgram& other) = delete;
+	ShaderProgram(const ShaderProgram& shapeB) = delete;
+	ShaderProgram& operator= (const ShaderProgram& shapeB) = delete;
 
 	//Moving it around is fine though, we just have to do it properly.
-	ShaderProgram(ShaderProgram&& other);
-	ShaderProgram& operator= (ShaderProgram&& other);
+	ShaderProgram(ShaderProgram&& shapeB);
+	ShaderProgram& operator= (ShaderProgram&& shapeB);
 
 	bool IsLoadedSuccessfully() const { return loadedSuccessfully; }
 

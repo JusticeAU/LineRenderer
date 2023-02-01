@@ -92,9 +92,9 @@ ShaderProgram::~ShaderProgram()
 	}
 }
 
-ShaderProgram::ShaderProgram(ShaderProgram&& other)
+ShaderProgram::ShaderProgram(ShaderProgram&& shapeB)
 {
-	if (&other == this)	//Don't do the move if we're moving this shader to itself.
+	if (&shapeB == this)	//Don't do the move if we're moving this shader to itself.
 	{
 		return;
 	}
@@ -107,17 +107,17 @@ ShaderProgram::ShaderProgram(ShaderProgram&& other)
 		glDeleteProgram(shaderProgram);
 	}
 
-	this->shaderProgram = other.shaderProgram;
-	this->fragmentShader = other.fragmentShader;
-	this->vertexShader = other.vertexShader;
-	this->loadedSuccessfully = other.loadedSuccessfully;
+	this->shaderProgram = shapeB.shaderProgram;
+	this->fragmentShader = shapeB.fragmentShader;
+	this->vertexShader = shapeB.vertexShader;
+	this->loadedSuccessfully = shapeB.loadedSuccessfully;
 
-	other.loadedSuccessfully = false;	//Invalidate the other shader - it's about to have its destructor called, and we need it to not call the glDelete functions.
+	shapeB.loadedSuccessfully = false;	//Invalidate the other shader - it's about to have its destructor called, and we need it to not call the glDelete functions.
 }
 
-ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other)
+ShaderProgram& ShaderProgram::operator=(ShaderProgram&& shapeB)
 {
-	if (&other == this)	//Don't do the move if we're moving this shader to itself.
+	if (&shapeB == this)	//Don't do the move if we're moving this shader to itself.
 	{
 		return *this;
 	}
@@ -128,12 +128,12 @@ ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other)
 		glDeleteShader(fragmentShader);
 		glDeleteProgram(shaderProgram);
 	}
-	this->shaderProgram = other.shaderProgram;
-	this->fragmentShader = other.fragmentShader;
-	this->vertexShader = other.vertexShader;
-	this->loadedSuccessfully = other.loadedSuccessfully;
+	this->shaderProgram = shapeB.shaderProgram;
+	this->fragmentShader = shapeB.fragmentShader;
+	this->vertexShader = shapeB.vertexShader;
+	this->loadedSuccessfully = shapeB.loadedSuccessfully;
 
-	other.loadedSuccessfully = false;	//Invalidate the other shader - it's about to have its destructor called, and we need it to not call the glDelete functions.
+	shapeB.loadedSuccessfully = false;	//Invalidate the other shader - it's about to have its destructor called, and we need it to not call the glDelete functions.
 	return *this;
 }
 

@@ -1,18 +1,25 @@
 #include "Circle.h"
-#include "CircleCollisionData.h"
+#include "CollisionData.h"
+#include "LineRenderer.h"
 
-CircleCollisionData Circle::CollisionWithCircle(Circle* other)
+void Circle::Draw(LineRenderer& lines) const
 {
-	CircleCollisionData col;
-	// Do collision Check
-	float distanceToOther = glm::distance(m_position, other->m_position);
-	if (distanceToOther < m_radius + other->m_radius)
-	{
-		Vec2 displacement = other->m_position - m_position;
-		col.normal = glm::normalize(displacement);
-		col.penetration = m_radius + other->m_radius - distanceToOther;
-		col.other = other;
-	}
+	lines.SetColour(m_colour);
+	lines.DrawCircle(m_position, m_radius);
+}
 
+CollisionData Circle::CollisionWithCircle(Circle* shapeB)
+{
+	CollisionData col;
+	float distanceFromAToB = glm::distance(m_position, shapeB->m_position);
+	if (distanceFromAToB < m_radius + shapeB->m_radius)
+	{
+		Vec2 displacement = shapeB->m_position - m_position;
+		col.depth = m_radius + shapeB->m_radius - distanceFromAToB;
+		col.normal = glm::normalize(displacement);
+		col.worldPosition = m_position + col.normal * (m_radius - col.depth / 2);
+	}
+	col.shapeA = this;
+	col.shapeB = shapeB;
 	return col;
 }

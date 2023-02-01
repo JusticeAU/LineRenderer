@@ -69,10 +69,13 @@
       <Filter>Game\Particles</Filter>
     </ClCompile>
     <ClCompile Include="CircleCollision.cpp">
-      <Filter>Game\CircleCollision</Filter>
+      <Filter>Game\CollisionFramework</Filter>
     </ClCompile>
     <ClCompile Include="Circle.cpp">
-      <Filter>Game\CircleCollision</Filter>
+      <Filter>Game\CollisionFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionData.cpp">
+      <Filter>Game\CollisionFramework</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,14 +172,14 @@
     <ClInclude Include="Repulser.h">
       <Filter>Game\Particles</Filter>
     </ClInclude>
-    <ClInclude Include="CircleCollision.h">
-      <Filter>Game\CircleCollision</Filter>
+    <ClInclude Include="CollisionFramework.h">
+      <Filter>Game\CollisionFramework</Filter>
     </ClInclude>
-    <ClInclude Include="CircleCollisionData.h">
-      <Filter>Game\CircleCollision</Filter>
+    <ClInclude Include="CollisionData.h">
+      <Filter>Game\CollisionFramework</Filter>
     </ClInclude>
     <ClInclude Include="Circle.h">
-      <Filter>Game\CircleCollision</Filter>
+      <Filter>Game\CollisionFramework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -207,7 +210,7 @@
     <Filter Include="Game\Particles">
       <UniqueIdentifier>{e9fd3ca3-c32c-41ff-9026-3bec69a8fbcc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\CircleCollision">
+    <Filter Include="Game\CollisionFramework">
       <UniqueIdentifier>{2aa2367d-b489-4f53-80ae-b9e885e523b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
