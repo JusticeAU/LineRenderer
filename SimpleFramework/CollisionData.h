@@ -18,5 +18,7 @@ public:
 
 	void Resolve();
 
-	void DebugDraw(LineRenderer& lines) const;
+	void DebugDrawCircleInfo(LineRenderer& lines) const;
+	void DebugDrawPlaneInfo(LineRenderer& lines) const;
+
 };

@@ -16,3 +16,13 @@ CollisionData CircleOnCircle(Circle& a, Circle& b)
 	col.shapeB = &b;
 	return col;
 }
+
+CollisionData CircleOnPlane(Circle& a, Plane& b)
+{
+	CollisionData col;
+	float distance = glm::dot(a.m_position, b.m_normal) - b.m_distance;
+	col.normal = b.m_normal;
+	col.depth = distance + a.m_radius;
+	col.worldPosition = a.m_position - (b.m_normal * distance);
+	return col;
+}

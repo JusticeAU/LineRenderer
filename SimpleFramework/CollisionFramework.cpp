@@ -2,6 +2,8 @@
 #include "CollisionData.h"
 #include "CollisionFunctions.h"
 
+#include <iostream>
+
 CollisionFramework::CollisionFramework()
 {
 	shapes.push_back(yourCircle);
@@ -38,7 +40,7 @@ void CollisionFramework::Update(float delta)
 
 					CollisionData col = CircleOnCircle(*circleA, *circleB);
 					col.Resolve();
-					col.DebugDraw(*lines);
+					col.DebugDrawCircleInfo(*lines);
 				}
 			}
 		}
@@ -60,5 +62,14 @@ void CollisionFramework::Update(float delta)
 	Plane plane(normal, distance, {1, 1, 0});
 	plane.Draw(*lines);
 
+	CollisionData colTest = CircleOnPlane(*yourCircle, plane);
+	if (colTest.IsCollision())
+		lines->SetColour({ 1,0,0 });
+	else
+		lines->SetColour({ 0,1,0 });
+
+	lines->DrawLineSegment(
+		colTest.worldPosition,
+		colTest.worldPosition + plane.m_normal * colTest.depth);
 
 }

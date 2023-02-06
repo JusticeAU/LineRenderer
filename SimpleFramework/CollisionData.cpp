@@ -12,7 +12,7 @@ void CollisionData::Resolve()
 
 }
 
-void CollisionData::DebugDraw(LineRenderer& lines) const
+void CollisionData::DebugDrawCircleInfo(LineRenderer& lines) const
 {
 	if (IsCollision())
 	{
@@ -25,4 +25,10 @@ void CollisionData::DebugDraw(LineRenderer& lines) const
 		lines.SetColour({ 1,1,1 });
 		lines.DrawCircle(worldPosition, depth / 2);
 	}
+}
+
+void CollisionData::DebugDrawPlaneInfo(LineRenderer& lines) const
+{
+	lines.SetColour({ 0, 1, 0 });
+	lines.DrawLineSegment({ 0,0 }, normal*depth);
 }
