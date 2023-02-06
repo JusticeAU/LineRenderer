@@ -64,7 +64,12 @@ void CollisionFramework::Update(float delta)
 
 	CollisionData colTest = CircleOnPlane(*yourCircle, plane);
 	if (colTest.IsCollision())
+	{
 		lines->SetColour({ 1,0,0 });
+		Circle newCircle = *yourCircle;
+		newCircle.m_position += colTest.normal * -colTest.depth;
+		newCircle.Draw(*lines);
+	}
 	else
 		lines->SetColour({ 0,1,0 });
 
