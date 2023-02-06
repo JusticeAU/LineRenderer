@@ -7,9 +7,8 @@ void CollisionData::Resolve()
 	if (IsCollision() != true)
 		return;
 
-	shapeA->m_position -= normal * depth / 2.0f;
-	shapeB->m_position += normal * depth / 2.0f;
-
+	shapeA->Move(-normal * depth / 2.0f);
+	shapeB->Move(normal * depth / 2.0f);
 }
 
 void CollisionData::DebugDrawCircleInfo(LineRenderer& lines) const

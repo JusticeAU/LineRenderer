@@ -1,7 +1,7 @@
 #pragma once
 #include "Maths.h"
 
-class Circle;
+class Shape;
 class LineRenderer;
 
 class CollisionData
@@ -11,8 +11,8 @@ public:
 	float depth = -1.0f; // Negative depth means no collision
 	Vec2 worldPosition;
 
-	Circle* shapeA = nullptr;
-	Circle* shapeB = nullptr;
+	Shape* shapeA = nullptr;
+	Shape* shapeB = nullptr;
 
 	bool IsCollision() const { return depth > 0.0f; }
 

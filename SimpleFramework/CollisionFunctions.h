@@ -6,5 +6,15 @@
 #include "AABB.h"
 #include "CollisionData.h"
 
-CollisionData CircleOnCircle(Circle& ShapeA, Circle& ShapeB);
-CollisionData CircleOnPlane(Circle& a, Plane& b);
+#include <functional>
+
+typedef std::function<CollisionData(Shape*, Shape*)> CollisionFunction;
+
+CollisionData TestCollisions(Shape* a, Shape* b);
+
+
+CollisionData CircleOnCircle(Shape* a, Shape* b);
+CollisionData CircleOnPlane(Shape* a, Shape* b);
+
+CollisionData PlaneOnCircle(Shape* a, Shape* b);
+CollisionData PlaneOnPlane(Shape* a, Shape* b);

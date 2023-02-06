@@ -3,20 +3,27 @@
 
 class LineRenderer;
 
-enum SHAPE
+enum class SHAPE
 {
-	SHAPE_CIRCLE,
-	SHAPE_PLANE,
-	SHAPE_AABB
+	CIRCLE,
+	PLANE,
+	AABB,
+
+	COUNT
 };
 
 class Shape
 {
 public:
 	SHAPE m_type;
+	Vec2 m_position = { 0,0 };
+	float m_inverseMass = 0.0f;
 	Vec3 m_colour = { 1,1,1 };
 
-	Shape(SHAPE shape, Vec3 colour) : m_type(shape), m_colour(colour) {}
+	Shape(SHAPE shape, Vec2 position, float inverseMass, Vec3 colour = {1, 1, 1}) : m_type(shape), m_position(position), m_inverseMass(inverseMass), m_colour(colour) {}
+
+	SHAPE GetShape() { return m_type; }
 
 	virtual void Draw(LineRenderer& lines) const = 0;
+	virtual void Move(Vec2 displacement) { m_position += displacement; }
 };

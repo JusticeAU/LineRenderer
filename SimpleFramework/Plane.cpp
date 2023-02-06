@@ -2,7 +2,7 @@
 #include "LineRenderer.h"
 
 Plane::Plane(Vec2 normal, float distance, Vec3 colour)
-	: Shape(SHAPE_PLANE, colour)
+	: Shape(SHAPE::PLANE, { 0,0 }, 0, colour)
 {
 	m_normal = normal;
 	m_distance = distance;

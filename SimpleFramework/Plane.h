@@ -11,4 +11,6 @@ public:
 	float m_distance;
 
 	void Draw(LineRenderer& lines) const override;
+
+	void Move(Vec2 displacement) override { }
 };
