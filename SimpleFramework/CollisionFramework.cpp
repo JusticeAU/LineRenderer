@@ -66,4 +66,15 @@ void CollisionFramework::Update(float delta)
 	{
 		s->Draw(*lines);
 	}
+
+	AABB aabb = AABB({0,0}, 5, 2, 1.0f);
+	aabb.Draw(*lines);
+
+	CollisionData col = CircleOnAABB(yourCircle, &aabb);
+
+	lines->DrawCross(col.worldPosition, 0.1f);
+	lines->DrawLineSegment(col.worldPosition, col.worldPosition + (col.normal * col.depth));
+
+	/*Vec2 closestPoint = aabb.GetClosestPoint(cursorPos);
+	lines->DrawCross(closestPoint, 0.1f);*/
 }

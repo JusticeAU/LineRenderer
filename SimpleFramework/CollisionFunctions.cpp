@@ -1,9 +1,11 @@
 #include "CollisionFunctions.h"
+#include <iostream>
 
 CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
 {
-	{CircleOnCircle, CircleOnPlane},
-	{PlaneOnCircle, PlaneOnPlane}
+	{CircleOnCircle, CircleOnPlane, CircleOnAABB},
+	{PlaneOnCircle, PlaneOnPlane, PlaneOnAABB},
+	{AABBOnCircle, AABBOnPlane, AABBOnAABB}
 };
 
 CollisionData TestCollisions(Shape* a, Shape* b)
@@ -45,6 +47,20 @@ CollisionData CircleOnPlane(Shape* a, Shape* b)
 	col.shapeB = b;
 	return col;
 }
+CollisionData CircleOnAABB(Shape* a, Shape* b)
+{
+	Circle* circleA = static_cast<Circle*>(a);
+	AABB* aabbB = static_cast<AABB*>(b);
+
+	CollisionData col;
+
+	Vec2 closestPoint = aabbB->GetClosestPoint(circleA->m_position);
+	col.worldPosition = closestPoint;
+	col.depth = glm::distance(closestPoint, circleA->m_position) - circleA->m_radius;
+	col.normal = glm::normalize(circleA->m_position - closestPoint);
+	
+	return col;
+}
 
 CollisionData PlaneOnCircle(Shape* a, Shape* b)
 {
@@ -58,4 +74,21 @@ CollisionData PlaneOnPlane(Shape* a, Shape* b)
 
 	return col;
 
+}
+CollisionData PlaneOnAABB(Shape* a, Shape* b)
+{
+	return CollisionData();
+}
+
+CollisionData AABBOnCircle(Shape* a, Shape* b)
+{
+	return CollisionData();
+}
+CollisionData AABBOnPlane(Shape* a, Shape* b)
+{
+	return CollisionData();
+}
+CollisionData AABBOnAABB(Shape* a, Shape* b)
+{
+	return CollisionData();
 }
