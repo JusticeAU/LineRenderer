@@ -7,8 +7,7 @@
 CollisionFramework::CollisionFramework()
 {
 	shapes.push_back(yourCircle);
-	shapes.push_back(yourPlane);
-
+	//shapes.push_back(yourPlane);
 }
 
 void CollisionFramework::Update(float delta)
@@ -29,8 +28,8 @@ void CollisionFramework::Update(float delta)
 		rightDown = false;
 
 	// Line Debug
-	yourPlane->m_normal = glm::normalize(cursorPos);
-	yourPlane->m_distance = glm::length(cursorPos);
+	//yourPlane->m_normal = glm::normalize(cursorPos);
+	//yourPlane->m_distance = glm::length(cursorPos);
 
 	// Perform collision tests and resolution 1 pass against all shapes.
 	if (shapes.size() >= 2)
@@ -71,9 +70,12 @@ void CollisionFramework::Update(float delta)
 	aabb.Draw(*lines);
 
 	CollisionData col = CircleOnAABB(yourCircle, &aabb);
-
-	lines->DrawCross(col.worldPosition, 0.1f);
-	lines->DrawLineSegment(col.worldPosition, col.worldPosition + (col.normal * col.depth));
+	if (col.IsCollision())
+	{
+		//std::cout << col.depth << std::endl;
+		lines->DrawCross(col.worldPosition, 0.1f);
+		lines->DrawLineSegment(col.worldPosition, col.worldPosition + (col.normal * col.depth));
+	}
 
 	/*Vec2 closestPoint = aabb.GetClosestPoint(cursorPos);
 	lines->DrawCross(closestPoint, 0.1f);*/

@@ -53,11 +53,58 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 	AABB* aabbB = static_cast<AABB*>(b);
 
 	CollisionData col;
-
+	// Get the closest point
 	Vec2 closestPoint = aabbB->GetClosestPoint(circleA->m_position);
 	col.worldPosition = closestPoint;
-	col.depth = glm::distance(closestPoint, circleA->m_position) - circleA->m_radius;
-	col.normal = glm::normalize(circleA->m_position - closestPoint);
+
+	// test if the circle centre is inside the AABB
+	if (closestPoint == circleA->m_position)
+	{
+		// Circle centre is inside box so we will calculate normal differently
+		// get min and max coords
+		float aabbMaxY = aabbB->m_position.y + aabbB->m_halfHeight;
+		float aabbMinY = aabbB->m_position.y - aabbB->m_halfHeight;
+		float aabbMaxX = aabbB->m_position.x + aabbB->m_halfWidth;
+		float aabbMinX = aabbB->m_position.x - aabbB->m_halfWidth;
+
+		// find the smallest direction
+		float distToUp = glm::abs(circleA->m_position.y - aabbMaxY);
+		float distToDown = circleA->m_position.y - aabbMinY;
+		float distToRight = glm::abs(circleA->m_position.x - aabbMaxX);
+		float distToLeft = circleA->m_position.x - aabbMinX;
+
+		//std::cout << distToUp << "\t" << distToDown << "\t" << distToLeft << "\t" << distToRight << std::endl;
+
+		if (distToUp < distToDown && distToUp < distToRight && distToUp < distToLeft)
+		{
+			//std::cout << "Up is closest" << std::endl;
+			col.depth = distToUp + circleA->m_radius;
+			col.normal = { 0, 1 };
+		}
+		else if (distToDown < distToRight && distToDown < distToLeft)
+		{
+			//std::cout << "Down is closest" << std::endl;
+			col.depth = distToDown + circleA->m_radius;
+			col.normal = { 0, -1 };
+		}
+		else if (distToRight < distToLeft)
+		{
+			//std::cout << "Right is closest" << std::endl;
+			col.depth = distToRight + circleA->m_radius;
+			col.normal = { 1, 0 };
+		}
+		else
+		{
+			//std::cout << "Left is closest" << std::endl;
+			col.depth = distToLeft + circleA->m_radius;
+			col.normal = { -1, 0 };
+		}
+	}
+	else
+	{
+		col.depth = circleA->m_radius - glm::distance(closestPoint, circleA->m_position);
+		col.normal = glm::normalize(circleA->m_position - closestPoint);
+	}
 	
 	return col;
 }
