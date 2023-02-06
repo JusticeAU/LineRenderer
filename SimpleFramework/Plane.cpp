@@ -1,8 +1,8 @@
 #include "Plane.h"
 #include "LineRenderer.h"
 
-Plane::Plane(Vec2 position, Vec2 normal, float distance, Vec3 colour)
-	: Shape(SHAPE_PLANE, position, colour)
+Plane::Plane(Vec2 normal, float distance, Vec3 colour)
+	: Shape(SHAPE_PLANE, colour)
 {
 	m_normal = normal;
 	m_distance = distance;

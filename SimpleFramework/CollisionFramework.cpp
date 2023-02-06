@@ -57,7 +57,7 @@ void CollisionFramework::Update(float delta)
 	// Line Debug
 	Vec2 normal = glm::normalize(cursorPos);
 	float distance = glm::length(cursorPos);
-	Plane plane({0,0}, normal, distance, {1, 1, 0});
+	Plane plane(normal, distance, {1, 1, 0});
 	plane.Draw(*lines);
 
 
