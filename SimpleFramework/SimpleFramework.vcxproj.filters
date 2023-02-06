@@ -83,6 +83,9 @@
     <ClCompile Include="AABB.cpp">
       <Filter>Game\CollisionFramework</Filter>
     </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Game\CollisionFramework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFWCallbacks.h">
@@ -194,6 +197,9 @@
       <Filter>Game\CollisionFramework</Filter>
     </ClInclude>
     <ClInclude Include="AABB.h">
+      <Filter>Game\CollisionFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
       <Filter>Game\CollisionFramework</Filter>
     </ClInclude>
   </ItemGroup>

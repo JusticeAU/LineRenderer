@@ -6,6 +6,7 @@ class LineRenderer;
 enum SHAPE
 {
 	SHAPE_CIRCLE,
+	SHAPE_PLANE,
 	SHAPE_AABB
 };
 

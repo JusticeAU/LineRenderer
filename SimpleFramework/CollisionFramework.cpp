@@ -51,7 +51,14 @@ void CollisionFramework::Update(float delta)
 		s->Draw(*lines);
 	}
 
-	AABB aabb = AABB({0,0}, 5, 2);
-	aabb.Draw(*lines);
+	/*AABB aabb = AABB({0,0}, 5, 2);
+	aabb.Draw(*lines);*/
+
+	// Line Debug
+	Vec2 normal = glm::normalize(cursorPos);
+	float distance = glm::length(cursorPos);
+	Plane plane({0,0}, normal, distance, {1, 1, 0});
+	plane.Draw(*lines);
+
 
 }

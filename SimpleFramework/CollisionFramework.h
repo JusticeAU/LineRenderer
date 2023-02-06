@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "Circle.h"
+#include "Plane.h"
 #include <vector>
 
 class CollisionFramework : public Application
