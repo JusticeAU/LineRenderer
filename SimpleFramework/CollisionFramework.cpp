@@ -6,16 +6,13 @@
 
 CollisionFramework::CollisionFramework()
 {
-	shapes.push_back(yourAABB);
-	shapes.push_back(yourPlane);
-	shapes.push_back(yourCircle);
+
 }
 
 void CollisionFramework::Update(float delta)
 {
 
-	if (leftMouseDown)
-		yourCircle->m_position = cursorPos;
+	//if (leftMouseDown)
 	
 	if (rightMouseDown && !rightDown)
 	{
@@ -27,10 +24,6 @@ void CollisionFramework::Update(float delta)
 	}
 	else if (!rightMouseDown && rightDown)
 		rightDown = false;
-
-	// Line Debug
-	yourPlane->m_normal = glm::normalize(cursorPos);
-	yourPlane->m_distance = glm::length(cursorPos);
 
 	// Perform collision tests and resolution 1 pass against all shapes.
 	if (shapes.size() >= 2)
@@ -66,5 +59,4 @@ void CollisionFramework::Update(float delta)
 	{
 		s->Draw(*lines);
 	}
-
 }

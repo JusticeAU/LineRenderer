@@ -29,4 +29,9 @@ public:
 		return closestPoint;
 	}
 	Vec2* GetCorners();
+
+	float Top() { return m_position.y + m_halfHeight; }
+	float Bottom() { return m_position.y - m_halfHeight; }
+	float Left() { return m_position.x - m_halfWidth; }
+	float Right() { return m_position.x + m_halfWidth; }
 };

@@ -170,5 +170,38 @@ CollisionData AABBOnPlane(Shape* a, Shape* b)
 }
 CollisionData AABBOnAABB(Shape* a, Shape* b)
 {
-	return CollisionData();
+	AABB* aabbA = static_cast<AABB*>(a);
+	AABB* aabbB = static_cast<AABB*>(b);
+	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
+
+	// Get Each Overlap
+	float upOverlap = aabbA->Top() - aabbB->Bottom();
+	float downOverlap = aabbB->Top() - aabbA->Bottom();
+	float leftOverlap = aabbB->Right() - aabbA->Left();
+	float rightOverlap = aabbA->Right() - aabbB->Left();
+
+	// find the lowest depth (negative means no overlap)
+	if (upOverlap < downOverlap && upOverlap < leftOverlap && upOverlap < rightOverlap)
+	{
+		col.depth = upOverlap;
+		col.normal = { 0, 1 };
+	}
+	else if(downOverlap < leftOverlap && downOverlap < rightOverlap)
+	{
+		col.depth = downOverlap;
+		col.normal = { 0, -1 };
+	}
+	else if (leftOverlap < rightOverlap)
+	{
+		col.depth = leftOverlap;
+		col.normal = { -1, 0 };
+	}
+	else
+	{
+		col.depth = rightOverlap;
+		col.normal = { 1, 0 };
+	}
+	return col;
 }
