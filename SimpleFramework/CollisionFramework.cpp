@@ -2,10 +2,11 @@
 #include "CollisionData.h"
 #include "CollisionFunctions.h"
 
-#include <iostream>
-
 CollisionFramework::CollisionFramework()
 {
+	shapeTemplates.push_back(new Circle(cursorPos, 1, 1.0f, { 0.2f,0.2f,0.2f }));
+	shapeTemplates.push_back(new Plane(cursorPos, 1, { 0.2f,0.2f,0.2f }));
+	shapeTemplates.push_back(new AABB(cursorPos, 1, 1.0f, 1, { 0.2f,0.2f,0.2f }));
 
 }
 
@@ -16,11 +17,12 @@ void CollisionFramework::Update(float delta)
 	
 	if (rightMouseDown && !rightDown)
 	{
-		rightDown = true;
+		/*rightDown = true;
 		float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 		float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 		float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-		shapes.push_back(new Circle(cursorPos, 1, 1.0f, {r,g,b}));
+		shapes.push_back(new Circle(cursorPos, 1, 1.0f, {r,g,b}));*/
+		shapes.push_back(shapeTemplates[templateIndex]);
 	}
 	else if (!rightMouseDown && rightDown)
 		rightDown = false;
@@ -59,4 +61,22 @@ void CollisionFramework::Update(float delta)
 	{
 		s->Draw(*lines);
 	}
+
+	// Draw template
+	if (shapeTemplates[templateIndex]->GetShape() == SHAPE::PLANE)
+	{
+		Plane* plane = static_cast<Plane*>(shapeTemplates[templateIndex]);
+		plane->m_normal = glm::normalize(cursorPos);
+		plane->m_distance = glm::length(cursorPos);
+	}
+	else
+		shapeTemplates[templateIndex]->m_position = cursorPos;
+	shapeTemplates[templateIndex]->Draw(*lines);
+}
+
+void CollisionFramework::OnLeftRelease()
+{
+	templateIndex += 1;
+	if (templateIndex == (int)SHAPE::COUNT)
+		templateIndex = 0;
 }

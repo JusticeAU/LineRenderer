@@ -10,8 +10,12 @@ public:
 	CollisionFramework();
 
 	void Update(float delta) override;
+	void OnLeftRelease() override;
 
 	std::vector<Shape*> shapes;
 	bool rightDown = false;
 	const int MAX_COLLISION_PASSES = 6;
+
+	std::vector<Shape*> shapeTemplates;
+	int templateIndex = 0;
 };
