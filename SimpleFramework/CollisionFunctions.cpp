@@ -73,29 +73,23 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 		float distToRight = glm::abs(circleA->m_position.x - aabbMaxX);
 		float distToLeft = circleA->m_position.x - aabbMinX;
 
-		//std::cout << distToUp << "\t" << distToDown << "\t" << distToLeft << "\t" << distToRight << std::endl;
-
 		if (distToUp < distToDown && distToUp < distToRight && distToUp < distToLeft)
 		{
-			//std::cout << "Up is closest" << std::endl;
 			col.depth = distToUp + circleA->m_radius;
 			col.normal = { 0, 1 };
 		}
 		else if (distToDown < distToRight && distToDown < distToLeft)
 		{
-			//std::cout << "Down is closest" << std::endl;
 			col.depth = distToDown + circleA->m_radius;
 			col.normal = { 0, -1 };
 		}
 		else if (distToRight < distToLeft)
 		{
-			//std::cout << "Right is closest" << std::endl;
 			col.depth = distToRight + circleA->m_radius;
 			col.normal = { 1, 0 };
 		}
 		else
 		{
-			//std::cout << "Left is closest" << std::endl;
 			col.depth = distToLeft + circleA->m_radius;
 			col.normal = { -1, 0 };
 		}
@@ -129,7 +123,7 @@ CollisionData PlaneOnAABB(Shape* a, Shape* b)
 
 CollisionData AABBOnCircle(Shape* a, Shape* b)
 {
-	return CollisionData();
+	return CircleOnAABB(b, a);
 }
 CollisionData AABBOnPlane(Shape* a, Shape* b)
 {
