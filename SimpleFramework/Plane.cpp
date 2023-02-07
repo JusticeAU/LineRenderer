@@ -24,3 +24,10 @@ void Plane::Draw(LineRenderer& lines) const
 	// Normal from plane origin
 	lines.DrawLineSegment(planeOrigin, planeOrigin + m_normal);
 }
+
+float Plane::DepthInPlane(Vec2 point)
+{
+	float distance = glm::dot(point, m_normal) - m_distance;
+
+	return distance;
+}

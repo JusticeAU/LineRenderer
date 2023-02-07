@@ -28,8 +28,5 @@ public:
 
 		return closestPoint;
 	}
-	Vec2 GetCardinalNormal(Vec2 point)
-	{
-
-	}
+	Vec2* GetCorners();
 };

@@ -12,5 +12,7 @@ public:
 
 	void Draw(LineRenderer& lines) const override;
 
-	void Move(Vec2 displacement) override { }
+	float DepthInPlane(Vec2 point);
+
+	void Move(Vec2 displacement) override { } // just overrides move to do nothing.
 };

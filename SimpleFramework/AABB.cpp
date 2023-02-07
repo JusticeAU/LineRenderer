@@ -16,3 +16,14 @@ void AABB::Draw(LineRenderer& lines) const
 	lines.FinishLineLoop();
 
 }
+
+Vec2* AABB::GetCorners()
+{
+	// 0-3 will be TopRight, BottomRight, Bottom Left, TopLeft
+	Vec2* depths = new Vec2[4];
+	depths[0] = m_position + Vec2(m_halfWidth, m_halfHeight);
+	depths[1] = m_position + Vec2(m_halfWidth, -m_halfHeight);
+	depths[2] = m_position + Vec2(-m_halfWidth, -m_halfHeight);
+	depths[3] = m_position + Vec2(-m_halfWidth, m_halfHeight);
+	return depths;
+}

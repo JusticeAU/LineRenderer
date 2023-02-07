@@ -56,6 +56,8 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 	// Get the closest point
 	Vec2 closestPoint = aabbB->GetClosestPoint(circleA->m_position);
 	col.worldPosition = closestPoint;
+	col.shapeA = a;
+	col.shapeB = b;
 
 	// test if the circle centre is inside the AABB
 	if (closestPoint == circleA->m_position)
@@ -97,7 +99,7 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 	else
 	{
 		col.depth = circleA->m_radius - glm::distance(closestPoint, circleA->m_position);
-		col.normal = glm::normalize(circleA->m_position - closestPoint);
+		col.normal = -glm::normalize(circleA->m_position - closestPoint);
 	}
 	
 	return col;
@@ -118,7 +120,44 @@ CollisionData PlaneOnPlane(Shape* a, Shape* b)
 }
 CollisionData PlaneOnAABB(Shape* a, Shape* b)
 {
-	return CollisionData();
+	Plane* planeA = static_cast<Plane*>(a);
+	AABB* aabbB = static_cast<AABB*>(b);
+	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
+	col.normal = -planeA->m_normal;
+
+	// for each aabb point, get depth
+	Vec2* points = aabbB->GetCorners();
+	float depths[4];
+	for (int i = 0; i < 4; i++)
+		depths[i] = planeA->DepthInPlane(points[i]);
+
+	// find greatest depths - 0-3 will be TopRight, BottomRight, Bottom Left, TopLeft
+	if (depths[0] > depths[1] && depths[0] > depths[2] && depths[0] > depths[3])
+	{
+		col.depth = depths[0];
+		col.worldPosition = points[0];
+	}
+	else if (depths[1] > depths[2] && depths[1] > depths[3])
+	{
+		col.depth = depths[1];
+		col.worldPosition = points[1];
+	}
+	else if (depths[2] > depths[3])
+	{
+		col.depth = depths[2];
+		col.worldPosition = points[2];
+	}
+	else
+	{
+		col.depth = depths[3];
+		col.worldPosition = points[3];
+	}
+	
+	delete points;
+	// get the greatest depth and push out on the reverse normal of the plane
+	return col;
 }
 
 CollisionData AABBOnCircle(Shape* a, Shape* b)
@@ -127,7 +166,7 @@ CollisionData AABBOnCircle(Shape* a, Shape* b)
 }
 CollisionData AABBOnPlane(Shape* a, Shape* b)
 {
-	return CollisionData();
+	return PlaneOnAABB(b, a);
 }
 CollisionData AABBOnAABB(Shape* a, Shape* b)
 {
