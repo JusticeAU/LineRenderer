@@ -2,7 +2,7 @@
 
 void Shape::Update(float deltaTime)
 {	
-	m_velocity += m_gravityForNow * deltaTime;
+	//m_velocity += m_gravityForNow * deltaTime;
 	Move(m_velocity * deltaTime);
 }
 
@@ -13,5 +13,6 @@ void Shape::Move(Vec2 displacement)
 
 void Shape::ApplyImpulse(Vec2 impulse)
 {
-	m_velocity = impulse;
+	float mass = 1.0f / m_inverseMass;
+	m_velocity = impulse / mass;
 }

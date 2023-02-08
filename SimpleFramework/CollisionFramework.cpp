@@ -9,6 +9,15 @@ CollisionFramework::CollisionFramework()
 	shapeTemplates.push_back(new Circle(cursorPos, 1, 1.0f, { 0.2f,0.2f,0.2f }));
 	shapeTemplates.push_back(new Plane(cursorPos, 1, { 0.2f,0.2f,0.2f }));
 	shapeTemplates.push_back(new AABB(cursorPos, 1, 1.0f, 1, { 0.2f,0.2f,0.2f }));
+
+	Circle* circle1 = new Circle({ -3, 0 }, 1, 1.0f);
+	circle1->m_velocity = { 1,0 };
+	Circle* circle2 = new Circle({ 1, 0 }, 1, 1.0f);
+
+	shapes.push_back(circle1);
+	shapes.push_back(circle2);
+
+
 }
 
 void CollisionFramework::Update(float delta)
