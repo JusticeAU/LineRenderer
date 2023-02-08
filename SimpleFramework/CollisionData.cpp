@@ -1,5 +1,5 @@
 #include "CollisionData.h"
-#include "Circle.h"
+#include "Shape.h"
 #include "LineRenderer.h"
 
 void CollisionData::Resolve()

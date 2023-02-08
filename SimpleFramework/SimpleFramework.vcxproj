@@ -173,6 +173,7 @@
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ApplicationHarness.cpp" />
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>

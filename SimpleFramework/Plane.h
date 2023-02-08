@@ -10,9 +10,11 @@ public:
 	Vec2 m_normal;
 	float m_distance;
 
+	void Update(float deltaTime) override {}
 	void Draw(LineRenderer& lines) const override;
 
 	float DepthInPlane(Vec2 point);
 
 	void Move(Vec2 displacement) override { } // just overrides move to do nothing.
+	void ApplyImpulse(Vec2 impulse) override { }
 };

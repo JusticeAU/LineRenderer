@@ -13,6 +13,11 @@ CollisionFramework::CollisionFramework()
 
 void CollisionFramework::Update(float delta)
 {
+	// Update all primitives
+	for (auto& shape : shapes)
+		shape->Update(delta);
+
+
 	// Perform collision tests and resolution 1 pass against all shapes.
 	for (int i = 0; i < MAX_COLLISION_PASSES; i++)
 	{

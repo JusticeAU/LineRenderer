@@ -86,6 +86,9 @@
     <ClCompile Include="Plane.cpp">
       <Filter>Game\CollisionFramework</Filter>
     </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>Game\CollisionFramework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFWCallbacks.h">
