@@ -22,7 +22,7 @@ void Plane::Draw(LineRenderer& lines) const
 
 	// Draw some Debug.
 	// Normal from plane origin
-	lines.DrawLineSegment(planeOrigin, planeOrigin + m_normal);
+	lines.DrawLineSegment(planeOrigin, planeOrigin - m_normal * 0.5f);
 }
 
 float Plane::DepthInPlane(Vec2 point)

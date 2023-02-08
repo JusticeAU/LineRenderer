@@ -1,5 +1,4 @@
 #include "CollisionFunctions.h"
-#include <iostream>
 
 CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
 {
