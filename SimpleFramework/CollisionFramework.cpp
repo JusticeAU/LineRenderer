@@ -46,9 +46,8 @@ void CollisionFramework::Update(float delta)
 	}
 
 	// Handle Template Spawning
-	if (spawn != nullptr && spawnStarted)
+	if (spawn != nullptr)
 	{
-		spawn->m_position = spawnShapeStartPos;
 		if (spawn->GetShape() == SHAPE::CIRCLE)
 		{
 			Circle* circle = (Circle*)spawn;
@@ -117,8 +116,6 @@ void CollisionFramework::Update(float delta)
 void CollisionFramework::OnLeftClick()
 {
 	std::cout << "left down" << std::endl;
-	spawnStarted = true;
-	spawnShapeStartPos = cursorPos;
 
 	// Spawn current template
 	switch (shapeTemplates[templateIndex]->GetShape())
@@ -159,7 +156,6 @@ void CollisionFramework::OnLeftRelease()
 		shapes.push_back(spawn);
 	}
 
-	spawnStarted = false;
 	spawn = nullptr;
 }
 

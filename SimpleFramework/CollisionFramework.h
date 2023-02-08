@@ -23,7 +23,6 @@ public:
 
 	std::vector<Shape*> shapeTemplates;
 	int templateIndex = 0;
-	bool spawnStarted = false;
-	Vec2 spawnShapeStartPos;
+	//bool spawnStarted = false;
 	Shape* spawn = nullptr;
 };
