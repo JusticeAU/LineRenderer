@@ -13,6 +13,9 @@ void Shape::Move(Vec2 displacement)
 
 void Shape::ApplyImpulse(Vec2 impulse)
 {
+	if (m_inverseMass == 0)
+		return;
+
 	float mass = 1.0f / m_inverseMass;
-	m_velocity = impulse / mass;
+	m_velocity += impulse / mass;
 }

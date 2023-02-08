@@ -17,8 +17,8 @@ void CollisionData::Resolve()
 
 
 	float totalMass = massA + massB;
-	float shapeARatio = massB / totalMass;
-	float shapeBRatio = massA / totalMass;
+	float shapeARatio = massA / totalMass;
+	float shapeBRatio = massB / totalMass;
 
 	shapeA->Move(-normal * depth * shapeARatio);
 	shapeB->Move(normal * depth * shapeBRatio);
@@ -29,7 +29,8 @@ void CollisionData::Resolve()
 	float k = -(1 + elasticity) * glm::dot(relativeVelocity, normal);
 	if(k < 0.0f)
 		return;
-	float j =  k / (shapeB->m_inverseMass + shapeA->m_inverseMass);
+	//float j =  k / (shapeB->m_inverseMass + shapeA->m_inverseMass);
+	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / (shapeA->m_inverseMass + (shapeB->m_inverseMass));
 
 	float EkPre = 0.5f * (
 		massA * (glm::dot(shapeA->m_velocity,shapeA->m_velocity)) +
