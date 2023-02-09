@@ -11,7 +11,7 @@ CollisionFramework::CollisionFramework()
 	shapeTemplates.push_back(new AABB(cursorPos, 1, 1.0f, 0, { 0.2f,0.2f,0.2f }));
 
 	Circle* circle1 = new Circle({ -3, 0 }, 1, 1.0f);
-	circle1->m_velocity = { 1,0 };
+	//circle1->m_velocity = { 1,0 };
 	shapes.push_back(circle1);
 	/*
 	circle1 = new Circle({ -1, 0 }, 1, 1.0f);
@@ -21,7 +21,7 @@ CollisionFramework::CollisionFramework()
 	shapes.push_back(circle1);
 	circle1 = new Circle({ 3, 0 }, 1, 1.0f);
 	shapes.push_back(circle1);*/
-	Circle* circle2 = new Circle({ 3, 0 }, 1, 1.0f);
+	Circle* circle2 = new Circle({ 3, 0 }, 1, .1f);
 
 	shapes.push_back(circle2);
 	shapes.push_back(new Plane({ 0,1 }, 10, { 1,1,1 }));
