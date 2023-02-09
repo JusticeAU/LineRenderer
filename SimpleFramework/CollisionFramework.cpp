@@ -12,16 +12,22 @@ CollisionFramework::CollisionFramework()
 
 	Circle* circle1 = new Circle({ -3, 0 }, 1, 1.0f);
 	circle1->m_velocity = { 1,0 };
-	Circle* circle2 = new Circle({ 3, 0 }, 1, 0);
-
 	shapes.push_back(circle1);
+	/*
+	circle1 = new Circle({ -1, 0 }, 1, 1.0f);
+	circle1->m_colour = { 1,0,0 };
+	shapes.push_back(circle1);
+	circle1 = new Circle({ 1, 0 }, 1, 1.0f);
+	shapes.push_back(circle1);
+	circle1 = new Circle({ 3, 0 }, 1, 1.0f);
+	shapes.push_back(circle1);*/
+	Circle* circle2 = new Circle({ 3, 0 }, 1, 1.0f);
+
 	shapes.push_back(circle2);
-	//shapes.push_back(new Plane({ 0,1 }, 10, { 1,1,1 }));
-	//shapes.push_back(new Plane({ 0,-1 }, 10, { 1,1,1 }));
-	//shapes.push_back(new Plane({ 1,0 }, 10, { 1,1,1 }));
-	//shapes.push_back(new Plane({ -1,0 }, 10, { 1,1,1 }));
-
-
+	shapes.push_back(new Plane({ 0,1 }, 10, { 1,1,1 }));
+	shapes.push_back(new Plane({ 0,-1 }, 10, { 1,1,1 }));
+	shapes.push_back(new Plane({ 1,0 }, 10, { 1,1,1 }));
+	shapes.push_back(new Plane({ -1,0 }, 10, { 1,1,1 }));
 
 }
 
@@ -172,8 +178,11 @@ void CollisionFramework::OnLeftRelease()
 		float g = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 		float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 		spawn->m_colour = { r,g,b };
-		spawn->m_velocity = { ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 0.5f) * 10), ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 0.5f) * 10) };
-		spawn->m_inverseMass = 1.0f;
+		if (spawn->GetShape() != SHAPE::PLANE)
+		{
+			spawn->m_velocity = { ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 0.5f) * 10), ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 0.5f) * 10) };
+			spawn->m_inverseMass = 1.0f;
+		}
 		shapes.push_back(spawn);
 	}
 

@@ -6,15 +6,20 @@ void CollisionData::Resolve()
 {
 	if (IsCollision() != true)
 		return;
-	
+
+	// check for two static items colliding.
+	if (shapeA->m_inverseMass == 0.0f && shapeB->m_inverseMass == 0.0f)
+		return;
+
+
 	float massA = 1.0f / shapeA->m_inverseMass;
 	float massB = 1.0f / shapeB->m_inverseMass;
 
-	if (shapeA->GetShape() == SHAPE::PLANE)
+	if (massA == INFINITY)
 		massA = 0.0f;
-	if (shapeB->GetShape() == SHAPE::PLANE)
-		massB = 0.0f;
 
+	if (massB == INFINITY)
+		massB = 0.0f;
 
 	float totalMass = massA + massB;
 	float shapeARatio = massA / totalMass;
@@ -25,7 +30,7 @@ void CollisionData::Resolve()
 
 	Vec2 relativeVelocity = shapeB->m_velocity - shapeA->m_velocity;
 
-	float elasticity = 1.0f;
+	float elasticity = .9f;
 	float k = -(1 + elasticity) * glm::dot(relativeVelocity, normal);
 	if(k < 0.0f)
 		return;
@@ -36,7 +41,6 @@ void CollisionData::Resolve()
 		massA * (glm::dot(shapeA->m_velocity,shapeA->m_velocity)) +
 		(massB * (glm::dot(shapeB->m_velocity,shapeB->m_velocity)))
 		);
-
 
 	shapeA->ApplyImpulse(normal * -j);
 	shapeB->ApplyImpulse(normal * j);
