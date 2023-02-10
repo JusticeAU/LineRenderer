@@ -1,5 +1,14 @@
 #include "AABB.h"
 #include "LineRenderer.h"
+#include <iostream>
+#include <string>
+
+void AABB::CalculateMassFromArea()
+{
+	float mass = (m_halfWidth * 2) * (m_halfHeight * 2);
+	std::cout << "Setting AABB mass to: " + std::to_string(mass) << std::endl;
+	m_inverseMass = 1 / mass;
+}
 
 void AABB::Draw(LineRenderer& lines) const
 {

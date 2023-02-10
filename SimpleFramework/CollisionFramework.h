@@ -16,6 +16,7 @@ public:
 	void OnRightClick() override;
 	void OnRightRelease() override;
 
+	void ProcessObjectSpawner();
 
 	std::vector<Shape*> shapes;
 	bool rightDown = false;
@@ -26,4 +27,5 @@ public:
 	//bool spawnStarted = false;
 	Shape* spawn = nullptr;
 	Vec2 spawnStartPos;
+	float timeSinceStart;
 };

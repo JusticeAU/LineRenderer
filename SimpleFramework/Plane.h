@@ -11,6 +11,7 @@ public:
 	float m_distance;
 
 	void Update(float deltaTime) override {}
+	void CalculateMassFromArea();
 	void Draw(LineRenderer& lines) const override;
 
 	float DepthInPlane(Vec2 point);

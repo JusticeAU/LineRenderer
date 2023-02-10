@@ -11,6 +11,8 @@ public:
 	float m_halfWidth;
 	float m_halfHeight;
 
+	void CalculateMassFromArea() override;
+
 	void Draw(LineRenderer& lines) const override;
 
 	Vec2 GetClosestPoint(Vec2 point)

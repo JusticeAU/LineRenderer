@@ -8,8 +8,8 @@ public:
 	virtual void Update(float delta) = 0;
 
 	bool leftMouseDown;
-	bool leftMouseUp;
 	bool rightMouseDown;
+	bool middleMouseDown;
 	Vec2 cursorPos;
 	LineRenderer* lines = nullptr;
 
@@ -17,4 +17,7 @@ public:
 	virtual void OnLeftRelease() {}
 	virtual void OnRightClick() {}
 	virtual void OnRightRelease() {}
+	virtual void OnMiddleClick() {}
+	virtual void OnMiddleRelease() {}
+
 };

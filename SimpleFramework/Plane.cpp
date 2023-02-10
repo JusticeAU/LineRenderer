@@ -8,9 +8,14 @@ Plane::Plane(Vec2 normal, float distance, Vec3 colour)
 	m_distance = distance;
 }
 
+void Plane::CalculateMassFromArea()
+{
+	m_inverseMass = 0;
+}
+
 void Plane::Draw(LineRenderer& lines) const
 {
-	float virtualLength = 100.0f; // line will be twice this as it is drawn from 'origin' in botyh direction
+	float virtualLength = 50.0f; // line will be twice this as it is drawn from 'origin' in botyh direction
 	Vec2 planeOrigin = m_normal * m_distance;
 	Vec2 perpendicularDirection = { -m_normal.y, m_normal.x };
 		

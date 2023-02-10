@@ -10,6 +10,7 @@ public:
 
 	float m_radius;
 
+	void CalculateMassFromArea() override;
 	void Draw(LineRenderer& lines) const override;
 
 };

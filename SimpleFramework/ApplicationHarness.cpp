@@ -158,8 +158,9 @@ void ApplicationHarness::Update(float delta)
 	}
 
 	app->leftMouseDown = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-	app->leftMouseUp = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE;
 	app->rightMouseDown = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+	app->middleMouseDown = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
+
 
 
 	lines.Clear();
@@ -207,6 +208,10 @@ void ApplicationHarness::OnMouseClick(int mouseButton)
 	{
 		app->OnRightClick();
 	}
+	else if (mouseButton == 2)
+	{
+		app->OnMiddleClick();
+	}
 }
 
 void ApplicationHarness::OnMouseRelease(int mouseButton)
@@ -218,6 +223,10 @@ void ApplicationHarness::OnMouseRelease(int mouseButton)
 	else if (mouseButton == 1)
 	{
 		app->OnRightRelease();
+	}
+	else if (mouseButton == 2)
+	{
+		app->OnMiddleRelease();
 	}
 }
 
