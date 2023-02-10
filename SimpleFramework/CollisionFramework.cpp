@@ -7,12 +7,12 @@
 CollisionFramework::CollisionFramework()
 {
 	shapeTemplates.push_back(new Circle(cursorPos, 1, 0, { 0.2f,0.2f,0.2f }));
-	shapeTemplates.push_back(new Plane(cursorPos, 1, { 0.2f,0.2f,0.2f }));
 	shapeTemplates.push_back(new AABB(cursorPos, 1, 1.0f, 0, { 0.2f,0.2f,0.2f }));
+	shapeTemplates.push_back(new Plane(cursorPos, 1, { 0.2f,0.2f,0.2f }));
 
-	Circle* circle1 = new Circle({ -3, 0 }, 1, 1.0f);
+	//Circle* circle1 = new Circle({ -3, 0 }, 1, 1.0f);
 	//circle1->m_velocity = { 1,0 };
-	shapes.push_back(circle1);
+	//shapes.push_back(circle1);
 	/*
 	circle1 = new Circle({ -1, 0 }, 1, 1.0f);
 	circle1->m_colour = { 1,0,0 };
@@ -21,9 +21,9 @@ CollisionFramework::CollisionFramework()
 	shapes.push_back(circle1);
 	circle1 = new Circle({ 3, 0 }, 1, 1.0f);
 	shapes.push_back(circle1);*/
-	Circle* circle2 = new Circle({ 3, 0 }, 1, .1f);
+	//Circle* circle2 = new Circle({ 3, 0 }, 1, .1f);
 
-	shapes.push_back(circle2);
+	//shapes.push_back(circle2);
 	shapes.push_back(new Plane({ 0,1 }, 10, { 1,1,1 }));
 	shapes.push_back(new Plane({ 0,-1 }, 10, { 1,1,1 }));
 	shapes.push_back(new Plane({ 1,0 }, 10, { 1,1,1 }));
@@ -84,12 +84,11 @@ void CollisionFramework::Update(float delta)
 		else if (spawn->GetShape() == SHAPE::AABB)
 		{
 			AABB* aabb = (AABB*)spawn;
-			aabb->m_halfHeight = glm::abs(spawn->m_position.y - cursorPos.y);
-			if (aabb->m_halfHeight == 0.0f)
-				aabb->m_halfHeight = 0.5f;
-			aabb->m_halfWidth = glm::abs(spawn->m_position.x - cursorPos.x);
-			if (aabb->m_halfWidth == 0.0f)
-				aabb->m_halfWidth = 0.5f;
+			aabb->m_halfWidth = glm::abs(cursorPos.x - spawnStartPos.x) * 0.5f;
+			aabb->m_halfHeight = glm::abs(cursorPos.y - spawnStartPos.y) * 0.5f;
+
+			Vec2 offset = { aabb->m_halfWidth, aabb->m_halfHeight };
+			aabb->m_position = (spawnStartPos + cursorPos) * 0.5f;
 		}
 		else if (spawn->GetShape() == SHAPE::PLANE)
 		{
@@ -130,6 +129,12 @@ void CollisionFramework::Update(float delta)
 			plane->m_normal = glm::normalize(cursorPos);
 			plane->m_distance = glm::length(cursorPos);
 		}
+		else if (shapeTemplates[templateIndex]->GetShape() == SHAPE::AABB)
+		{
+			AABB* aabb = (AABB*)shapeTemplates[templateIndex];
+			Vec2 offset = { aabb->m_halfWidth, -aabb->m_halfHeight };
+			shapeTemplates[templateIndex]->m_position = cursorPos + offset;
+		}
 		else
 		{
 			shapeTemplates[templateIndex]->m_position = cursorPos;
@@ -155,7 +160,9 @@ void CollisionFramework::OnLeftClick()
 	case SHAPE::AABB:
 	{
 		AABB* aabb = new AABB(*dynamic_cast<AABB*>(shapeTemplates[templateIndex]));
-		aabb->m_position = cursorPos;
+		spawnStartPos = cursorPos;
+		Vec2 offset = { aabb->m_halfWidth, -aabb->m_halfHeight };
+		aabb->m_position = cursorPos + offset;
 		spawn = aabb;
 		break;
 	}

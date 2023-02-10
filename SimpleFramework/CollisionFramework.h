@@ -25,4 +25,5 @@ public:
 	int templateIndex = 0;
 	//bool spawnStarted = false;
 	Shape* spawn = nullptr;
+	Vec2 spawnStartPos;
 };
