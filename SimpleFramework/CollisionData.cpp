@@ -1,6 +1,7 @@
 #include "CollisionData.h"
 #include "Shape.h"
 #include "LineRenderer.h"
+#include <iostream>
 
 void CollisionData::Resolve()
 {
@@ -30,7 +31,7 @@ void CollisionData::Resolve()
 
 	Vec2 relativeVelocity = shapeB->m_velocity - shapeA->m_velocity;
 
-	float elasticity = .5f;
+	float elasticity = 1.0f;
 	float k = -(1 + elasticity) * glm::dot(relativeVelocity, normal);
 	if(k < 0.0f)
 		return;
@@ -50,7 +51,7 @@ void CollisionData::Resolve()
 		(massB * (glm::dot(shapeB->m_velocity, shapeB->m_velocity)))
 		);
 
-	//EkPre += 1;
+	std::cout << EkPre / EkAfter << std::endl;
 
 }
 

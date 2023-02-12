@@ -27,12 +27,17 @@ void Plane::Draw(LineRenderer& lines) const
 
 	// Draw some Debug.
 	// Normal from plane origin
-	lines.DrawLineSegment(planeOrigin, planeOrigin - m_normal * 0.5f);
+	lines.DrawLineSegment(planeOrigin, planeOrigin + m_normal * 0.5f);
+
+	// Draw some bullshit behind the plane
+	lines.SetColour(m_colour * 0.1f);
+	for (int i = -virtualLength; i <= virtualLength; i++)
+		lines.DrawLineSegment(planeOrigin + (perpendicularDirection * (float)i), planeOrigin + (perpendicularDirection * (float)i) + (-m_normal * 5.0f));
 }
 
 float Plane::DepthInPlane(Vec2 point)
 {
-	float distance = glm::dot(point, m_normal) - m_distance;
+	float distance = m_distance - glm::dot(point, m_normal);
 
 	return distance;
 }

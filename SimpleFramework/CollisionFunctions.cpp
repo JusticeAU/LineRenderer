@@ -1,4 +1,5 @@
 #include "CollisionFunctions.h"
+#include <iostream>
 
 CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
 {
@@ -16,7 +17,6 @@ CollisionData CircleOnCircle(Shape* a, Shape* b)
 {
 	Circle* circleA = static_cast<Circle*>(a);
 	Circle* circleB = static_cast<Circle*>(b);
-
 
 	CollisionData col;
 	float distanceFromAToB = glm::distance(circleA->m_position, circleB->m_position);
@@ -39,8 +39,8 @@ CollisionData CircleOnPlane(Shape* a, Shape* b)
 
 	CollisionData col;
 	float distance = glm::dot(circleA->m_position, planeB->m_normal) - planeB->m_distance;
-	col.normal = planeB->m_normal;
-	col.depth = distance + circleA->m_radius;
+	col.normal = -planeB->m_normal;
+	col.depth = -(distance - circleA->m_radius);
 	col.worldPosition = circleA->m_position - (planeB->m_normal * distance);
 	col.shapeA = a;
 	col.shapeB = b;
@@ -124,7 +124,7 @@ CollisionData PlaneOnAABB(Shape* a, Shape* b)
 	CollisionData col;
 	col.shapeA = a;
 	col.shapeB = b;
-	col.normal = -planeA->m_normal;
+	col.normal = planeA->m_normal;
 
 	// for each aabb point, get depth
 	Vec2* points = aabbB->GetCorners();

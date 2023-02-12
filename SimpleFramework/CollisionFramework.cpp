@@ -14,10 +14,10 @@ CollisionFramework::CollisionFramework()
 
 
 	// Set up world border planes
-	shapes.push_back(new Plane({ 0,1 }, 10, { 1,1,1 }));
-	shapes.push_back(new Plane({ 0,-1 }, 10, { 1,1,1 }));
-	shapes.push_back(new Plane({ 1,0 }, 10, { 1,1,1 }));
-	shapes.push_back(new Plane({ -1,0 }, 10, { 1,1,1 }));
+	shapes.push_back(new Plane({ 0,1 }, -10, { 1,1,1 }));
+	//shapes.push_back(new Plane({ 0,-1 }, -10, { 1,1,1 }));
+	//shapes.push_back(new Plane({ 1,0 }, -10, { 1,1,1 }));
+	//shapes.push_back(new Plane({ -1,0 }, -10, { 1,1,1 }));
 
 }
 
@@ -50,6 +50,7 @@ void CollisionFramework::Update(float delta)
 			for (int b = a + 1; b < shapes.size(); b++)
 			{
 				CollisionData col = TestCollisions(shapes[a], shapes[b]);
+				//lines->DrawCross(col.worldPosition, 1.0f);
 				if (col.IsCollision())
 					collisions.push_back(col);
 			}
@@ -163,8 +164,8 @@ void CollisionFramework::ProcessObjectSpawner()
 		else if (spawn->GetShape() == SHAPE::PLANE)
 		{
 			Plane* plane = static_cast<Plane*>(spawn);
-			plane->m_normal = glm::normalize(cursorPos);
-			plane->m_distance = glm::length(cursorPos);
+			plane->m_normal = -glm::normalize(cursorPos);
+			plane->m_distance = -glm::length(cursorPos);
 		}
 
 		// run collision against objects in scene
@@ -202,8 +203,8 @@ void CollisionFramework::ProcessObjectSpawner()
 		else if (shapeTemplates[templateIndex]->GetShape() == SHAPE::PLANE)
 		{
 			Plane* plane = static_cast<Plane*>(shapeTemplates[templateIndex]);
-			plane->m_normal = glm::normalize(cursorPos);
-			plane->m_distance = glm::length(cursorPos);
+			plane->m_normal = -glm::normalize(cursorPos);
+			plane->m_distance = -glm::length(cursorPos);
 		}
 		else if (shapeTemplates[templateIndex]->GetShape() == SHAPE::AABB)
 		{
