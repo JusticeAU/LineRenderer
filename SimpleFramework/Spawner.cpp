@@ -169,6 +169,6 @@ void Spawner::OnRightClick()
 void Spawner::OnRightRelease()
 {
 	templateIndex += 1;
-	if (templateIndex == (int)SHAPE::COUNT)
+	if (templateIndex == (int)SHAPE::CONVEX_POLY) // hack whilst implement polys
 		templateIndex = 0;
 }

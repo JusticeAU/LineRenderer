@@ -7,14 +7,65 @@
 
 CollisionFramework::CollisionFramework()
 {
-	spawner = new Spawner(&shapes);
+	//spawner = new Spawner(&shapes);
+
+	std::vector<Vec2> somePoints = std::vector<Vec2>();
+	somePoints.push_back(Vec2(0, 1));
+	somePoints.push_back(Vec2(1, -1));
+	somePoints.push_back(Vec2(-1, -1));
+	convexPoly = new ConvexPolygon(Vec2(0, 0), 1, somePoints);
+	shapes.push_back(convexPoly);
+
+	std::vector<Vec2> someOtherPoints = std::vector<Vec2>();
+	someOtherPoints.push_back(Vec2(0, 1));
+	someOtherPoints.push_back(Vec2(1, -1));
+	someOtherPoints.push_back(Vec2(-1, -1));
+	convexPoly2 = new ConvexPolygon(Vec2(0, 0), 1, someOtherPoints);
+	shapes.push_back(convexPoly2);
 
 	// Set up world border planes
-	shapes.push_back(new Plane({ 0,1 }, -10, { 1,1,1 }));
+	//shapes.push_back(new Plane({ 0,1 }, -10, { 1,1,1 }));
 }
 
 void CollisionFramework::Update(float delta)
 {
+	Vec2 planeNormal = -glm::normalize(cursorPos);
+	float distance = -glm::length(cursorPos);
+	Plane plane = Plane(planeNormal, distance, { 1,1,1 });
+	plane.Draw(*lines);
+
+	//std::vector<Vec2> pointsToDraw = std::vector<Vec2>();
+
+	ConvexPolygon* butActually = (ConvexPolygon*)convexPoly;
+	ConvexPolygon* butActually2 = (ConvexPolygon*)convexPoly2;
+
+	Vec2 planeOrigin = planeNormal * distance;
+	lines->DrawCircle(planeOrigin, 0.1f);
+	Vec2 planePerpendicular = { -planeNormal.y, planeNormal.x };
+	for (int i = 0; i < butActually->m_points.size(); i++)
+	{
+		float pointToDraw = glm::dot(butActually->GetVertexInWorldspace(i), planePerpendicular);
+		lines->SetColour({ 1,0,0 });
+		lines->DrawCircle(planeOrigin + (planePerpendicular * pointToDraw), 0.1f);
+		lines->SetColour({ 1,1,1 });
+		lines->DrawLineSegment(butActually->GetVertexInWorldspace(i), planeOrigin + (planePerpendicular * pointToDraw));
+
+		pointToDraw = glm::dot(butActually2->GetVertexInWorldspace(i), planePerpendicular);
+		lines->SetColour({ 0,1,0 });
+		lines->DrawCircle(planeOrigin + (planePerpendicular * pointToDraw), 0.1f);
+		lines->SetColour({ 1,1,1 });
+		lines->DrawLineSegment(butActually2->GetVertexInWorldspace(i), planeOrigin + (planePerpendicular * pointToDraw));
+	}
+	
+	if (leftMouseDown)
+		butActually->m_position = cursorPos;
+
+	if (rightMouseDown)
+		butActually2->m_position = cursorPos;
+
+
+
+	
 	// Update all primitives
 	for (auto& shape : shapes)
 		shape->Update(delta);

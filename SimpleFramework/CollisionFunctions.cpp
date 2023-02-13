@@ -3,9 +3,10 @@
 
 CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
 {
-	{CircleOnCircle, CircleOnPlane, CircleOnAABB},
-	{PlaneOnCircle, PlaneOnPlane, PlaneOnAABB},
-	{AABBOnCircle, AABBOnPlane, AABBOnAABB}
+	{CircleOnCircle, CircleOnPlane, CircleOnAABB, CircleOnConvexPoly},
+	{PlaneOnCircle, PlaneOnPlane, PlaneOnAABB, PlaneOnConvexPoly},
+	{AABBOnCircle, AABBOnPlane, AABBOnAABB, AABBOnConvexPoly},
+	{ConvexPolyOnCircle, ConvexPolyOnPlane, ConvexPolyOnAABB, ConvexPolyOnConvexPoly}
 };
 
 CollisionData TestCollisions(Shape* a, Shape* b)
@@ -103,6 +104,11 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 	
 	return col;
 }
+CollisionData CircleOnConvexPoly(Shape* a, Shape* b)
+{
+	CollisionData col;
+	return col;
+}
 
 CollisionData PlaneOnCircle(Shape* a, Shape* b)
 {
@@ -158,6 +164,11 @@ CollisionData PlaneOnAABB(Shape* a, Shape* b)
 	// get the greatest depth and push out on the reverse normal of the plane
 	return col;
 }
+CollisionData PlaneOnConvexPoly(Shape* a, Shape* b)
+{
+	CollisionData col;
+	return col;
+}
 
 CollisionData AABBOnCircle(Shape* a, Shape* b)
 {
@@ -202,5 +213,35 @@ CollisionData AABBOnAABB(Shape* a, Shape* b)
 		col.depth = rightOverlap;
 		col.normal = { 1, 0 };
 	}
+	return col;
+}
+CollisionData AABBOnConvexPoly(Shape* a, Shape* b)
+{
+	CollisionData col;
+	return col;
+}
+
+CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
+{
+	CollisionData col;
+
+	return col;
+}
+CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
+{
+	CollisionData col;
+
+	return col;
+}
+CollisionData ConvexPolyOnAABB(Shape* a, Shape* b)
+{
+	CollisionData col;
+
+	return col;
+}
+CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
+{
+	CollisionData col;
+
 	return col;
 }

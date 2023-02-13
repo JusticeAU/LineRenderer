@@ -158,6 +158,7 @@
     <ClCompile Include="CollisionFramework.cpp" />
     <ClCompile Include="CollisionData.cpp" />
     <ClCompile Include="CollisionFunctions.cpp" />
+    <ClCompile Include="ConvexPolygon.cpp" />
     <ClCompile Include="DotClicker.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="Example.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="CollisionFramework.h" />
     <ClInclude Include="CollisionData.h" />
     <ClInclude Include="CollisionFunctions.h" />
+    <ClInclude Include="ConvexPolygon.h" />
     <ClInclude Include="DotClicker.h" />
     <ClInclude Include="Example.h" />
     <ClInclude Include="glad.h" />

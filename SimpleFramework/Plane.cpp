@@ -21,9 +21,9 @@ void Plane::Draw(LineRenderer& lines) const
 		
 	
 	// Draw some bullshit behind the plane
-	lines.SetColour(m_colour * 0.5f);
-	for (int i = -virtualLength; i <= virtualLength; i++)
-		lines.DrawLineSegment(planeOrigin + (perpendicularDirection * (float)i), planeOrigin + (perpendicularDirection * (float)i) + (-m_normal * 5.0f));
+	//lines.SetColour(m_colour * 0.5f);
+	//for (int i = -virtualLength; i <= virtualLength; i++)
+	//	lines.DrawLineSegment(planeOrigin + (perpendicularDirection * (float)i), planeOrigin + (perpendicularDirection * (float)i) + (-m_normal * 5.0f));
 
 	// Draw some Debug.
 	// Normal from plane origin

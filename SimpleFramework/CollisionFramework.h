@@ -18,11 +18,13 @@ public:
 	void OnRightClick() override;
 	void OnRightRelease() override;
 
-	void ProcessObjectSpawner();
-
 	std::vector<Shape*> shapes;
 	bool rightDown = false;
 	const int MAX_COLLISION_PASSES = 6;
 
 	Spawner* spawner;
+	Shape* convexPoly;
+	Shape* convexPoly2;
+	bool spatOutData = false;
+	int vertIndex = 0;
 };

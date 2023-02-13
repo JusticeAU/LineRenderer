@@ -8,6 +8,7 @@ enum class SHAPE
 	CIRCLE,
 	PLANE,
 	AABB,
+	CONVEX_POLY,
 
 	COUNT
 };
