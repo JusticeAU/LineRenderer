@@ -25,6 +25,6 @@ public:
 	Spawner* spawner;
 	Shape* convexPoly;
 	Shape* convexPoly2;
-	bool spatOutData = false;
 	int vertIndex = 0;
+	bool indexing = false;
 };
