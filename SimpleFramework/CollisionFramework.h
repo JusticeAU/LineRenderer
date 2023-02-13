@@ -4,6 +4,8 @@
 #include "AABB.h"
 #include <vector>
 
+class Spawner;
+
 class CollisionFramework : public Application
 {
 public:
@@ -22,10 +24,5 @@ public:
 	bool rightDown = false;
 	const int MAX_COLLISION_PASSES = 6;
 
-	std::vector<Shape*> shapeTemplates;
-	int templateIndex = 0;
-	//bool spawnStarted = false;
-	Shape* spawn = nullptr;
-	Vec2 spawnStartPos;
-	float timeSinceStart;
+	Spawner* spawner;
 };

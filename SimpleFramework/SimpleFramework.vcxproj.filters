@@ -89,6 +89,9 @@
     <ClCompile Include="Shape.cpp">
       <Filter>Game\CollisionFramework</Filter>
     </ClCompile>
+    <ClCompile Include="Spawner.cpp">
+      <Filter>Game\CollisionFramework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFWCallbacks.h">
@@ -203,6 +206,9 @@
       <Filter>Game\CollisionFramework</Filter>
     </ClInclude>
     <ClInclude Include="Plane.h">
+      <Filter>Game\CollisionFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="Spawner.h">
       <Filter>Game\CollisionFramework</Filter>
     </ClInclude>
   </ItemGroup>

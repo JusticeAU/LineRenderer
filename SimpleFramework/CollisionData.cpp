@@ -50,8 +50,8 @@ void CollisionData::Resolve()
 		massA * (glm::dot(shapeA->m_velocity, shapeA->m_velocity)) +
 		(massB * (glm::dot(shapeB->m_velocity, shapeB->m_velocity)))
 		);
-
-	std::cout << EkPre / EkAfter << std::endl;
+	
+	//std::cout << EkAfter / EkPre << std::endl;
 
 }
 

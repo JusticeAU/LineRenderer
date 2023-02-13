@@ -19,20 +19,22 @@ void Plane::Draw(LineRenderer& lines) const
 	Vec2 planeOrigin = m_normal * m_distance;
 	Vec2 perpendicularDirection = { -m_normal.y, m_normal.x };
 		
-	// Draw the plane
+	
+	// Draw some bullshit behind the plane
+	lines.SetColour(m_colour * 0.5f);
+	for (int i = -virtualLength; i <= virtualLength; i++)
+		lines.DrawLineSegment(planeOrigin + (perpendicularDirection * (float)i), planeOrigin + (perpendicularDirection * (float)i) + (-m_normal * 5.0f));
+
+	// Draw some Debug.
+	// Normal from plane origin
 	lines.SetColour(m_colour);
+	lines.DrawLineSegment(planeOrigin, planeOrigin + m_normal * 0.5f);
+
+	// Draw the plane
 	lines.DrawLineSegment(
 		planeOrigin + perpendicularDirection * virtualLength,
 		planeOrigin - perpendicularDirection * virtualLength);
 
-	// Draw some Debug.
-	// Normal from plane origin
-	lines.DrawLineSegment(planeOrigin, planeOrigin + m_normal * 0.5f);
-
-	// Draw some bullshit behind the plane
-	lines.SetColour(m_colour * 0.1f);
-	for (int i = -virtualLength; i <= virtualLength; i++)
-		lines.DrawLineSegment(planeOrigin + (perpendicularDirection * (float)i), planeOrigin + (perpendicularDirection * (float)i) + (-m_normal * 5.0f));
 }
 
 float Plane::DepthInPlane(Vec2 point)

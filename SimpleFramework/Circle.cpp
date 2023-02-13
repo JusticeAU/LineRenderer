@@ -15,4 +15,5 @@ void Circle::Draw(LineRenderer& lines) const
 {
 	lines.SetColour(m_colour);
 	lines.DrawCircle(m_position, m_radius);
+	lines.DrawLineSegment(m_position, m_position + m_velocity);
 }

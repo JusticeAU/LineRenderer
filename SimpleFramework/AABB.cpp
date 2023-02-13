@@ -24,6 +24,7 @@ void AABB::Draw(LineRenderer& lines) const
 	lines.AddPointToLine({ maxX, minY });
 	lines.FinishLineLoop();
 
+	lines.DrawLineSegment(m_position, m_position + m_velocity);
 }
 
 Vec2* AABB::GetCorners()
