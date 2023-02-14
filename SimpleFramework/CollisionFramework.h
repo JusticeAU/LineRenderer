@@ -25,6 +25,8 @@ public:
 	Spawner* spawner;
 	Shape* convexPoly;
 	Shape* convexPoly2;
+	Shape* circle;
+
 	int vertIndex = 0;
 	bool indexing = false;
 };

@@ -106,8 +106,7 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 }
 CollisionData CircleOnConvexPoly(Shape* a, Shape* b)
 {
-	CollisionData col;
-	return col;
+	return ConvexPolyOnCircle(b, a);
 }
 
 CollisionData PlaneOnCircle(Shape* a, Shape* b)
@@ -224,6 +223,90 @@ CollisionData AABBOnConvexPoly(Shape* a, Shape* b)
 CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 {
 	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
+
+	ConvexPolygon* poly1 = (ConvexPolygon*)a;
+	Circle* circle2 = (Circle*)b;
+
+	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
+
+	for (int i = 0; i < poly1->m_points.size(); i++)
+	{
+		vertexDirections.push_back(poly1->GetVertexDirection(i));
+		Vec2 vertexToCircle = poly1->GetVertexInWorldspace(i) - circle2->m_position;
+		Vec2 perpendicular = { vertexToCircle.y, -vertexToCircle.x };
+		vertexDirections.push_back(-glm::normalize(perpendicular));
+	}
+
+	float minOverlap = FLT_MAX;
+	int minOverlapIndex;
+	Vec2 vertexDirection;
+	bool gap = false;
+	for (int i = 0; i < vertexDirections.size(); i++)
+	{
+		// Set up the plane we're projecting on to.
+		Vec2 testPlaneNormal = -vertexDirections[i];
+
+		// Set up a plane perpendicular to the normal to project on to.
+		Vec2 planePerpendicular = { -testPlaneNormal.y, testPlaneNormal.x };
+
+		// Set up our min and max extents for this cycle.
+		float poly1min = FLT_MAX;
+		float poly1max = -FLT_MAX;
+		float circle2min = FLT_MAX;
+		float circle2max = -FLT_MAX;
+
+		// project all of poly1s points
+		for (int i = 0; i < poly1->m_points.size(); i++)
+		{
+			float point = glm::dot(poly1->GetVertexInWorldspace(i), planePerpendicular);
+			poly1min = glm::min(poly1min, point);
+			poly1max = glm::max(poly1max, point);
+		}
+
+		// project circle2s points (min and max are position - + radius
+		float point = glm::dot(circle2->m_position, planePerpendicular);
+		circle2min = point - circle2->m_radius;
+		circle2max = point + circle2->m_radius;
+
+
+		// Get the overlap for this iteration
+		float overlapA = poly1max - circle2min;
+		float overlapB = circle2max - poly1min;
+		float overlap = glm::min(overlapA, overlapB);
+		if (overlap > 0.0f)
+		{
+			if (minOverlap > overlap)
+			{
+				minOverlap = overlap;
+				minOverlapIndex = i;
+				if (overlapA > overlapB)
+				{
+					vertexDirection = vertexDirections[i];
+				}
+				else
+				{
+
+					vertexDirection = -vertexDirections[i];
+				}
+				vertexDirection = { vertexDirection.y, -vertexDirection.x };
+			}
+		}
+		else
+		{
+			//std::cout << "found a gap on axis" << i << " early outing" << std::endl;
+			gap = true;
+			break;
+		}
+
+	}
+
+	if (!gap)
+	{
+		col.depth = minOverlap;
+		col.normal = -vertexDirection;
+	}
 
 	return col;
 }
