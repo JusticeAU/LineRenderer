@@ -165,8 +165,7 @@ CollisionData PlaneOnAABB(Shape* a, Shape* b)
 }
 CollisionData PlaneOnConvexPoly(Shape* a, Shape* b)
 {
-	CollisionData col;
-	return col;
+	return ConvexPolyOnPlane(b,a);
 }
 
 CollisionData AABBOnCircle(Shape* a, Shape* b)
@@ -313,6 +312,23 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
 {
 	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
+
+	ConvexPolygon* poly1 = (ConvexPolygon*)a;
+	Plane* plane2 = (Plane*)b;
+
+	float maxDepth = -FLT_MAX;
+	for (int i = 0; i < poly1->m_points.size(); i++)
+	{
+		float depth = plane2->DepthInPlane(poly1->GetVertexInWorldspace(i));
+		if (maxDepth < depth)
+		{
+			maxDepth = depth;
+			col.depth = maxDepth;
+		}
+	}
+	col.normal = -plane2->m_normal;
 
 	return col;
 }
