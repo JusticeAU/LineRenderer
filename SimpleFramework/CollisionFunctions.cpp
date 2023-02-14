@@ -242,6 +242,89 @@ CollisionData ConvexPolyOnAABB(Shape* a, Shape* b)
 CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 {
 	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
+
+	ConvexPolygon* poly1 = (ConvexPolygon*)a;
+	ConvexPolygon* poly2 = (ConvexPolygon*)b;
+
+	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
+
+	for (int i = 0; i < poly1->m_points.size(); i++)
+		vertexDirections.push_back(poly1->GetVertexDirection(i));
+	for (int i = 0; i < poly2->m_points.size(); i++)
+		vertexDirections.push_back(-poly2->GetVertexDirection(i));
+
+	float minOverlap = FLT_MAX;
+	int minOverlapIndex;
+	Vec2 vertexDirection;
+	bool gap = false;
+	for (int i = 0; i < vertexDirections.size(); i++)
+	{
+		// Set up the plane we're projecting on to.
+		Vec2 testPlaneNormal = -vertexDirections[i];
+
+		// Set up a plane perpendicular to the normal to project on to.
+		Vec2 planePerpendicular = { -testPlaneNormal.y, testPlaneNormal.x };
+
+		// Set up our min and max extents for this cycle.
+		float poly1min = FLT_MAX;
+		float poly1max = -FLT_MAX;
+		float poly2min = FLT_MAX;
+		float poly2max = -FLT_MAX;
+
+		// project all of poly1s points
+		for (int i = 0; i < poly1->m_points.size(); i++)
+		{
+			float point = glm::dot(poly1->GetVertexInWorldspace(i), planePerpendicular);
+			poly1min = glm::min(poly1min, point);
+			poly1max = glm::max(poly1max, point);
+		}
+
+		// project all of poly2s points
+		for (int i = 0; i < poly2->m_points.size(); i++)
+		{
+			float point = glm::dot(poly2->GetVertexInWorldspace(i), planePerpendicular);
+			poly2min = glm::min(poly2min, point);
+			poly2max = glm::max(poly2max, point);
+		}
+
+		// Get the overlap for this iteration
+		float overlapA = poly1max - poly2min;
+		float overlapB = poly2max - poly1min;
+		float overlap = glm::min(overlapA, overlapB);
+		if (overlap > 0.0f)
+		{
+			if (minOverlap > overlap)
+			{
+				minOverlap = overlap;
+				minOverlapIndex = i;
+				if (overlapA > overlapB)
+				{
+					vertexDirection = vertexDirections[i];
+				}
+				else
+				{
+
+					vertexDirection = -vertexDirections[i];
+				}
+				vertexDirection = { vertexDirection.y, -vertexDirection.x };
+			}
+		}
+		else
+		{
+			//std::cout << "found a gap on axis" << i << " early outing" << std::endl;
+			gap = true;
+			break;
+		}
+
+	}
+
+	if (!gap)
+	{
+		col.depth = minOverlap;
+		col.normal = -vertexDirection;
+	}
 
 	return col;
 }
