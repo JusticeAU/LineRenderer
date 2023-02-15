@@ -26,6 +26,7 @@ public:
 	Shape* convexPoly;
 	Shape* convexPoly2;
 	Shape* circle;
+	Shape* aabb;
 
 	int vertIndex = 0;
 	bool indexing = false;

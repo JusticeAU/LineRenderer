@@ -19,8 +19,11 @@ CollisionFramework::CollisionFramework()
 	convexPoly2->m_colour = { 0,0,1 };
 	shapes.push_back(convexPoly2);
 
-	circle = new Circle({ 0,0 }, 1.0f, 1.0f, { 0,1,0 });
-	shapes.push_back(circle);
+	aabb = new Circle({ 0,0 }, 1.0f, 1.0f, { 0,1,0 });
+	//shapes.push_back(circle);
+
+	aabb = new AABB({ 4, -1.25 }, 1.2, 2.1, 1, {0,1,0});
+	shapes.push_back(aabb);
 
 	// Set up world border planes
 	shapes.push_back(new Plane({ 0,1 }, -10, { 1,1,1 }));
@@ -33,34 +36,39 @@ void CollisionFramework::Update(float delta)
 		s->Draw(*lines);
 
 	// start SAT dev
-	Circle* circle1 = (Circle*)circle;
+	AABB* aabb1 = (AABB*)aabb;
 	ConvexPolygon* poly2 = (ConvexPolygon*)convexPoly2;
 
 	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
 	std::vector<Vec2> pointA = std::vector<Vec2>();
 	std::vector<Vec2> pointB = std::vector<Vec2>();
 
-
+	// Add the polys verts
 	for (int i = 0; i < poly2->m_points.size(); i++)
 	{
 		vertexDirections.push_back(-poly2->GetVertexDirection(i));
 		pointA.push_back(poly2->GetVertexInWorldspace(i));
 		pointB.push_back(poly2->GetVertexInWorldspace(i+1));
-
-
 	}
-	for (int i = 0; i < poly2->m_points.size(); i++)
-	{
-		Vec2 vertexToCircle = poly2->GetVertexInWorldspace(i) - circle1->m_position;
-		Vec2 perpendicular = { vertexToCircle.y, -vertexToCircle.x };
-		vertexDirections.push_back(-glm::normalize(perpendicular));
-		pointA.push_back(poly2->GetVertexInWorldspace(i));
-		pointB.push_back(circle1->m_position);
-	}
-
+	
+	Vec2* corners = aabb1->GetCorners();
+	// Add the boxes verts
+	vertexDirections.push_back({ -1,0 });
+	pointA.push_back(corners[3]);
+	pointB.push_back(corners[0]);
+	vertexDirections.push_back({ 0,1 });
+	pointA.push_back(corners[0]);
+	pointB.push_back(corners[1]);
+	vertexDirections.push_back({ 1,0 });
+	pointA.push_back(corners[1]);
+	pointB.push_back(corners[2]);
+	vertexDirections.push_back({ 0,-1 });
+	pointA.push_back(corners[2]);
+	pointB.push_back(corners[3]);
 
 
 	Vec2 renderPlaneNormal = -vertexDirections[vertIndex];
+	lines->DrawLineSegment({ 0,0 }, renderPlaneNormal, {1,0,1});
 	//Vec2 renderPlaneNormal = -glm::normalize(cursorPos);
 	float renderPlaneDistance = -4.5f;
 	Plane renderPlane = Plane(renderPlaneNormal, renderPlaneDistance, { 1,1,1 });
@@ -76,16 +84,18 @@ void CollisionFramework::Update(float delta)
 	float poly2min = FLT_MAX;
 	float poly2max = -FLT_MAX;
 
-	// check all of poly1s points
-
-	float point = glm::dot(circle1->m_position, planePerpendicular);
-	poly1min = point - circle1->m_radius;
-	poly1max = point + circle1->m_radius;
+	// check all of AABBs points
+	for(int i = 0; i < 4; i++)
+	{
+		float point = glm::dot(corners[i], planePerpendicular);
+		poly1min = glm::min(poly1min, point);
+		poly1max = glm::max(poly1max, point);
+	}
 
 	lines->DrawLineSegment(
 		planeOrigin + (planePerpendicular * poly1min),
 		planeOrigin + (planePerpendicular * poly1max),
-		circle1->m_colour);
+		aabb->m_colour);
 
 	// check all of poly2s points
 	for (int i = 0; i < poly2->m_points.size(); i++)
@@ -141,7 +151,7 @@ void CollisionFramework::Update(float delta)
 		
 	
 	if (leftMouseDown)
-		circle->m_position = cursorPos;
+		aabb->m_position = cursorPos;
 
 	if (rightMouseDown)
 		convexPoly2->m_position = cursorPos;

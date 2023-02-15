@@ -215,8 +215,7 @@ CollisionData AABBOnAABB(Shape* a, Shape* b)
 }
 CollisionData AABBOnConvexPoly(Shape* a, Shape* b)
 {
-	CollisionData col;
-	return col;
+	return ConvexPolyOnAABB(b,a);
 }
 
 CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
@@ -335,7 +334,92 @@ CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
 CollisionData ConvexPolyOnAABB(Shape* a, Shape* b)
 {
 	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
 
+	ConvexPolygon* poly1 = (ConvexPolygon*)a;
+	AABB* aabb2 = (AABB*)b;
+
+	// Build a list of verts to test
+	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
+
+	// Add the polys verts
+	for (int i = 0; i < poly1->m_points.size(); i++)
+		vertexDirections.push_back(-poly1->GetVertexDirection(i));
+
+	// Add cardinal x/y for the AABB
+	vertexDirections.push_back({ -1,0 });
+	vertexDirections.push_back({ 0,1 });
+	vertexDirections.push_back({ 1,0 });
+	vertexDirections.push_back({ 0,-1 });
+	
+	// Test projections against all verts
+	float minOverlap = FLT_MAX;
+	int minOverlapIndex;
+	Vec2 vertexDirection;
+	bool gap = false;
+	Vec2* corners = aabb2->GetCorners();
+	for (int i = 0; i < vertexDirections.size(); i++)
+	{
+		// Set up the plane we're projecting on to.
+		Vec2 testPlaneNormal = -vertexDirections[i];
+
+		// Set up a plane perpendicular to the normal to project on to.
+		Vec2 planePerpendicular = { -testPlaneNormal.y, testPlaneNormal.x };
+
+		float poly1min = FLT_MAX;
+		float poly1max = -FLT_MAX;
+		float poly2min = FLT_MAX;
+		float poly2max = -FLT_MAX;
+
+		// check all of AABBs points
+		for (int aabbi = 0; aabbi < 4; aabbi++)
+		{
+			float point = glm::dot(corners[aabbi], planePerpendicular);
+			poly1min = glm::min(poly1min, point);
+			poly1max = glm::max(poly1max, point);
+		}
+
+		// check all of the Polyss points
+		for (int polyi = 0; polyi < poly1->m_points.size(); polyi++)
+		{
+			float point = glm::dot(poly1->GetVertexInWorldspace(polyi), planePerpendicular);
+			poly2min = glm::min(poly2min, point);
+			poly2max = glm::max(poly2max, point);
+		}
+
+		// Get the overlap for this iteration
+		float overlapA = poly1max - poly2min;
+		float overlapB = poly2max - poly1min;
+		float overlap = glm::min(overlapA, overlapB);
+		if (overlap > 0.0f)
+		{
+			if (minOverlap > overlap)
+			{
+				minOverlap = overlap;
+				minOverlapIndex = i;
+				if (overlapA > overlapB)
+					vertexDirection = -vertexDirections[i];
+				else
+					vertexDirection = vertexDirections[i];
+
+				vertexDirection = { vertexDirection.y, -vertexDirection.x };
+			}
+		}
+		else
+		{
+			gap = true;
+			break;
+		}
+	}
+
+	if (!gap)
+	{
+		col.depth = minOverlap;
+		col.normal = -vertexDirection;
+	}
+
+	delete corners;
 	return col;
 }
 CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
@@ -399,20 +483,15 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 				minOverlap = overlap;
 				minOverlapIndex = i;
 				if (overlapA > overlapB)
-				{
 					vertexDirection = vertexDirections[i];
-				}
 				else
-				{
-
 					vertexDirection = -vertexDirections[i];
-				}
+
 				vertexDirection = { vertexDirection.y, -vertexDirection.x };
 			}
 		}
 		else
 		{
-			//std::cout << "found a gap on axis" << i << " early outing" << std::endl;
 			gap = true;
 			break;
 		}
