@@ -2,6 +2,7 @@
 #include "Circle.h"
 #include "AABB.h"
 #include "Plane.h"
+#include "ConvexPolygon.h"
 #include "CollisionData.h"
 #include "CollisionFunctions.h"
 
@@ -16,6 +17,15 @@ Spawner::Spawner(std::vector<Shape*>* shapes)
 	shapeTemplates.push_back(new Circle(Vec2(0), 1, 0, {0.2f,0.2f,0.2f}));
 	shapeTemplates.push_back(new AABB(Vec2(0), 1, 1.0f, 0, { 0.2f,0.2f,0.2f }));
 	shapeTemplates.push_back(new Plane(Vec2(0), 1, { 0.2f,0.2f,0.2f }));
+
+	// set up hard coded poly for now:
+	std::vector<Vec2> somePoints = std::vector<Vec2>();
+	somePoints.push_back(Vec2(0, 1));
+	somePoints.push_back(Vec2(1.8, 0.8));
+
+	somePoints.push_back(Vec2(1, -1));
+	somePoints.push_back(Vec2(-1, -1));
+	shapeTemplates.push_back(new ConvexPolygon(Vec2(0), 1, somePoints, { 0.2f,0.2f,0.2f }));
 }
 
 void Spawner::Update(float delta, Vec2 cursorPos)
@@ -139,6 +149,12 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 		spawn = plane;
 		break;
 	}
+	case SHAPE::CONVEX_POLY:
+	{
+		ConvexPolygon* poly = new ConvexPolygon(*(ConvexPolygon*)shapeTemplates[templateIndex]);
+		spawn = poly;
+		break;
+	}
 	}
 }
 
@@ -169,6 +185,6 @@ void Spawner::OnRightClick()
 void Spawner::OnRightRelease()
 {
 	templateIndex += 1;
-	if (templateIndex == (int)SHAPE::CONVEX_POLY) // hack whilst implement polys
+	if (templateIndex == (int)SHAPE::COUNT) // hack whilst implement polys
 		templateIndex = 0;
 }
