@@ -30,4 +30,8 @@ public:
 
 	int vertIndex = 0;
 	bool indexing = false;
+
+	// Poly Spawner shit
+	std::vector<Vec2> spawningVerts;
+	Vec2 potentialVert;
 };

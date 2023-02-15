@@ -31,7 +31,7 @@ void CollisionData::Resolve()
 
 	Vec2 relativeVelocity = shapeB->m_velocity - shapeA->m_velocity;
 
-	float elasticity = .9f;
+	float elasticity = .5f;
 	float k = -(1 + elasticity) * glm::dot(relativeVelocity, normal);
 	if(k < 0.0f)
 		return;
