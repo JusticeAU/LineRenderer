@@ -7,26 +7,20 @@
 
 CollisionFramework::CollisionFramework()
 {
-	//spawner = new Spawner(&shapes);
+	spawner = new Spawner(&shapes);
 
-	//std::vector<Vec2> somePoints = std::vector<Vec2>();
-	//somePoints.push_back(Vec2(0, 1));
-	//somePoints.push_back(Vec2(1.8, 0.8));
-
-	//somePoints.push_back(Vec2(1, -1));
-	//somePoints.push_back(Vec2(-1, -1));
-	//convexPoly2 = new ConvexPolygon(Vec2(1.5, 1), 1, somePoints);
-	//convexPoly2->m_colour = { 0,0,1 };
-	//shapes.push_back(convexPoly2);
-
-	circle = new Circle({ 0,0 }, 1.0f, 1.0f, { 0,1,0 });
+	/*circle = new Circle({ 0,0 }, 1.0f, 1.0f, { 0,1,0 });
 	shapes.push_back(circle);
 
 	aabb = new AABB({ 4, -1.25 }, 1.2, 2.1, 1, {0,1,0});
-	shapes.push_back(aabb);
+	shapes.push_back(aabb);*/
 
 	// Set up world border planes
-	shapes.push_back(new Plane({ 0,1 }, -10, { 1,1,1 }));
+	shapes.push_back(new Plane({ 0,1 }, -9, { 1,1,1 }));
+	shapes.push_back(new Plane({ 1,0 }, -16, { 1,1,1 }));
+	shapes.push_back(new Plane({ 0,-1 }, -9, { 1,1,1 }));
+	shapes.push_back(new Plane({ -1,0 }, -16, { 1,1,1 }));
+
 
 	// Poly Spawner shit
 	spawningVerts = std::vector<Vec2>();
@@ -42,122 +36,122 @@ void CollisionFramework::Update(float delta)
 
 	// Poly Spawner shit
 	// draw current poly
-	lines->SetColour({ .8,.8,.8 });
-	for (auto& point : spawningVerts)
-		lines->AddPointToLine(point);
-	lines->FinishLineStrip();
-	if(spawningVerts.size() > 0)
-	{
-		potentialVert = cursorPos;
-		Vec2 from = spawningVerts.back();
+	//lines->SetColour({ .8,.8,.8 });
+	//for (auto& point : spawningVerts)
+	//	lines->AddPointToLine(point);
+	//lines->FinishLineStrip();
+	//if(spawningVerts.size() > 0)
+	//{
+	//	potentialVert = cursorPos;
+	//	Vec2 from = spawningVerts.back();
 
-		Vec2 lastEdgeNormalised, lastEdgePerpendicular, fromPos, lastVertToPotentialPos;
-		float dot, dotPerpendicular;
+	//	Vec2 lastEdgeNormalised, lastEdgePerpendicular, fromPos, lastVertToPotentialPos;
+	//	float dot, dotPerpendicular;
 
-		Vec2 toHome, toHomePerpendicular;
-		float dotToHome, dotPerpendicularToHome;
+	//	Vec2 toHome, toHomePerpendicular;
+	//	float dotToHome, dotPerpendicularToHome;
 
-		toHome = glm::normalize(spawningVerts.front() - spawningVerts.back());
-		toHomePerpendicular = { -toHome.y, toHome.x };
+	//	toHome = glm::normalize(spawningVerts.front() - spawningVerts.back());
+	//	toHomePerpendicular = { -toHome.y, toHome.x };
 
-		Vec2 firstEdgeNormalized, firstEdgePerpendicular, firstVertToPotentialPos;
-		float dotfirstEdge, dotfirstEdgePerpendicular;
+	//	Vec2 firstEdgeNormalized, firstEdgePerpendicular, firstVertToPotentialPos;
+	//	float dotfirstEdge, dotfirstEdgePerpendicular;
 
-		float potentialVertdistanceToHome = 0.0f;;
+	//	float potentialVertdistanceToHome = 0.0f;;
 
-		if (spawningVerts.size() > 1)
-		{
-			lastEdgeNormalised = glm::normalize(spawningVerts[spawningVerts.size() - 1] - spawningVerts[spawningVerts.size() - 2]);
-			firstEdgeNormalized = glm::normalize(spawningVerts[1] - spawningVerts[0]);
-			firstEdgePerpendicular = { firstEdgeNormalized.y, -firstEdgeNormalized.x };
-		}
-		else
-			lastEdgeNormalised = { 1,0 };
-			
-		lastEdgePerpendicular = { lastEdgeNormalised.y, -lastEdgeNormalised.x };
+	//	if (spawningVerts.size() > 1)
+	//	{
+	//		lastEdgeNormalised = glm::normalize(spawningVerts[spawningVerts.size() - 1] - spawningVerts[spawningVerts.size() - 2]);
+	//		firstEdgeNormalized = glm::normalize(spawningVerts[1] - spawningVerts[0]);
+	//		firstEdgePerpendicular = { firstEdgeNormalized.y, -firstEdgeNormalized.x };
+	//	}
+	//	else
+	//		lastEdgeNormalised = { 1,0 };
+	//		
+	//	lastEdgePerpendicular = { lastEdgeNormalised.y, -lastEdgeNormalised.x };
 
-		fromPos = spawningVerts[spawningVerts.size() - 1];
-		lastVertToPotentialPos = potentialVert - spawningVerts.back();
-		potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
-			
+	//	fromPos = spawningVerts[spawningVerts.size() - 1];
+	//	lastVertToPotentialPos = potentialVert - spawningVerts.back();
+	//	potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
+	//		
 
-			
-
-
-
-
-		lines->SetColour({ .5,.5,.5 });
-
-		// check for attempt to make concave polygon in counter clockwise direction
-		dot = glm::dot(lastVertToPotentialPos, lastEdgeNormalised);
-		dotPerpendicular = glm::dot(lastVertToPotentialPos, lastEdgePerpendicular);
-		if (dotPerpendicular < 0)
-		{
-			potentialVert = fromPos + (lastEdgeNormalised * glm::max(0.0f,dot));
-			potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
-		}
-			
-		// check for attempt to make concave polygon in clockwise direction
-		dotToHome = glm::dot(lastVertToPotentialPos, toHome);
-		dotPerpendicularToHome = glm::dot(lastVertToPotentialPos, toHomePerpendicular);
-		if (dotPerpendicularToHome < 0 && spawningVerts.size() > 2)
-		{
-			potentialVert = fromPos + (toHome * glm::max(0.0f, dotToHome));
-			potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
-		}
-
-		// check for attemp to make edge going past starting vector
-		firstVertToPotentialPos = potentialVert - spawningVerts[0];
-		dotfirstEdge = glm::dot(firstVertToPotentialPos, firstEdgeNormalized);
-		dotfirstEdgePerpendicular = glm::dot(firstVertToPotentialPos, firstEdgePerpendicular);
-		if (spawningVerts.size() > 2 && dotfirstEdgePerpendicular < 0.0f)
-		{
-
-			// check if our poly is closing in on itself so that we can define a max distance along this vector.
-			float maxDistance = 99999;
-
-			Vec2 v1 = spawningVerts[0] + (-firstEdgeNormalized * 50.0f);
-			Vec2 v2 = spawningVerts[spawningVerts.size() - 1] + (lastEdgeNormalised * 50.0f);
+	//		
 
 
 
-			float dot = glm::dot(glm::normalize(v1), glm::normalize(v2));
-			if (dot > 0.0f)
-			{
-				std::cout << "vecs are similar" << std::endl;
-				Vec2 A, B, C, D;
-				A = spawningVerts[0];
-				B = v1;
-				C = spawningVerts[spawningVerts.size() - 1];
-				D = v2;
 
-				Vec2 maxPoint = LineIntersection(A, B, C, D);
-				float dotto = glm::dot(glm::normalize(spawningVerts[0] - maxPoint), firstEdgeNormalized);
-				std::cout << dotto << std::endl;
-				if (dotto > 0.99f)
-				{
-					std::cout << "poly is closing in on itself" << std::endl;
-					lines->DrawCircle(maxPoint, 0.3f);
-					lines->DrawLineSegment(spawningVerts[spawningVerts.size() - 1], v2, { 1,0,0 });
-					lines->DrawLineSegment(spawningVerts[0], v1, { 1,0,0 });
-					maxDistance = glm::distance(spawningVerts[0], maxPoint);
-				}
-			}
+	//	lines->SetColour({ .5,.5,.5 });
 
-			potentialVert = spawningVerts[0] + (firstEdgeNormalized * glm::min(0.0f, glm::max(dotfirstEdge, -maxDistance)));
-		}
+	//	// check for attempt to make concave polygon in counter clockwise direction
+	//	dot = glm::dot(lastVertToPotentialPos, lastEdgeNormalised);
+	//	dotPerpendicular = glm::dot(lastVertToPotentialPos, lastEdgePerpendicular);
+	//	if (dotPerpendicular < 0)
+	//	{
+	//		potentialVert = fromPos + (lastEdgeNormalised * glm::max(0.0f,dot));
+	//		potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
+	//	}
+	//		
+	//	// check for attempt to make concave polygon in clockwise direction
+	//	dotToHome = glm::dot(lastVertToPotentialPos, toHome);
+	//	dotPerpendicularToHome = glm::dot(lastVertToPotentialPos, toHomePerpendicular);
+	//	if (dotPerpendicularToHome < 0 && spawningVerts.size() > 2)
+	//	{
+	//		potentialVert = fromPos + (toHome * glm::max(0.0f, dotToHome));
+	//		potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
+	//	}
 
-		// check for closing the loop
-		if (glm::distance(cursorPos, spawningVerts[0]) < 0.2f)
-			potentialVert = spawningVerts[0];
+	//	// check for attemp to make edge going past starting vector
+	//	firstVertToPotentialPos = potentialVert - spawningVerts[0];
+	//	dotfirstEdge = glm::dot(firstVertToPotentialPos, firstEdgeNormalized);
+	//	dotfirstEdgePerpendicular = glm::dot(firstVertToPotentialPos, firstEdgePerpendicular);
+	//	if (spawningVerts.size() > 2 && dotfirstEdgePerpendicular < 0.0f)
+	//	{
 
-		lines->DrawLineSegment(from, potentialVert);
-		lines->DrawCircle(potentialVert, 0.1);
+	//		// check if our poly is closing in on itself so that we can define a max distance along this vector.
+	//		float maxDistance = FLT_MAX;
 
-		lines->SetColour({ .8,.8,.8 });
-	}
-	else
-		lines->DrawCircle(cursorPos, 0.1);
+	//		Vec2 v1 = spawningVerts[0] + (-firstEdgeNormalized * 50.0f);
+	//		Vec2 v2 = spawningVerts[spawningVerts.size() - 1] + (lastEdgeNormalised * 50.0f);
+
+
+
+	//		float dot = glm::dot(glm::normalize(v1), glm::normalize(v2));
+	//		if (dot > 0.0f)
+	//		{
+	//			std::cout << "vecs are similar" << std::endl;
+	//			Vec2 A, B, C, D;
+	//			A = spawningVerts[0];
+	//			B = v1;
+	//			C = spawningVerts[spawningVerts.size() - 1];
+	//			D = v2;
+
+	//			Vec2 maxPoint = LineIntersection(A, B, C, D);
+	//			float dotto = glm::dot(glm::normalize(spawningVerts[0] - maxPoint), firstEdgeNormalized);
+	//			std::cout << dotto << std::endl;
+	//			if (dotto > 0.99f)
+	//			{
+	//				std::cout << "poly is closing in on itself" << std::endl;
+	//				lines->DrawCircle(maxPoint, 0.3f);
+	//				lines->DrawLineSegment(spawningVerts[spawningVerts.size() - 1], v2, { 1,0,0 });
+	//				lines->DrawLineSegment(spawningVerts[0], v1, { 1,0,0 });
+	//				maxDistance = glm::distance(spawningVerts[0], maxPoint);
+	//			}
+	//		}
+
+	//		potentialVert = spawningVerts[0] + (firstEdgeNormalized * glm::min(0.0f, glm::max(dotfirstEdge, -maxDistance)));
+	//	}
+
+	//	// check for closing the loop
+	//	if (glm::distance(cursorPos, spawningVerts[0]) < 0.2f)
+	//		potentialVert = spawningVerts[0];
+
+	//	lines->DrawLineSegment(from, potentialVert);
+	//	lines->DrawCircle(potentialVert, 0.1);
+
+	//	lines->SetColour({ .8,.8,.8 });
+	//}
+	//else
+	//	lines->DrawCircle(cursorPos, 0.1);
 		
 	
 	// Update all primitives
@@ -212,12 +206,11 @@ void CollisionFramework::Update(float delta)
 
 void CollisionFramework::OnLeftClick()
 {
-	std::cout << "left down" << std::endl;
-	
+
 	if(spawner != nullptr)
 		spawner->OnLeftClick(cursorPos);
 
-
+	return;
 	// Poly spawner stuff
 	if (spawningVerts.size() > 0)
 	{
@@ -247,23 +240,26 @@ void CollisionFramework::OnLeftClick()
 
 void CollisionFramework::OnLeftRelease()
 {
-	std::cout << "left release" << std::endl;
-	
 	if (spawner != nullptr)
 		spawner->OnLeftRelease();
 }
 
 void CollisionFramework::OnRightClick()
 {
-	std::cout << "right click" << std::endl;
+	if (spawner != nullptr)
+		spawner->OnRightClick();
 }
 
 void CollisionFramework::OnRightRelease()
 {
-	std::cout << "right release" << std::endl;
-	
 	if (spawner != nullptr)
 		spawner->OnRightRelease();
+}
+
+void CollisionFramework::OnMouseScroll(double delta)
+{
+	if (spawner != nullptr)
+		spawner->OnMouseScroll(delta);
 }
 
 Vec2 CollisionFramework::LineIntersection(Vec2 A, Vec2 B, Vec2 C, Vec2 D)

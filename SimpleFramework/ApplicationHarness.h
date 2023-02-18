@@ -11,7 +11,7 @@
 class ApplicationHarness
 {
 	Application* app = nullptr;
-	float cameraHeight = 10.0f;
+	float cameraHeight = 18.0f;
 	Vec2 cameraCentre = { 0.0f, 0.0f };
 	GLFWwindow* window = nullptr;
 
@@ -49,6 +49,8 @@ public:
 	//1 for left, 2 for right, 3 for middle. Other button codes will get sent for other buttons but I'm not sure how they'd map to a particular mouse.
 	virtual void OnMouseClick(int mouseButton);
 	virtual void OnMouseRelease(int mouseButton);
+	virtual void OnMouseScroll(double delta);
+
 
 	void Zoom(float zoomFactor);
 };

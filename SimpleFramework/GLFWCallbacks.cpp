@@ -25,12 +25,17 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 void MouseWheelCallback(GLFWwindow* window, double xDelta, double yDelta)
 {
 	ApplicationHarness* programPointer = (ApplicationHarness*)glfwGetWindowUserPointer(window);
-	if (yDelta > 0)
+
+	// Finns zoom code
+	/*if (yDelta > 0)
 	{
 		programPointer->Zoom(ZOOM_FACTOR);
 	}
 	else
 	{
 		programPointer->Zoom(1.0f / ZOOM_FACTOR);
-	}
+	}*/
+
+	// Justins shape scroller code
+	programPointer->OnMouseScroll(yDelta);
 }

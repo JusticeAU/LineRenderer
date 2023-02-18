@@ -19,5 +19,6 @@ public:
 	virtual void OnRightRelease() {}
 	virtual void OnMiddleClick() {}
 	virtual void OnMiddleRelease() {}
+	virtual void OnMouseScroll(double delta) {}
 
 };

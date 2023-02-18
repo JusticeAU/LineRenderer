@@ -4,6 +4,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include <iostream>
+
 glm::mat4 ApplicationHarness::GetCameraTransform() const
 {
 	return glm::ortho(
@@ -182,7 +184,7 @@ void ApplicationHarness::Render()
 	glClear(GL_COLOR_BUFFER_BIT);
 	glm::mat4 orthoMat = GetCameraTransform();
 	simpleShader.SetUniform("vpMatrix", orthoMat);
-	grid.Draw();
+	//grid.Draw();
 	lines.Draw();
 
 	if (ImGui::GetDrawData())	//Render tends to get called once or twice before Update gets called, so we need to make sure this info exists.
@@ -228,6 +230,11 @@ void ApplicationHarness::OnMouseRelease(int mouseButton)
 	{
 		app->OnMiddleRelease();
 	}
+}
+
+void ApplicationHarness::OnMouseScroll(double delta)
+{
+	app->OnMouseScroll(delta);
 }
 
 

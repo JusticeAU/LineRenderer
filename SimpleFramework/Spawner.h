@@ -5,6 +5,14 @@
 class Shape;
 class LineRenderer;
 
+enum class SPAWNER_STATE
+{
+	IDLE,
+	BUILD,
+	LAUNCH,
+	GRAB
+};
+
 class Spawner
 {
 public:
@@ -17,13 +25,16 @@ public:
 	void OnLeftRelease();
 	void OnRightClick();
 	void OnRightRelease();
+	void OnMouseScroll(double delta);
 
 protected:
 	std::vector<Shape*>* shapes = nullptr;
 	std::vector<Shape*> shapeTemplates;
 	int templateIndex = 0;
-	//bool spawnStarted = false;
 	Shape* spawn = nullptr;
 	Vec2 spawnStartPos = Vec2(0);
 	float timeSinceStart = 0.0f;
+	SPAWNER_STATE state = SPAWNER_STATE::IDLE;
+
+	Vec2 cursorPos;
 };
