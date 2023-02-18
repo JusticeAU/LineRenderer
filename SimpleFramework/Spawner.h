@@ -27,7 +27,13 @@ public:
 	void OnRightRelease();
 	void OnMouseScroll(double delta);
 
+	void DoPolygonConstructionUpdate(float delta, Vec2 cursorPos);
+	void DoPolygonConstructionDraw(LineRenderer& lines);
+
+	Vec2 LineIntersection(Vec2 A, Vec2 B, Vec2 C, Vec2 D);
+
 protected:
+	Vec3 templateColour = { 0.2f,0.2f,0.2f };
 	std::vector<Shape*>* shapes = nullptr;
 	std::vector<Shape*> shapeTemplates;
 	int templateIndex = 0;
@@ -37,4 +43,8 @@ protected:
 	SPAWNER_STATE state = SPAWNER_STATE::IDLE;
 
 	Vec2 cursorPos;
+
+	// Poly Spawner shit
+	std::vector<Vec2> spawningVerts;
+	Vec2 potentialVert;
 };

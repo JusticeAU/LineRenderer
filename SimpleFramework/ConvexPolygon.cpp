@@ -60,3 +60,19 @@ Vec2 ConvexPolygon::GetVertexInWorldspace(int vertIndex) const
 		vertIndex -= m_points.size();
 	return m_position + m_points[vertIndex];
 }
+
+
+void ConvexPolygon::CalculateCentroid()
+{
+	Vec2 centroid(0);
+
+	for (auto& point : m_points)
+		centroid += point;
+
+	centroid /= m_points.size();
+
+	for (auto& point : m_points)
+		point -= centroid;
+
+	m_position = centroid;
+}

@@ -3,10 +3,10 @@
 
 CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
 {
-	{CircleOnCircle, CircleOnPlane, CircleOnAABB, CircleOnConvexPoly},
-	{PlaneOnCircle, PlaneOnPlane, PlaneOnAABB, PlaneOnConvexPoly},
-	{AABBOnCircle, AABBOnPlane, AABBOnAABB, AABBOnConvexPoly},
-	{ConvexPolyOnCircle, ConvexPolyOnPlane, ConvexPolyOnAABB, ConvexPolyOnConvexPoly}
+	{CircleOnCircle, CircleOnAABB, CircleOnConvexPoly, CircleOnPlane},
+	{AABBOnCircle, AABBOnAABB, AABBOnConvexPoly, AABBOnPlane},
+	{ConvexPolyOnCircle, ConvexPolyOnAABB, ConvexPolyOnConvexPoly, ConvexPolyOnPlane},
+	{PlaneOnCircle, PlaneOnAABB, PlaneOnConvexPoly, PlaneOnPlane},
 };
 
 CollisionData TestCollisions(Shape* a, Shape* b)

@@ -210,32 +210,6 @@ void CollisionFramework::OnLeftClick()
 	if(spawner != nullptr)
 		spawner->OnLeftClick(cursorPos);
 
-	return;
-	// Poly spawner stuff
-	if (spawningVerts.size() > 0)
-	{
-		if (glm::distance(potentialVert, spawningVerts.front()) < 0.2f)
-		{
-			// Create the shape
-			ConvexPolygon* poly = new ConvexPolygon({ 0,0 }, 1, spawningVerts, { 1,1,1 });
-			spawningVerts.clear();
-			shapes.push_back(poly);
-		}
-		else
-		{
-			for (auto& vert : spawningVerts)
-			{
-				if (glm::distance(potentialVert, vert) < 0.2f)
-					return;
-			}
-			spawningVerts.push_back(potentialVert);
-		}
-	}
-	else
-		spawningVerts.push_back(cursorPos);
-
-
-
 }
 
 void CollisionFramework::OnLeftRelease()
@@ -260,32 +234,4 @@ void CollisionFramework::OnMouseScroll(double delta)
 {
 	if (spawner != nullptr)
 		spawner->OnMouseScroll(delta);
-}
-
-Vec2 CollisionFramework::LineIntersection(Vec2 A, Vec2 B, Vec2 C, Vec2 D)
-{
-	// Line AB represented as a1x + b1y = c1
-	double a1 = B.y - A.y;
-	double b1 = A.x - B.x;
-	double c1 = a1 * (A.x) + b1 * (A.y);
-
-	// Line CD represented as a2x + b2y = c2
-	double a2 = D.y - C.y;
-	double b2 = C.x - D.x;
-	double c2 = a2 * (C.x) + b2 * (C.y);
-
-	double determinant = a1 * b2 - a2 * b1;
-
-	if (determinant == 0)
-	{
-		// The lines are parallel. This is simplified
-		// by returning a pair of FLT_MAX
-		return Vec2(FLT_MAX, FLT_MAX);
-	}
-	else
-	{
-		double x = (b2 * c1 - b1 * c2) / determinant;
-		double y = (a1 * c2 - a2 * c1) / determinant;
-		return Vec2(x, y);
-	}
 }

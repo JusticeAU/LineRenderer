@@ -6,9 +6,9 @@ class LineRenderer;
 enum class SHAPE
 {
 	CIRCLE,
-	PLANE,
 	AABB,
 	CONVEX_POLY,
+	PLANE,
 
 	COUNT
 };

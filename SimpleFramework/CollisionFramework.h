@@ -20,8 +20,6 @@ public:
 
 	void OnMouseScroll(double delta) override;
 
-	Vec2 LineIntersection(Vec2 A, Vec2 B, Vec2 C, Vec2 D);
-
 	std::vector<Shape*> shapes;
 	bool rightDown = false;
 	const int MAX_COLLISION_PASSES = 6;
