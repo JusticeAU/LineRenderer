@@ -3,6 +3,7 @@
 #include "LineRenderer.h"
 #include <iostream>
 #include <string>
+#include "glm.hpp"
 
 void Circle::CalculateMassFromArea()
 {
@@ -17,4 +18,9 @@ void Circle::Draw(LineRenderer& lines) const
 	lines.DrawCircle(m_position, m_radius);
 
 	//lines.DrawLineSegment(m_position, m_position + m_velocity);
+}
+
+bool Circle::PointInShape(Vec2 point)
+{
+	return glm::distance(m_position, point) < m_radius;
 }

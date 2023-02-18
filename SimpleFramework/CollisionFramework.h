@@ -25,15 +25,7 @@ public:
 	const int MAX_COLLISION_PASSES = 6;
 
 	Spawner* spawner;
-	Shape* convexPoly;
-	Shape* convexPoly2;
-	Shape* circle;
-	Shape* aabb;
 
 	int vertIndex = 0;
 	bool indexing = false;
-
-	// Poly Spawner shit
-	std::vector<Vec2> spawningVerts;
-	Vec2 potentialVert;
 };

@@ -93,6 +93,13 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 	}
 	case SPAWNER_STATE::GRAB:
 	{
+		if (grabbed->m_position != cursorPos)
+		{
+			Vec2 shapeToCursor = cursorPos - grabbed->m_position;
+			Vec2 shapeToCursorNormalized = glm::normalize(shapeToCursor);
+			//grabbed->m_position += shapeToCursor * delta * 10.0f;
+			grabbed->m_velocity = shapeToCursor * 10.0f;
+		}
 		break;
 	}
 	}
@@ -137,9 +144,20 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 	case SPAWNER_STATE::IDLE:
 	{
 		// Check if were selecting an object
-		if (false)
+		for (auto* shape : *shapes)
+		{
+			if (shape->PointInShape(cursorPos))
+			{
+				grabbed = shape;
+				break;
+			}
+		}
+
+		if (grabbed != nullptr)
 		{
 			// grab object logic
+			state = SPAWNER_STATE::GRAB;
+			grabbed->m_inverseMass = 0;
 		}
 		else
 		{
@@ -258,6 +276,9 @@ void Spawner::OnLeftRelease()
 	}
 	case SPAWNER_STATE::GRAB:
 	{
+		grabbed->CalculateMassFromArea();
+		grabbed = nullptr;
+		state = SPAWNER_STATE::IDLE;
 		break;
 	}
 	default:

@@ -47,4 +47,7 @@ protected:
 	// Poly Spawner shit
 	std::vector<Vec2> spawningVerts;
 	Vec2 potentialVert;
+
+	// Grabbeed Shape
+	Shape* grabbed = nullptr;
 };

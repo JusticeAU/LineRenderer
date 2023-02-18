@@ -20,3 +20,8 @@ void Shape::ApplyImpulse(Vec2 impulse)
 	float mass = 1.0f / m_inverseMass;
 	m_velocity += impulse / mass;
 }
+
+bool Shape::PointInShape(Vec2 point)
+{
+	return false;
+}

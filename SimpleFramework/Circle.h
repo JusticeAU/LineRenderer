@@ -13,4 +13,6 @@ public:
 	void CalculateMassFromArea() override;
 	void Draw(LineRenderer& lines) const override;
 
+	bool PointInShape(Vec2 point) override;
+
 };

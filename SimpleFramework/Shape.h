@@ -33,4 +33,6 @@ public:
 	virtual void CalculateMassFromArea() = 0;
 	virtual void Move(Vec2 displacement);
 	virtual void ApplyImpulse(Vec2 impulse);
+
+	virtual bool PointInShape(Vec2 point);
 };
