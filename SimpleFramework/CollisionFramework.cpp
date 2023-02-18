@@ -49,65 +49,68 @@ void CollisionFramework::Update(float delta)
 	if(spawningVerts.size() > 0)
 	{
 		Vec2 from = spawningVerts.back();
-		if (glm::distance(cursorPos, spawningVerts.front()) < 0.2f && spawningVerts.size() > 2)
+
+		// do some normal testing shenanigans here
+		Vec2 desiredPoint = cursorPos;
+		Vec2 lastEdgeNormalised, lastEdgePerpendicular, fromPos, lastVertToCursor;
+		float dot, dotPerpendicular;
+
+		Vec2 toHome, toHomePerpendicular;
+		float dotToHome, dotPerpendicularToHome;
+
+		toHome = glm::normalize(spawningVerts.front() - spawningVerts.back());
+		toHomePerpendicular = { -toHome.y, toHome.x };
+
+		Vec2 firstEdgeNormalized, firstEdgePerpendicular, firstVertToCursor;
+		float dotfirstEdge, dotfirstEdgePerpendicular;
+
+		if (spawningVerts.size() > 1)
 		{
-			lines->DrawLineSegment(from, spawningVerts.front());
-			lines->DrawCircle(spawningVerts.front(), 0.1);
+			lastEdgeNormalised = glm::normalize(spawningVerts[spawningVerts.size() - 1] - spawningVerts[spawningVerts.size() - 2]);
+			firstEdgeNormalized = glm::normalize(spawningVerts[1] - spawningVerts[0]);
+			firstEdgePerpendicular = { firstEdgeNormalized.y, -firstEdgeNormalized.x };
 		}
 		else
-		{
-			// do some normal testing shenanigans here
-			Vec2 desiredPoint = cursorPos;
-			Vec2 lastEdgeNormalised, lastEdgePerpendicular, fromPos, lastVertToCursor;
-			float dot, dotPerpendicular;
-			Vec2 toHome, toHomePerpendicular;
-			float dotPerpendicularToHome;
+			lastEdgeNormalised = { 1,0 };
+			
+		lastEdgePerpendicular = { lastEdgeNormalised.y, -lastEdgeNormalised.x };
 
-			toHome = glm::normalize(spawningVerts.front() - spawningVerts.back());
-			toHomePerpendicular = { -toHome.y, toHome.x };
+		fromPos = spawningVerts[spawningVerts.size() - 1];
+		lastVertToCursor = cursorPos - spawningVerts.back();
+		firstVertToCursor = cursorPos - spawningVerts[0];
+			
+		dot = glm::dot(lastVertToCursor, lastEdgeNormalised);
+		dotPerpendicular = glm::dot(lastVertToCursor, lastEdgePerpendicular);
+			
+		dotToHome = glm::dot(lastVertToCursor, toHome);
+		dotPerpendicularToHome = glm::dot(lastVertToCursor, toHomePerpendicular);
 
-			if (spawningVerts.size() > 1)
-				lastEdgeNormalised = glm::normalize(spawningVerts[spawningVerts.size() - 1] - spawningVerts[spawningVerts.size() - 2]);
-			else
-				lastEdgeNormalised = { 1,0 };
+		dotfirstEdge = glm::dot(firstVertToCursor, firstEdgeNormalized);
+		dotfirstEdgePerpendicular = glm::dot(firstVertToCursor, firstEdgePerpendicular);
 
-			lastEdgePerpendicular = { lastEdgeNormalised.y, -lastEdgeNormalised.x };
-			fromPos = spawningVerts[spawningVerts.size() - 1];
-			lastVertToCursor = cursorPos - spawningVerts.back();
-			dot = glm::dot(lastVertToCursor, lastEdgeNormalised);
-			dotPerpendicular = glm::dot(lastVertToCursor, lastEdgePerpendicular);
-			dotPerpendicularToHome = glm::dot(lastVertToCursor, toHomePerpendicular);
+		lines->SetColour({ .5,.5,.5 });
 
-			lines->SetColour({ .5,.5,.5 });
-			if (dotPerpendicular < 0)
-			{
-				potentialVert = fromPos + (lastEdgeNormalised * dot);
-				lines->DrawCircle(fromPos + (lastEdgeNormalised * dot), 0.1f);
-				lines->DrawLineSegment(from, fromPos + (lastEdgeNormalised * dot));
-			}
-			else if (dotPerpendicularToHome < 0 && spawningVerts.size() > 2)
-			{
-				std::cout << dotPerpendicularToHome << std::endl;
-				potentialVert = fromPos + (toHome * dotPerpendicular);
-				lines->DrawCircle(fromPos + (toHome * dotPerpendicular), 0.1f);
-				lines->DrawLineSegment(from, fromPos + (toHome * dotPerpendicular)); // Progress
-			}
-			else
-			{
-				potentialVert = cursorPos;
-				lines->DrawLineSegment(from, cursorPos);
-				lines->DrawCircle(cursorPos, 0.1);
-			}
+		potentialVert = cursorPos;
+		// check for attempt to make concave polygon in counter clockwise direction
+		if (dotPerpendicular < 0)
+			potentialVert = fromPos + (lastEdgeNormalised * glm::max(0.0f,dot));
+			
+		// check for attempt to make concave polygon in clockwise direction
+		if (dotPerpendicularToHome < 0 && spawningVerts.size() > 2)
+			potentialVert = fromPos + (toHome * glm::max(0.0f, dotToHome));
 
-			lines->DrawLineSegment(fromPos, fromPos + lastEdgeNormalised);
-			if (spawningVerts.size() > 2)
-			{
+		// check for attemp to make edge going past starting vector
+		if (spawningVerts.size() > 2 && dotfirstEdgePerpendicular < 0.0f)
+			potentialVert = spawningVerts[0] + (firstEdgeNormalized * glm::min(0.0f, dotfirstEdge));
 
-				lines->DrawLineSegment(spawningVerts.back(), spawningVerts.back() + toHome);
-			}
+		// check for closing the loop
+		if (glm::distance(cursorPos, spawningVerts[0]) < 0.2f)
+			potentialVert = spawningVerts[0];
 
-			lines->SetColour({ .8,.8,.8 });
-		}
+		lines->DrawLineSegment(from, potentialVert);
+		lines->DrawCircle(potentialVert, 0.1);
+
+		lines->SetColour({ .8,.8,.8 });
 	}
 	else
 		lines->DrawCircle(cursorPos, 0.1);
@@ -174,7 +177,7 @@ void CollisionFramework::OnLeftClick()
 	// Poly spawner stuff
 	if (spawningVerts.size() > 0)
 	{
-		if (glm::distance(cursorPos, spawningVerts.front()) < 0.2f)
+		if (glm::distance(potentialVert, spawningVerts.front()) < 0.2f)
 		{
 			// Create the shape
 			ConvexPolygon* poly = new ConvexPolygon({ 0,0 }, 1, spawningVerts, { 1,1,1 });
