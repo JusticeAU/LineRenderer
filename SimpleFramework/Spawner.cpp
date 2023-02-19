@@ -314,7 +314,17 @@ void Spawner::OnRightClick()
 	}
 	case SPAWNER_STATE::GRAB:
 	{
-
+		// Delete grabbed object
+		for (int i = 0; i < shapes->size(); i++)
+		{
+			if (grabbed == shapes->at(i))
+			{
+				shapes->erase(shapes->begin()  + i);
+				grabbed = nullptr;
+				state = SPAWNER_STATE::IDLE;
+				break;
+			}
+		}
 	}
 	default:
 		break;
