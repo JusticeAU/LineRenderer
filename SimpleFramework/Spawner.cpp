@@ -131,7 +131,10 @@ void Spawner::Draw(LineRenderer& lines)
 	}
 	case SPAWNER_STATE::GRAB:
 	{
-
+		Vec3 oldColour = grabbed->m_colour;
+		grabbed->m_colour = { 1,1,1 };
+		grabbed->Draw(lines);
+		grabbed->m_colour = oldColour;
 	}
 	default:
 		break;

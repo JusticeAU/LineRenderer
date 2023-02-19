@@ -19,11 +19,6 @@ CollisionFramework::CollisionFramework()
 
 void CollisionFramework::Update(float delta)
 {
-	//Draw
-	for (auto s : shapes)
-		s->Draw(*lines);
-		
-	
 	// Update all primitives
 	for (auto& shape : shapes)
 		shape->Update(delta);
@@ -64,7 +59,9 @@ void CollisionFramework::Update(float delta)
 		}
 	}
 
-
+	// Draw all shapes in simulation.
+	for (auto s : shapes)
+		s->Draw(*lines);
 
 	// Handle spawner if we've created it.
 	if (spawner != nullptr)
@@ -76,10 +73,8 @@ void CollisionFramework::Update(float delta)
 
 void CollisionFramework::OnLeftClick()
 {
-
 	if(spawner != nullptr)
 		spawner->OnLeftClick(cursorPos);
-
 }
 
 void CollisionFramework::OnLeftRelease()
