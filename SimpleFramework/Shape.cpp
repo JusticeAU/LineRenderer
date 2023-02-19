@@ -4,7 +4,6 @@ void Shape::Update(float deltaTime)
 {	
 	m_velocity += m_gravityForNow * deltaTime;
 	Move(m_velocity * deltaTime);
-	//m_velocity *= .99;
 }
 
 void Shape::Move(Vec2 displacement)

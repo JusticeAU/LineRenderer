@@ -26,6 +26,8 @@ Spawner::Spawner(std::vector<Shape*>* shapes)
 	somePoints.push_back(Vec2(1, -1));
 	somePoints.push_back(Vec2(-1, -1));
 	shapeTemplates.push_back(new ConvexPolygon(Vec2(0), 1, somePoints, templateColour));
+	ConvexPolygon* poly = (ConvexPolygon*)shapeTemplates.back();
+	poly->CalculateCentroid();
 
 	shapeTemplates.push_back(new Plane(Vec2(0), 1, templateColour));
 }
@@ -97,7 +99,6 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 		{
 			Vec2 shapeToCursor = cursorPos - grabbed->m_position;
 			Vec2 shapeToCursorNormalized = glm::normalize(shapeToCursor);
-			//grabbed->m_position += shapeToCursor * delta * 10.0f;
 			grabbed->m_velocity = shapeToCursor * 10.0f;
 		}
 		break;
@@ -157,6 +158,7 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 		{
 			// grab object logic
 			state = SPAWNER_STATE::GRAB;
+			grabbedInverseMass = grabbed->m_inverseMass;
 			grabbed->m_inverseMass = 0;
 		}
 		else
@@ -276,7 +278,7 @@ void Spawner::OnLeftRelease()
 	}
 	case SPAWNER_STATE::GRAB:
 	{
-		grabbed->CalculateMassFromArea();
+		grabbed->m_inverseMass = grabbedInverseMass;
 		grabbed = nullptr;
 		state = SPAWNER_STATE::IDLE;
 		break;

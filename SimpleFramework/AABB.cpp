@@ -27,6 +27,33 @@ void AABB::Draw(LineRenderer& lines) const
 	//lines.DrawLineSegment(m_position, m_position + m_velocity);
 }
 
+bool AABB::PointInShape(Vec2 point)
+{
+	if (point.x > Left() && point.x < Right()
+		&&
+		point.y > Bottom() && point.y < Top()
+		)
+		return true;
+	else
+		return false;
+}
+
+Vec2 AABB::GetClosestPoint(Vec2 point)
+{
+	float minX, minY, maxX, maxY;
+	minX = m_position.x - m_halfWidth;
+	maxX = m_position.x + m_halfWidth;
+	minY = m_position.y - m_halfHeight;
+	maxY = m_position.y + m_halfHeight;
+
+	Vec2 closestPoint;
+
+	closestPoint.x = point.x < minX ? minX : point.x > maxX ? maxX : point.x;
+	closestPoint.y = point.y < minY ? minY : point.y > maxY ? maxY : point.y;
+
+	return closestPoint;
+}
+
 // 0-3 will be TopRight, BottomRight, Bottom Left, TopLeft
 Vec2* AABB::GetCorners()
 {

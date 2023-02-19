@@ -50,4 +50,5 @@ protected:
 
 	// Grabbeed Shape
 	Shape* grabbed = nullptr;
+	float grabbedInverseMass = 0.0f;
 };

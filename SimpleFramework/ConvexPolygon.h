@@ -11,6 +11,8 @@ public:
 	void CalculateMassFromArea() override;
 	void Draw(LineRenderer& lines) const override;
 
+	bool PointInShape(Vec2 point);
+
 	Vec2 GetVertexDirection(int vertIndex) const;
 	Vec2 GetSurfaceNormal(int vertIndex) const;
 	Vec2 GetSurfaceMidPoint(int vertIndex) const;

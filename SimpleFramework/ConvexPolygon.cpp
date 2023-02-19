@@ -1,6 +1,8 @@
 #include "ConvexPolygon.h"
 #include "LineRenderer.h"
 
+#include <iostream>
+
 void ConvexPolygon::CalculateMassFromArea()
 {
 	// intentionall left blank for now
@@ -24,6 +26,30 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 	}*/
 }
 
+bool ConvexPolygon::PointInShape(Vec2 point)
+{
+	// Get
+	Vec2 testPlane = glm::normalize(m_position - point);
+
+	float min = FLT_MAX;
+	float max = -FLT_MAX;
+	for (int i = 0; i < m_points.size(); i++)
+	{
+		float dot = glm::dot(GetVertexInWorldspace(i), testPlane);
+		if (dot < min)
+			min = dot;
+		if (dot > max)
+			max = dot;
+	}
+
+	float pointDot = glm::dot(point, testPlane);
+
+	if (pointDot > min && pointDot < max)
+		return true;
+	else
+		return false;
+}
+
 Vec2 ConvexPolygon::GetVertexDirection(int vertIndex) const
 {
 	Vec2 a = m_points[vertIndex];
@@ -36,12 +62,8 @@ Vec2 ConvexPolygon::GetVertexDirection(int vertIndex) const
 
 Vec2 ConvexPolygon::GetSurfaceNormal(int vertIndex) const
 {
-	Vec2 a = m_points[vertIndex];
-	Vec2 b = vertIndex + 1 >= m_points.size() ? m_points[0] : m_points[vertIndex + 1];
-
-	Vec2 aToB = b - a;
-	aToB = glm::normalize(aToB);
-	Vec2 normal = { -aToB.y, aToB.x };
+	Vec2 vertex = GetVertexDirection(vertIndex);
+	Vec2 normal = { -vertex.y, vertex.x };
 	return normal;
 }
 

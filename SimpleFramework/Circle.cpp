@@ -15,7 +15,7 @@ void Circle::CalculateMassFromArea()
 void Circle::Draw(LineRenderer& lines) const
 {
 	lines.SetColour(m_colour);
-	lines.DrawCircle(m_position, m_radius);
+	lines.DrawCircle(m_position, m_radius, 18);
 
 	//lines.DrawLineSegment(m_position, m_position + m_velocity);
 }
