@@ -73,9 +73,15 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 		else if (templateIndex == (int)SHAPE::AABB)
 		{
 			AABB* aabb = (AABB*)shapeTemplates[templateIndex];
-			std::cout << glm::abs(cursorPos.x - aabb->m_position.x) << std::endl;
-			aabb->m_halfWidth = glm::abs(cursorPos.x - aabb->m_position.x);
-			aabb->m_halfHeight = glm::abs(cursorPos.y - aabb->m_position.y);
+			float halfWidth = glm::abs(cursorPos.x - aabb->m_position.x);
+			float halfHeight = glm::abs(cursorPos.y - aabb->m_position.y);
+
+			halfWidth = glm::max(halfWidth, 0.2f);
+			halfHeight = glm::max(halfHeight, 0.2f);
+
+			aabb->m_halfWidth = halfWidth;
+			aabb->m_halfHeight = halfHeight;
+
 		}
 		else if (templateIndex == (int)SHAPE::CONVEX_POLY)
 		{
