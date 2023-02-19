@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Spawner.h"
 #include "Circle.h"
 #include "AABB.h"
@@ -27,6 +29,7 @@ Spawner::Spawner(std::vector<Shape*>* shapes)
 	somePoints.push_back(Vec2(-1, -1));
 	shapeTemplates.push_back(new ConvexPolygon(Vec2(0), 1, somePoints, templateColour));
 	ConvexPolygon* poly = (ConvexPolygon*)shapeTemplates.back();
+
 	poly->CalculateCentroid();
 
 	shapeTemplates.push_back(new Plane(Vec2(0), 1, templateColour));
@@ -133,10 +136,10 @@ void Spawner::Draw(LineRenderer& lines)
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		if (selectedTool < 3)
-			shapeTemplates[selectedTool]->Draw(lines);
-		else if(selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
+		if(selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
 			DoPolygonConstructionDraw(lines);
+		else if (selectedTool < 3)
+			shapeTemplates[selectedTool]->Draw(lines);
 		else if (selectedTool == (int)SPAWNER_TOOL::LINE_CUTTER)
 		{
 
@@ -155,10 +158,12 @@ void Spawner::Draw(LineRenderer& lines)
 		grabbed->m_colour = { 1,1,1 };
 		grabbed->Draw(lines);
 		grabbed->m_colour = oldColour;
+		break;
 	}
 	case SPAWNER_STATE::CUT:
 	{
 		lines.DrawLineSegment(cursorDownPos, cursorPos, { 1,0,0 });
+		break;
 	}
 	default:
 		break;
@@ -323,6 +328,16 @@ void Spawner::OnLeftRelease()
 	{
 		state = SPAWNER_STATE::IDLE;
 		// make line from cursorDownPos to cursorPos and calculate intersection across all convex polys
+		int maxShapesToCheck = shapes->size();
+		for (int i = 0; i < maxShapesToCheck; i++)
+		{
+			Shape* shape = shapes->at(i);
+			if (shape->GetShape() == SHAPE::CONVEX_POLY)
+			{
+				ConvexPolygon* poly = (ConvexPolygon*)shape;
+				poly->LineIntersects(cursorDownPos, cursorPos, shapes);
+			}
+		}
 	}
 	default:
 		break;
@@ -379,7 +394,7 @@ void Spawner::OnRightRelease()
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		if (selectedTool < 3) // simple buildables
+		if (selectedTool != 2) // simple buildables
 			state = SPAWNER_STATE::IDLE;
 		break;
 	}
@@ -494,19 +509,19 @@ void Spawner::DoPolygonConstructionUpdate(float delta, Vec2 cursorPos)
 			float dot = glm::dot(glm::normalize(v1), glm::normalize(v2));
 			if (dot > 0.0f)
 			{
-				std::cout << "vecs are similar" << std::endl;
 				Vec2 A, B, C, D;
 				A = spawningVerts[0];
 				B = v1;
 				C = spawningVerts[spawningVerts.size() - 1];
 				D = v2;
 
-				Vec2 maxPoint = LineIntersection(A, B, C, D);
+				Vec2 maxPoint;
+				LineIntersection(A, B, C, D, &maxPoint);
+
 				float dotto = glm::dot(glm::normalize(spawningVerts[0] - maxPoint), firstEdgeNormalized);
 				std::cout << dotto << std::endl;
 				if (dotto > 0.99f)
 				{
-					std::cout << "poly is closing in on itself" << std::endl;
 					//lines->DrawCircle(maxPoint, 0.3f);
 					//lines->DrawLineSegment(spawningVerts[spawningVerts.size() - 1], v2, { 1,0,0 });
 					//lines->DrawLineSegment(spawningVerts[0], v1, { 1,0,0 });
@@ -547,32 +562,4 @@ void Spawner::DoPolygonConstructionDraw(LineRenderer& lines)
 
 	// Draw Cursor
 	lines.DrawCircle(potentialVert, 0.2f);
-}
-
-Vec2 Spawner::LineIntersection(Vec2 A, Vec2 B, Vec2 C, Vec2 D)
-{
-	// Line AB represented as a1x + b1y = c1
-	double a1 = B.y - A.y;
-	double b1 = A.x - B.x;
-	double c1 = a1 * (A.x) + b1 * (A.y);
-
-	// Line CD represented as a2x + b2y = c2
-	double a2 = D.y - C.y;
-	double b2 = C.x - D.x;
-	double c2 = a2 * (C.x) + b2 * (C.y);
-
-	double determinant = a1 * b2 - a2 * b1;
-
-	if (determinant == 0)
-	{
-		// The lines are parallel. This is simplified
-		// by returning a pair of FLT_MAX
-		return Vec2(FLT_MAX, FLT_MAX);
-	}
-	else
-	{
-		double x = (b2 * c1 - b1 * c2) / determinant;
-		double y = (a1 * c2 - a2 * c1) / determinant;
-		return Vec2(x, y);
-	}
 }

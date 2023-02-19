@@ -4,6 +4,7 @@
 
 class Shape;
 class LineRenderer;
+class ConvexPolygon;
 
 enum class SPAWNER_STATE
 {
@@ -43,7 +44,33 @@ public:
 	void DoPolygonConstructionUpdate(float delta, Vec2 cursorPos);
 	void DoPolygonConstructionDraw(LineRenderer& lines);
 
-	Vec2 LineIntersection(Vec2 A, Vec2 B, Vec2 C, Vec2 D);
+	static bool LineIntersection(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, Vec2* i = nullptr)
+	{
+
+		// https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+		Vec2 s1(0);
+		Vec2 s2(0);
+		s1.x = p1.x - p0.x;     s1.y = p1.y - p0.y;
+		s2.x = p3.x - p2.x;     s2.y = p3.y - p2.y;
+
+		float s, t;
+		s = (-s1.y * (p0.x - p2.x) + s1.x * (p0.y - p2.y)) / (-s2.x * s1.y + s1.x * s2.y);
+		t = (s2.x * (p0.y - p2.y) - s2.y * (p0.x - p2.x)) / (-s2.x * s1.y + s1.x * s2.y);
+
+		if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+		{
+			// Collision detected
+			if (i != nullptr)
+			{
+				i->x = p0.x + (t * s1.x);
+				i->y = p0.y + (t * s1.y);
+
+			}
+			return true;
+		}
+
+		return false; // No collision
+	}
 
 protected:
 	Vec3 templateColour = { 0.2f,0.2f,0.2f };
@@ -64,4 +91,7 @@ protected:
 	// Grabbeed Shape
 	Shape* grabbed = nullptr;
 	float grabbedInverseMass = 0.0f;
+
+	// Cutter test
+	ConvexPolygon* testPoly = nullptr;
 };

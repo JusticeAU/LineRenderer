@@ -1,7 +1,9 @@
 #include "ConvexPolygon.h"
 #include "LineRenderer.h"
+#include "Spawner.h"
 
 #include <iostream>
+
 
 void ConvexPolygon::CalculateMassFromArea()
 {
@@ -48,6 +50,57 @@ bool ConvexPolygon::PointInShape(Vec2 point)
 		return true;
 	else
 		return false;
+}
+
+void ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shapes)
+{
+	int cutsFound = 0;
+	int cutIndexes[2];
+	Vec2 cutPositions[2];
+
+	for (int i = 0; i < m_points.size(); i++)
+	{
+		Vec2 vertA = GetVertexInWorldspace(i);
+		Vec2 vertB = GetVertexInWorldspace(i+1);
+
+		Vec2 point;
+		if (Spawner::LineIntersection(lineFrom, lineTo, vertA, vertB, &point))
+		{
+			cutIndexes[cutsFound] = i;
+			cutPositions[cutsFound] = point;
+			cutsFound += 1;
+		}
+
+	}
+
+	if (cutsFound == 2) // valid cut on this shape
+	{
+		// construct the new shape and add it to our environment
+		std::vector<Vec2> newShape = std::vector<Vec2>();
+		newShape.push_back(cutPositions[0] - m_position);
+		for (int i = cutIndexes[0]+1; i <= cutIndexes[1]; i++)
+		{
+			Vec2 point = m_points.at(i);
+			newShape.push_back(point);
+		}
+		newShape.push_back(cutPositions[1] - m_position);
+		ConvexPolygon* newPoly = new ConvexPolygon(m_position, 1, newShape, m_colour);
+
+		Vec2 cutDirection = glm::normalize(lineTo - lineFrom);
+		Vec2 cutPerp = { cutDirection.y, -cutDirection.x };
+		newPoly->ApplyImpulse(cutPerp);
+		ApplyImpulse(-cutPerp);
+
+		shapes->push_back(newPoly);
+		
+
+		// remove the verts from our current shape.
+		m_points.erase(m_points.begin() + cutIndexes[0] + 1, m_points.begin() + cutIndexes[1] + 1);
+		m_points.insert(m_points.begin() + cutIndexes[0] + 1, cutPositions[0] - m_position);
+		m_points.insert(m_points.begin() + cutIndexes[0] + 2, cutPositions[1] - m_position);
+
+		
+	}
 }
 
 Vec2 ConvexPolygon::GetVertexDirection(int vertIndex) const
