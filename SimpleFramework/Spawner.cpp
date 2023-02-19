@@ -41,38 +41,43 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 	{
 	case SPAWNER_STATE::IDLE:
 	{
-		if (shapeTemplates[templateIndex]->GetShape() == SHAPE::PLANE)
+		// Update our tool
+		if (selectedTool < 3) // circle, aabb, poly
 		{
-			Plane* plane = (Plane*)shapeTemplates[templateIndex];
+			if (shapeTemplates[selectedTool]->m_position != cursorPos)
+			{
+				Vec2 shapeToCursor = cursorPos - shapeTemplates[selectedTool]->m_position;
+				Vec2 shapeToCursorNormalized = glm::normalize(shapeToCursor);
+				shapeTemplates[selectedTool]->m_position += shapeToCursor * delta * 10.0f;
+			}
+		}
+		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_PLANE)
+		{
+			Plane* plane = (Plane*)shapeTemplates[selectedTool];
 			plane->m_normal = -glm::normalize(cursorPos);
 			plane->m_distance = -glm::length(cursorPos);
 		}
-		else
+		else if (selectedTool == (int)SPAWNER_TOOL::LINE_CUTTER)
 		{
-			if (shapeTemplates[templateIndex]->m_position != cursorPos)
-			{
-				Vec2 shapeToCursor = cursorPos - shapeTemplates[templateIndex]->m_position;
-				Vec2 shapeToCursorNormalized = glm::normalize(shapeToCursor);
-				shapeTemplates[templateIndex]->m_position += shapeToCursor * delta * 10.0f;
-			}
+			// some cool shit.
 		}
 		break;
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		if (templateIndex == (int)SHAPE::CIRCLE)
+		if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CIRCLE)
 		{
-			Circle* circle = (Circle*)shapeTemplates[templateIndex];
-			if (shapeTemplates[templateIndex]->m_position != cursorPos)
-				circle->m_radius = glm::distance(shapeTemplates[templateIndex]->m_position, cursorPos);
+			Circle* circle = (Circle*)shapeTemplates[(int)SHAPE::CIRCLE];
+			if (shapeTemplates[selectedTool]->m_position != cursorPos)
+				circle->m_radius = glm::distance(shapeTemplates[selectedTool]->m_position, cursorPos);
 
 			if (circle->m_radius <= 0.3f)
 				circle->m_radius = 0.3f;
 
 		}
-		else if (templateIndex == (int)SHAPE::AABB)
+		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_AABB)
 		{
-			AABB* aabb = (AABB*)shapeTemplates[templateIndex];
+			AABB* aabb = (AABB*)shapeTemplates[(int)SHAPE::AABB];
 			float halfWidth = glm::abs(cursorPos.x - aabb->m_position.x);
 			float halfHeight = glm::abs(cursorPos.y - aabb->m_position.y);
 
@@ -83,13 +88,13 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 			aabb->m_halfHeight = halfHeight;
 
 		}
-		else if (templateIndex == (int)SHAPE::CONVEX_POLY)
+		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
 		{
 			DoPolygonConstructionUpdate(delta, cursorPos);
 		}
-		else if (templateIndex == (int)SHAPE::PLANE)
+		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_PLANE)
 		{
-			Plane* plane = (Plane*)shapeTemplates[templateIndex];
+			Plane* plane = (Plane*)shapeTemplates[(int)SHAPE::PLANE];
 			plane->m_normal = -glm::normalize(cursorPos);
 			plane->m_distance = -glm::length(cursorPos);
 		}
@@ -118,15 +123,24 @@ void Spawner::Draw(LineRenderer& lines)
 	{
 	case SPAWNER_STATE::IDLE:
 	{
-		shapeTemplates[templateIndex]->Draw(lines);
+		if(selectedTool < 4)
+			shapeTemplates[selectedTool]->Draw(lines);
+		else
+		{
+
+		}
 		break;
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		if (templateIndex != (int)SHAPE::CONVEX_POLY)
-			shapeTemplates[templateIndex]->Draw(lines);
-		else
+		if (selectedTool < 3)
+			shapeTemplates[selectedTool]->Draw(lines);
+		else if(selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
 			DoPolygonConstructionDraw(lines);
+		else if (selectedTool == (int)SPAWNER_TOOL::LINE_CUTTER)
+		{
+
+		}
 		break;
 	}
 	case SPAWNER_STATE::LAUNCH:
@@ -141,6 +155,10 @@ void Spawner::Draw(LineRenderer& lines)
 		grabbed->m_colour = { 1,1,1 };
 		grabbed->Draw(lines);
 		grabbed->m_colour = oldColour;
+	}
+	case SPAWNER_STATE::CUT:
+	{
+		lines.DrawLineSegment(cursorDownPos, cursorPos, { 1,0,0 });
 	}
 	default:
 		break;
@@ -172,44 +190,53 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 		}
 		else
 		{
-			// Spawn and Launch object logic
-			state = SPAWNER_STATE::LAUNCH;
-			// Spawn current template
-			switch (shapeTemplates[templateIndex]->GetShape())
+			if (selectedTool < 4) // Spawnables
 			{
-			case SHAPE::CIRCLE:
-			{
-				Circle* circle = new Circle(*(Circle*)(shapeTemplates[templateIndex]));
-				circle->m_position = cursorPos;
-				spawn = circle;
-				break;
+
+				// Spawn and Launch object logic
+				state = SPAWNER_STATE::LAUNCH;
+				// Spawn current template
+				switch (shapeTemplates[selectedTool]->GetShape())
+				{
+				case SHAPE::CIRCLE:
+				{
+					Circle* circle = new Circle(*(Circle*)(shapeTemplates[selectedTool]));
+					circle->m_position = cursorPos;
+					spawn = circle;
+					break;
+				}
+				case SHAPE::AABB:
+				{
+					AABB* aabb = new AABB(*dynamic_cast<AABB*>(shapeTemplates[selectedTool]));
+					aabb->m_position = cursorPos;
+					spawn = aabb;
+					break;
+				}
+				case SHAPE::PLANE:
+				{
+					Plane* plane = new Plane(*static_cast<Plane*>(shapeTemplates[selectedTool]));
+					spawn = plane;
+					break;
+				}
+				case SHAPE::CONVEX_POLY:
+				{
+					ConvexPolygon* poly = new ConvexPolygon(*(ConvexPolygon*)shapeTemplates[selectedTool]);
+					spawn = poly;
+					break;
+				}
+				}
 			}
-			case SHAPE::AABB:
+			else if (selectedTool == (int)SPAWNER_TOOL::LINE_CUTTER)
 			{
-				AABB* aabb = new AABB(*dynamic_cast<AABB*>(shapeTemplates[templateIndex]));
-				aabb->m_position = cursorPos;
-				spawn = aabb;
-				break;
-			}
-			case SHAPE::PLANE:
-			{
-				Plane* plane = new Plane(*static_cast<Plane*>(shapeTemplates[templateIndex]));
-				spawn = plane;
-				break;
-			}
-			case SHAPE::CONVEX_POLY:
-			{
-				ConvexPolygon* poly = new ConvexPolygon(*(ConvexPolygon*)shapeTemplates[templateIndex]);
-				spawn = poly;
-				break;
-			}
+				cursorDownPos = cursorPos;
+				state = SPAWNER_STATE::CUT;
 			}
 		}
 		break;
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		if (templateIndex == (int)SHAPE::CONVEX_POLY)
+		if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
 		{
 			// Poly spawner stuff
 			if (spawningVerts.size() > 0)
@@ -219,8 +246,8 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 					// Create the shape
 					ConvexPolygon* poly = new ConvexPolygon({ 0,0 }, 1, spawningVerts, templateColour);
 					spawningVerts.clear();
-					delete shapeTemplates[templateIndex];
-					shapeTemplates[templateIndex] = poly;
+					delete shapeTemplates[selectedTool];
+					shapeTemplates[selectedTool] = poly;
 					state = SPAWNER_STATE::IDLE;
 					poly->CalculateCentroid();
 					
@@ -292,6 +319,11 @@ void Spawner::OnLeftRelease()
 		state = SPAWNER_STATE::IDLE;
 		break;
 	}
+	case SPAWNER_STATE::CUT:
+	{
+		state = SPAWNER_STATE::IDLE;
+		// make line from cursorDownPos to cursorPos and calculate intersection across all convex polys
+	}
 	default:
 		break;
 	}
@@ -347,7 +379,7 @@ void Spawner::OnRightRelease()
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		if(templateIndex != (int)SHAPE::CONVEX_POLY) // to complicate for a drag release
+		if (selectedTool < 3) // simple buildables
 			state = SPAWNER_STATE::IDLE;
 		break;
 	}
@@ -370,15 +402,15 @@ void Spawner::OnMouseScroll(double delta)
 	{
 		if (glm::sign<double>(delta) == 1)
 		{
-			templateIndex += 1;
-			if (templateIndex == (int)SHAPE::COUNT)
-				templateIndex = 0;
+			selectedTool += 1;
+			if (selectedTool == (int)SPAWNER_TOOL::COUNT)
+				selectedTool = 0;
 		}
 		else if (glm::sign<double>(delta) == -1)
 		{
-			templateIndex -= 1;
-			if (templateIndex == -1)
-				templateIndex = (int)SHAPE::COUNT-1;
+			selectedTool -= 1;
+			if (selectedTool == -1)
+				selectedTool = (int)SPAWNER_TOOL::COUNT-1;
 		}
 	}
 

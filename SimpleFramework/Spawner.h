@@ -10,7 +10,20 @@ enum class SPAWNER_STATE
 	IDLE,
 	BUILD,
 	LAUNCH,
-	GRAB
+	GRAB,
+	CUT
+};
+
+// SPAWN_ indexes should align with with the shapeTemplates vector and the SHAPES enum
+enum class SPAWNER_TOOL
+{
+	SPAWN_CIRCLE,
+	SPAWN_AABB,
+	SPAWN_CONVEX_POLY,
+	SPAWN_PLANE,
+	LINE_CUTTER,
+
+	COUNT
 };
 
 class Spawner
@@ -36,13 +49,13 @@ protected:
 	Vec3 templateColour = { 0.2f,0.2f,0.2f };
 	std::vector<Shape*>* shapes = nullptr;
 	std::vector<Shape*> shapeTemplates;
-	int templateIndex = 0;
+	int selectedTool = 0;
 	Shape* spawn = nullptr;
-	Vec2 spawnStartPos = Vec2(0);
 	float timeSinceStart = 0.0f;
-	SPAWNER_STATE state = SPAWNER_STATE::IDLE;
+	SPAWNER_STATE state = SPAWNER_STATE::IDLE;;
 
-	Vec2 cursorPos;
+	Vec2 cursorPos = Vec2(0);
+	Vec2 cursorDownPos = Vec2(0);
 
 	// Poly Spawner shit
 	std::vector<Vec2> spawningVerts;
