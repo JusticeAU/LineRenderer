@@ -12,7 +12,8 @@ public:
 	void Draw(LineRenderer& lines) const override;
 
 	bool PointInShape(Vec2 point);
-	void LineIntersects(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shapes);
+	bool LineIntersects(Vec2 lineFrom, Vec2 lineTo) override;
+	void Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shapes) override;
 
 	Vec2 GetVertexDirection(int vertIndex) const;
 	Vec2 GetSurfaceNormal(int vertIndex) const;

@@ -24,3 +24,12 @@ bool Shape::PointInShape(Vec2 point)
 {
 	return false;
 }
+
+bool Shape::LineIntersects(Vec2 a, Vec2 b)
+{
+	return false; // default if not implemented
+}
+void Shape::Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes)
+{
+	// default is not sliceable
+}

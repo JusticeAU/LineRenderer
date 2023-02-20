@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "Maths.h"
 
 class LineRenderer;
@@ -35,4 +36,7 @@ public:
 	virtual void ApplyImpulse(Vec2 impulse);
 
 	virtual bool PointInShape(Vec2 point);
+
+	virtual bool LineIntersects(Vec2 a, Vec2 b);
+	virtual void Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes);
 };

@@ -49,7 +49,7 @@ bool ConvexPolygon::PointInShape(Vec2 point)
 		return false;
 }
 
-void ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shapes)
+bool ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo)
 {
 	int cutsFound = 0;
 	int cutIndexes[2];
@@ -71,11 +71,38 @@ void ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape
 	}
 
 	if (cutsFound == 2) // valid cut on this shape
+		return true;
+	else
+		return false;
+}
+
+void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shapes)
+{
+	int cutsFound = 0;
+	int cutIndexes[2];
+	Vec2 cutPositions[2];
+
+	for (int i = 0; i < m_points.size(); i++)
+	{
+		Vec2 vertA = GetVertexInWorldspace(i);
+		Vec2 vertB = GetVertexInWorldspace(i + 1);
+
+		Vec2 point;
+		if (Spawner::LineIntersection(lineFrom, lineTo, vertA, vertB, &point))
+		{
+			cutIndexes[cutsFound] = i;
+			cutPositions[cutsFound] = point;
+			cutsFound += 1;
+		}
+
+	}
+
+	if (cutsFound == 2) // valid cut on this shape
 	{
 		// construct the new shape and add it to our environment
 		std::vector<Vec2> newShape = std::vector<Vec2>();
 		newShape.push_back(cutPositions[0] - m_position);
-		for (int i = cutIndexes[0]+1; i <= cutIndexes[1]; i++)
+		for (int i = cutIndexes[0] + 1; i <= cutIndexes[1]; i++)
 		{
 			Vec2 point = m_points.at(i);
 			newShape.push_back(point);
