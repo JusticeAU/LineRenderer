@@ -17,19 +17,25 @@ Spawner::Spawner(std::vector<Shape*>* shapes)
 	this->shapes = shapes;
 
 	// Set up template shapes
+	// Circle
 	shapeTemplates.push_back(new Circle(Vec2(0), 1, 0, templateColour));
-	shapeTemplates.push_back(new AABB(Vec2(0), 1, 1.0f, 0, templateColour));
 
-	// set up hard coded poly for now:
+	// Box Poly
+	std::vector<Vec2> boxPoints;
+	boxPoints.push_back({ 1,1 });
+	boxPoints.push_back({ 1,-1 });
+	boxPoints.push_back({ -1,-1 });
+	boxPoints.push_back({ -1,1 });
+	shapeTemplates.push_back(new ConvexPolygon(Vec2(0), 1, boxPoints, templateColour));
+
+	// "Complex" Poly
 	std::vector<Vec2> somePoints = std::vector<Vec2>();
 	somePoints.push_back(Vec2(0, 1));
 	somePoints.push_back(Vec2(1.8, 0.8));
-
 	somePoints.push_back(Vec2(1, -1));
 	somePoints.push_back(Vec2(-1, -1));
 	shapeTemplates.push_back(new ConvexPolygon(Vec2(0), 1, somePoints, templateColour));
 	ConvexPolygon* poly = (ConvexPolygon*)shapeTemplates.back();
-
 	poly->RecalculateCentroid();
 
 	shapeTemplates.push_back(new Plane(Vec2(0), 1, templateColour));
@@ -78,17 +84,20 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 				circle->m_radius = 0.3f;
 
 		}
-		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_AABB)
+		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_AABB) // This is actually a poly now!!
 		{
-			AABB* aabb = (AABB*)shapeTemplates[(int)SHAPE::AABB];
-			float halfWidth = glm::abs(cursorPos.x - aabb->m_position.x);
-			float halfHeight = glm::abs(cursorPos.y - aabb->m_position.y);
+			ConvexPolygon* boxPoly = (ConvexPolygon*)shapeTemplates[(int)SHAPE::AABB];
+			float halfWidth = glm::abs(cursorPos.x - boxPoly->m_position.x);
+			float halfHeight = glm::abs(cursorPos.y - boxPoly->m_position.y);
 
-			halfWidth = glm::max(halfWidth, 0.2f);
-			halfHeight = glm::max(halfHeight, 0.2f);
+			halfWidth = glm::max(halfWidth, 0.5f);
+			halfHeight = glm::max(halfHeight, 0.5f);
 
-			aabb->m_halfWidth = halfWidth;
-			aabb->m_halfHeight = halfHeight;
+			// Update all points
+			boxPoly->m_points[0] = { halfWidth, halfHeight };
+			boxPoly->m_points[1] = { halfWidth, -halfHeight };
+			boxPoly->m_points[2] = { -halfWidth, -halfHeight };
+			boxPoly->m_points[3] = { -halfWidth, halfHeight };
 
 		}
 		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)

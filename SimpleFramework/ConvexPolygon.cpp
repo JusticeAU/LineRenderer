@@ -16,7 +16,7 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 	lines.FinishLineLoop();
 
 	// Draw its centrepoint
-	lines.DrawCircle(m_position, 0.1f);
+	//lines.DrawCircle(m_position, 0.1f);
 
 	//Draw its normals
 	/*for (int i = 0; i < m_points.size(); i++)
