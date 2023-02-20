@@ -19,6 +19,17 @@ CollisionFramework::CollisionFramework()
 
 void CollisionFramework::Update(float delta)
 {
+	// Delete any objects that need deleting
+	for (int i = 0; i < shapes.size(); i++)
+	{
+		Shape* shape = shapes[i];
+		if (shape->toBeDeleted)
+		{
+			shapes.erase(shapes.begin() + i);
+			i--;
+		}
+	}
+
 	// Update all primitives
 	for (auto& shape : shapes)
 		shape->Update(delta);

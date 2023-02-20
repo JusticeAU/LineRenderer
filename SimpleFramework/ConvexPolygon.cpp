@@ -28,25 +28,24 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 bool ConvexPolygon::PointInShape(Vec2 point)
 {
 	// Get
-	Vec2 testPlane = glm::normalize(m_position - point);
+	//Vec2 testPlane = glm::normalize(m_position - point);
 
-	float min = FLT_MAX;
-	float max = -FLT_MAX;
-	for (int i = 0; i < m_points.size(); i++)
+	for (int edge = 0; edge < m_points.size(); edge++)
 	{
-		float dot = glm::dot(GetVertexInWorldspace(i), testPlane);
-		if (dot < min)
-			min = dot;
-		if (dot > max)
-			max = dot;
+		Vec2 testEdge = GetSurfaceNormal(edge);
+		float max = -FLT_MAX;
+		for (int i = 0; i < m_points.size(); i++)
+		{
+			float dot = glm::dot(GetVertexInWorldspace(i), testEdge);
+			if (dot > max)
+				max = dot;
+		}
+
+		float pointDot = glm::dot(point, testEdge);
+
+		if (pointDot > max)
+			return false;
 	}
-
-	float pointDot = glm::dot(point, testPlane);
-
-	if (pointDot > min && pointDot < max)
-		return true;
-	else
-		return false;
 }
 
 bool ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo)
@@ -108,7 +107,8 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 			newShape.push_back(point);
 		}
 		newShape.push_back(cutPositions[1] - m_position);
-		ConvexPolygon* newPoly = new ConvexPolygon(m_position, 1, newShape, m_colour);
+		ConvexPolygon* newPoly = new ConvexPolygon(m_position, m_inverseMass, newShape, m_colour);
+		newPoly->m_velocity = m_velocity;
 
 		Vec2 cutDirection = glm::normalize(lineTo - lineFrom);
 		Vec2 cutPerp = { cutDirection.y, -cutDirection.x };

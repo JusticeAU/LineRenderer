@@ -15,4 +15,6 @@ public:
 
 	bool PointInShape(Vec2 point) override;
 
+	bool LineIntersects(Vec2 a, Vec2 b) override;
+	void Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes) override;
 };

@@ -23,6 +23,7 @@ public:
 	Vec2 m_gravityForNow = { 0, -9.81 };
 	float m_inverseMass = 0.0f;
 	Vec3 m_colour = { 1,1,1 };
+	bool toBeDeleted = false;
 
 	Shape(SHAPE shape, Vec2 position, float inverseMass, Vec3 colour = {1, 1, 1}) : m_type(shape), m_position(position), m_inverseMass(inverseMass), m_colour(colour) {}
 

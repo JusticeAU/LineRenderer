@@ -431,7 +431,8 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 	ConvexPolygon* poly1 = (ConvexPolygon*)a;
 	ConvexPolygon* poly2 = (ConvexPolygon*)b;
 
-	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
+	std::vector<Vec2> vertexDirections;
+	vertexDirections.reserve(poly1->m_points.size() + poly2->m_points.size());
 
 	for (int i = 0; i < poly1->m_points.size(); i++)
 		vertexDirections.push_back(poly1->GetVertexDirection(i));

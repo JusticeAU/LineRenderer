@@ -115,7 +115,6 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 			Vec2 shapeToCursorNormalized = glm::normalize(shapeToCursor);
 			grabbed->m_velocity = shapeToCursor * 10.0f;
 		}
-		break;
 	}
 	}
 }
@@ -333,7 +332,10 @@ void Spawner::OnLeftRelease()
 		{
 			Shape* shape = shapes->at(i);
 			if (shape->LineIntersects(cursorDownPos, cursorPos))
+			{
+				std::cout << "SLICEM" << std::endl;
 				shape->Slice(cursorDownPos, cursorPos, shapes);
+			}
 		}
 	}
 	default:
@@ -364,17 +366,11 @@ void Spawner::OnRightClick()
 	}
 	case SPAWNER_STATE::GRAB:
 	{
+		state = SPAWNER_STATE::IDLE;
+		
 		// Delete grabbed object
-		for (int i = 0; i < shapes->size(); i++)
-		{
-			if (grabbed == shapes->at(i))
-			{
-				shapes->erase(shapes->begin()  + i);
-				grabbed = nullptr;
-				state = SPAWNER_STATE::IDLE;
-				break;
-			}
-		}
+		grabbed->toBeDeleted = true;
+		grabbed = nullptr;
 	}
 	default:
 		break;
