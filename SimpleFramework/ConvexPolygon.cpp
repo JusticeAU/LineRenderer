@@ -2,12 +2,9 @@
 #include "LineRenderer.h"
 #include "Spawner.h"
 
-#include <iostream>
-
-
 void ConvexPolygon::CalculateMassFromArea()
 {
-	// intentionall left blank for now
+	// intentionally left blank for now
 }
 
 void ConvexPolygon::Draw(LineRenderer& lines) const
@@ -19,7 +16,7 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 	lines.FinishLineLoop();
 
 	// Draw its centrepoint
-	//lines.DrawCircle(m_position, 0.1f);
+	lines.DrawCircle(m_position, 0.1f);
 
 	//Draw its normals
 	/*for (int i = 0; i < m_points.size(); i++)
@@ -92,14 +89,14 @@ void ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape
 		ApplyImpulse(-cutPerp);
 
 		shapes->push_back(newPoly);
-		
 
 		// remove the verts from our current shape.
 		m_points.erase(m_points.begin() + cutIndexes[0] + 1, m_points.begin() + cutIndexes[1] + 1);
 		m_points.insert(m_points.begin() + cutIndexes[0] + 1, cutPositions[0] - m_position);
 		m_points.insert(m_points.begin() + cutIndexes[0] + 2, cutPositions[1] - m_position);
 
-		
+		RecalculateCentroid();
+		newPoly->RecalculateCentroid();
 	}
 }
 
@@ -136,10 +133,10 @@ Vec2 ConvexPolygon::GetVertexInWorldspace(int vertIndex) const
 	return m_position + m_points[vertIndex];
 }
 
-
-void ConvexPolygon::CalculateCentroid()
+void ConvexPolygon::RecalculateCentroid()
 {
 	Vec2 centroid(0);
+	Vec2 anOldPos = GetVertexInWorldspace(0);
 
 	for (auto& point : m_points)
 		centroid += point;
@@ -150,4 +147,9 @@ void ConvexPolygon::CalculateCentroid()
 		point -= centroid;
 
 	m_position = centroid;
+
+	// Correct the position based on a known quantity from before
+	Vec2 aNewPos = GetVertexInWorldspace(0);
+	Vec2 change = aNewPos - anOldPos;
+	m_position -= change;
 }

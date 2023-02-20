@@ -30,7 +30,7 @@ Spawner::Spawner(std::vector<Shape*>* shapes)
 	shapeTemplates.push_back(new ConvexPolygon(Vec2(0), 1, somePoints, templateColour));
 	ConvexPolygon* poly = (ConvexPolygon*)shapeTemplates.back();
 
-	poly->CalculateCentroid();
+	poly->RecalculateCentroid();
 
 	shapeTemplates.push_back(new Plane(Vec2(0), 1, templateColour));
 }
@@ -254,7 +254,7 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 					delete shapeTemplates[selectedTool];
 					shapeTemplates[selectedTool] = poly;
 					state = SPAWNER_STATE::IDLE;
-					poly->CalculateCentroid();
+					poly->RecalculateCentroid();
 					
 				}
 				else

@@ -19,7 +19,7 @@ public:
 	Vec2 GetSurfaceMidPoint(int vertIndex) const;
 	Vec2 GetVertexInWorldspace(int vertIndex) const;
 
-	void CalculateCentroid();
+	void RecalculateCentroid();
 
 	std::vector<Vec2> m_points;
 protected:
