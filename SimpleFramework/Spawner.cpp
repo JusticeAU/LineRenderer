@@ -7,11 +7,9 @@
 #include "ConvexPolygon.h"
 #include "CollisionData.h"
 #include "CollisionFunctions.h"
-
 #include "LineRenderer.h"
 #include "glm.hpp"
 
-#include <iostream>
 Spawner::Spawner(std::vector<Shape*>* shapes)
 {
 	this->shapes = shapes;
@@ -256,13 +254,12 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 			{
 				if (glm::distance(potentialVert, spawningVerts.front()) < 0.2f)
 				{
+					state = SPAWNER_STATE::IDLE;
 					// Create the shape
 					ConvexPolygon* poly = new ConvexPolygon({ 0,0 }, 1, spawningVerts, templateColour);
 					spawningVerts.clear();
 					delete shapeTemplates[selectedTool];
 					shapeTemplates[selectedTool] = poly;
-					state = SPAWNER_STATE::IDLE;
-					poly->RecalculateCentroid();
 					
 				}
 				else
@@ -336,16 +333,13 @@ void Spawner::OnLeftRelease()
 	{
 		state = SPAWNER_STATE::IDLE;
 
-		// make line from cursorDownPos to cursorPos and calculate intersection across all shapes polys
+		// make line from cursorDownPos to cursorPos and calculate intersection across all current polys
 		int maxShapesToCheck = shapes->size();
 		for (int i = 0; i < maxShapesToCheck; i++)
 		{
 			Shape* shape = shapes->at(i);
 			if (shape->LineIntersects(cursorDownPos, cursorPos))
-			{
-				std::cout << "SLICEM" << std::endl;
 				shape->Slice(cursorDownPos, cursorPos, shapes);
-			}
 		}
 	}
 	default:
@@ -522,7 +516,6 @@ void Spawner::DoPolygonConstructionUpdate(float delta, Vec2 cursorPos)
 				LineIntersection(A, B, C, D, &maxPoint);
 
 				float dotto = glm::dot(glm::normalize(spawningVerts[0] - maxPoint), firstEdgeNormalized);
-				std::cout << dotto << std::endl;
 				if (dotto > 0.99f)
 				{
 					//lines->DrawCircle(maxPoint, 0.3f);

@@ -2,6 +2,8 @@
 #include "LineRenderer.h"
 #include "Spawner.h"
 
+#include <iostream>
+
 void ConvexPolygon::Update(float deltaTime)
 {
 	Shape::Update(deltaTime);
@@ -11,26 +13,40 @@ void ConvexPolygon::Update(float deltaTime)
 void ConvexPolygon::Draw(LineRenderer& lines) const
 {
 	lines.SetColour(m_colour);
+
 	for (auto& point : m_points)
 		lines.AddPointToLine(m_position + point);
 
 	lines.FinishLineLoop();
 
 	// Draw its centrepoint
-	//lines.DrawCircle(m_position, 0.1f);
+	lines.DrawCircle(m_position, 0.1f);
 
-	//Draw its normals
-	/*for (int i = 0; i < m_points.size(); i++)
-	{
-		lines.DrawLineSegment(m_position + GetSurfaceMidPoint(i), m_position + GetSurfaceMidPoint(i) + (GetSurfaceNormal(i) * 0.3f));
-	}*/
-
-	//aabb.Draw(lines);
+	aabb.Draw(lines);
 }
 
 void ConvexPolygon::CalculateMassFromArea()
 {
-	// intentionally left blank for now
+	// We will construct triangles from the centrepoint to each face and sum their area for a total area, which will be our mass.
+	float totalArea = 0;
+	float lengthAB = glm::distance(m_position, GetVertexInWorldspace(0));
+	for (int i = 0; i < m_points.size(); i++)
+	{
+		float lengthAC = glm::distance(m_position, GetVertexInWorldspace(i+1));
+		float lengthBC = glm::distance(GetVertexInWorldspace(i), GetVertexInWorldspace(i + 1));
+
+
+		// Heron's Formula for area of a triangle with 3 known lengths.
+		float s = (lengthAB + lengthAC + lengthBC) / 2; // semi-perimiter
+		float area = glm::sqrt(s * (s - lengthAB) * (s - lengthAC) * (s - lengthBC));
+		
+		totalArea += area;
+
+		// reuse AC as AB for next iteration
+		lengthAB = lengthAC;
+	}
+
+	m_inverseMass = 1 / totalArea;
 }
 
 bool ConvexPolygon::PointInShape(Vec2 point)
@@ -104,9 +120,9 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 
 	}
 
-	if (cutsFound == 2) // valid cut on this shape
+	if (cutsFound == 2) // valid cut on this Poly
 	{
-		// construct the new shape and add it to our environment
+		// construct the new Poly and add it to our environment
 		std::vector<Vec2> newShape = std::vector<Vec2>();
 		newShape.push_back(cutPositions[0] - m_position);
 		for (int i = cutIndexes[0] + 1; i <= cutIndexes[1]; i++)
@@ -117,23 +133,22 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 		newShape.push_back(cutPositions[1] - m_position);
 		ConvexPolygon* newPoly = new ConvexPolygon(m_position, m_inverseMass, newShape, m_colour);
 		newPoly->m_velocity = m_velocity;
+		newPoly->UpdateAABB();
+		shapes->push_back(newPoly);
 
+		// remove the verts from our current Poly and reprocess.
+		m_points.erase(m_points.begin() + cutIndexes[0] + 1, m_points.begin() + cutIndexes[1] + 1);
+		m_points.insert(m_points.begin() + cutIndexes[0] + 1, cutPositions[0] - m_position);
+		m_points.insert(m_points.begin() + cutIndexes[0] + 2, cutPositions[1] - m_position);
+		RecalculateCentroid();
+		UpdateAABB();
+		CalculateMassFromArea();
+
+		// Send the objects away from each other - looks cool and ninja!
 		Vec2 cutDirection = glm::normalize(lineTo - lineFrom);
 		Vec2 cutPerp = { cutDirection.y, -cutDirection.x };
 		newPoly->ApplyImpulse(cutPerp);
 		ApplyImpulse(-cutPerp);
-
-		shapes->push_back(newPoly);
-
-		// remove the verts from our current shape.
-		m_points.erase(m_points.begin() + cutIndexes[0] + 1, m_points.begin() + cutIndexes[1] + 1);
-		m_points.insert(m_points.begin() + cutIndexes[0] + 1, cutPositions[0] - m_position);
-		m_points.insert(m_points.begin() + cutIndexes[0] + 2, cutPositions[1] - m_position);
-
-		RecalculateCentroid();
-		UpdateAABB();
-		newPoly->RecalculateCentroid();
-		newPoly->UpdateAABB();
 	}
 }
 
@@ -197,10 +212,12 @@ void ConvexPolygon::UpdateAABB()
 	float maxWidth = -FLT_MAX;
 	for (auto& point : m_points)
 	{
+		//max = glm::max(glm::max(glm::abs(point.y), glm::abs(point.x)), max); // Old ver for kicks
 		maxHeight = glm::max(glm::abs(point.y), maxHeight);
 		maxWidth = glm::max(glm::abs(point.x), maxWidth);
 	}
 
 	aabb.m_halfHeight = maxHeight;
 	aabb.m_halfWidth = maxWidth;
+
 }

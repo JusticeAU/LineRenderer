@@ -10,6 +10,7 @@ public:
 		: Shape(SHAPE::CONVEX_POLY, position, inverseMass, colour), m_points(points) {
 		RecalculateCentroid();
 		UpdateAABB();
+		CalculateMassFromArea();
 	}
 
 	std::vector<Vec2> m_points;
