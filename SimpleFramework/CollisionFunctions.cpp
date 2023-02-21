@@ -227,6 +227,11 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 	ConvexPolygon* poly1 = (ConvexPolygon*)a;
 	Circle* circle2 = (Circle*)b;
 
+	// Check AABB first
+	CollisionData broadCollision = AABBOnCircle(&poly1->aabb, b);
+	if (broadCollision.IsCollision() == false)
+		return broadCollision;
+
 	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
 
 	for (int i = 0; i < poly1->m_points.size(); i++)
@@ -316,6 +321,11 @@ CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
 
 	ConvexPolygon* poly1 = (ConvexPolygon*)a;
 	Plane* plane2 = (Plane*)b;
+
+	// Check AABB first
+	CollisionData broadCollision = AABBOnPlane(&poly1->aabb, b);
+	if (broadCollision.IsCollision() == false)
+		return broadCollision;
 
 	float maxDepth = -FLT_MAX;
 	for (int i = 0; i < poly1->m_points.size(); i++)
@@ -430,6 +440,12 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 
 	ConvexPolygon* poly1 = (ConvexPolygon*)a;
 	ConvexPolygon* poly2 = (ConvexPolygon*)b;
+
+	// Check AABB first
+	CollisionData broadCollision = AABBOnAABB(&poly1->aabb, &poly2->aabb);
+	if (broadCollision.IsCollision() == false)
+		return broadCollision;
+
 
 	std::vector<Vec2> vertexDirections;
 	vertexDirections.reserve(poly1->m_points.size() + poly2->m_points.size());

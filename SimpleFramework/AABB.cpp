@@ -23,8 +23,6 @@ void AABB::Draw(LineRenderer& lines) const
 	lines.AddPointToLine({ maxX, maxY });
 	lines.AddPointToLine({ maxX, minY });
 	lines.FinishLineLoop();
-
-	//lines.DrawLineSegment(m_position, m_position + m_velocity);
 }
 
 bool AABB::PointInShape(Vec2 point)

@@ -2,9 +2,10 @@
 #include "LineRenderer.h"
 #include "Spawner.h"
 
-void ConvexPolygon::CalculateMassFromArea()
+void ConvexPolygon::Update(float deltaTime)
 {
-	// intentionally left blank for now
+	Shape::Update(deltaTime);
+	aabb.m_position = m_position;
 }
 
 void ConvexPolygon::Draw(LineRenderer& lines) const
@@ -23,6 +24,13 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 	{
 		lines.DrawLineSegment(m_position + GetSurfaceMidPoint(i), m_position + GetSurfaceMidPoint(i) + (GetSurfaceNormal(i) * 0.3f));
 	}*/
+
+	//aabb.Draw(lines);
+}
+
+void ConvexPolygon::CalculateMassFromArea()
+{
+	// intentionally left blank for now
 }
 
 bool ConvexPolygon::PointInShape(Vec2 point)
@@ -123,7 +131,9 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 		m_points.insert(m_points.begin() + cutIndexes[0] + 2, cutPositions[1] - m_position);
 
 		RecalculateCentroid();
+		UpdateAABB();
 		newPoly->RecalculateCentroid();
+		newPoly->UpdateAABB();
 	}
 }
 
@@ -179,4 +189,18 @@ void ConvexPolygon::RecalculateCentroid()
 	Vec2 aNewPos = GetVertexInWorldspace(0);
 	Vec2 change = aNewPos - anOldPos;
 	m_position -= change;
+}
+
+void ConvexPolygon::UpdateAABB()
+{
+	float maxHeight = -FLT_MAX;
+	float maxWidth = -FLT_MAX;
+	for (auto& point : m_points)
+	{
+		maxHeight = glm::max(glm::abs(point.y), maxHeight);
+		maxWidth = glm::max(glm::abs(point.x), maxWidth);
+	}
+
+	aabb.m_halfHeight = maxHeight;
+	aabb.m_halfWidth = maxWidth;
 }

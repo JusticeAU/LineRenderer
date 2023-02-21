@@ -335,6 +335,7 @@ void Spawner::OnLeftRelease()
 	case SPAWNER_STATE::CUT:
 	{
 		state = SPAWNER_STATE::IDLE;
+
 		// make line from cursorDownPos to cursorPos and calculate intersection across all shapes polys
 		int maxShapesToCheck = shapes->size();
 		for (int i = 0; i < maxShapesToCheck; i++)
