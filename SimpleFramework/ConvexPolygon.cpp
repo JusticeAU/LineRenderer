@@ -140,7 +140,7 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 		m_points.erase(m_points.begin() + cutIndexes[0] + 1, m_points.begin() + cutIndexes[1] + 1);
 		m_points.insert(m_points.begin() + cutIndexes[0] + 1, cutPositions[0] - m_position);
 		m_points.insert(m_points.begin() + cutIndexes[0] + 2, cutPositions[1] - m_position);
-		RecalculateCentroid();
+		RecalculateCentre();
 		UpdateAABB();
 		CalculateMassFromArea();
 
@@ -185,20 +185,28 @@ Vec2 ConvexPolygon::GetVertexInWorldspace(int vertIndex) const
 	return m_position + m_points[vertIndex];
 }
 
-void ConvexPolygon::RecalculateCentroid()
+void ConvexPolygon::RecalculateCentre()
 {
-	Vec2 centroid(0);
-	Vec2 anOldPos = GetVertexInWorldspace(0);
+	float minX = FLT_MAX;
+	float minY = FLT_MAX;
+	float maxX = -FLT_MAX;
+	float maxY = -FLT_MAX;
+
+	Vec2 anOldPos = GetVertexInWorldspace(0); // We're going to take a reference point to ensure we dont cause a jump when we update the world position of the centre point
 
 	for (auto& point : m_points)
-		centroid += point;
+	{
+		minX = glm::min(minX, point.x);
+		minY = glm::min(minY, point.y);
+		maxX = glm::max(maxX, point.x);
+		maxY = glm::max(maxY, point.y);
+	}
 
-	centroid /= m_points.size();
-
+	Vec2 centre = { (minX + maxX) * 0.5f, (minY + maxY) * 0.5f };
 	for (auto& point : m_points)
-		point -= centroid;
+		point -= centre;
 
-	m_position = centroid;
+	m_position = centre;
 
 	// Correct the position based on a known quantity from before
 	Vec2 aNewPos = GetVertexInWorldspace(0);

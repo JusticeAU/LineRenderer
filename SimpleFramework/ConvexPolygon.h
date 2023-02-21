@@ -8,13 +8,14 @@ class ConvexPolygon : public Shape
 public:
 	ConvexPolygon(Vec2 position, float inverseMass, std::vector<Vec2> points, Vec3 colour = { 1,1,1 })
 		: Shape(SHAPE::CONVEX_POLY, position, inverseMass, colour), m_points(points) {
-		RecalculateCentroid();
+		RecalculateCentre();
 		UpdateAABB();
 		CalculateMassFromArea();
 	}
 
 	std::vector<Vec2> m_points;
 	AABB aabb;
+	Vec2 aabbOffset;
 
 	void Update(float deltaTime) override;
 	void Draw(LineRenderer& lines) const override;
@@ -29,7 +30,7 @@ public:
 	Vec2 GetSurfaceMidPoint(int vertIndex) const;
 	Vec2 GetVertexInWorldspace(int vertIndex) const;
 
-	void RecalculateCentroid();
+	void RecalculateCentre();
 	void UpdateAABB();
 
 protected:

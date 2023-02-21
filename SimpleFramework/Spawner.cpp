@@ -34,7 +34,7 @@ Spawner::Spawner(std::vector<Shape*>* shapes)
 	somePoints.push_back(Vec2(-1, -1));
 	shapeTemplates.push_back(new ConvexPolygon(Vec2(0), 1, somePoints, templateColour));
 	ConvexPolygon* poly = (ConvexPolygon*)shapeTemplates.back();
-	poly->RecalculateCentroid();
+	poly->RecalculateCentre();
 
 	shapeTemplates.push_back(new Plane(Vec2(0), 1, templateColour));
 }
