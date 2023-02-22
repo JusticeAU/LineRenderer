@@ -44,9 +44,9 @@ public:
 	void DoPolygonConstructionUpdate(float delta, Vec2 cursorPos);
 	void DoPolygonConstructionDraw(LineRenderer& lines);
 
-	static bool LineIntersection(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, Vec2* i = nullptr)
+	// Returns true if the lines intersect, optionally provide a pointer to Vec2 i to get that point of intersection.
+	static bool LineLineIntersection(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, Vec2* i = nullptr)
 	{
-
 		// https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 		Vec2 s1(0);
 		Vec2 s2(0);
@@ -57,18 +57,15 @@ public:
 		s = (-s1.y * (p0.x - p2.x) + s1.x * (p0.y - p2.y)) / (-s2.x * s1.y + s1.x * s2.y);
 		t = (s2.x * (p0.y - p2.y) - s2.y * (p0.x - p2.x)) / (-s2.x * s1.y + s1.x * s2.y);
 
-		if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) // Collision detected
 		{
-			// Collision detected
 			if (i != nullptr)
 			{
 				i->x = p0.x + (t * s1.x);
 				i->y = p0.y + (t * s1.y);
-
 			}
 			return true;
 		}
-
 		return false; // No collision
 	}
 

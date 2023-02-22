@@ -2,10 +2,9 @@
 #include "LineRenderer.h"
 #include "Spawner.h"
 
-#include <iostream>
-
 void ConvexPolygon::Update(float deltaTime)
 {
+	// We override this because we need to keep updating our AABBs position aswell.
 	Shape::Update(deltaTime);
 	aabb.m_position = m_position;
 }
@@ -18,11 +17,6 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 		lines.AddPointToLine(m_position + point);
 
 	lines.FinishLineLoop();
-
-	// Draw its centrepoint
-	lines.DrawCircle(m_position, 0.1f);
-
-	//aabb.Draw(lines);
 }
 
 void ConvexPolygon::CalculateMassFromArea()
@@ -34,7 +28,6 @@ void ConvexPolygon::CalculateMassFromArea()
 	{
 		float lengthAC = glm::distance(m_position, GetVertexInWorldspace(i+1));
 		float lengthBC = glm::distance(GetVertexInWorldspace(i), GetVertexInWorldspace(i + 1));
-
 
 		// Heron's Formula for area of a triangle with 3 known lengths.
 		float s = (lengthAB + lengthAC + lengthBC) / 2; // semi-perimiter
@@ -51,14 +44,12 @@ void ConvexPolygon::CalculateMassFromArea()
 
 bool ConvexPolygon::PointInShape(Vec2 point) const
 {
-	// Get
-	//Vec2 testPlane = glm::normalize(m_position - point);
-
-	for (int edge = 0; edge < m_points.size(); edge++)
+	// project all poly points and our test point on to every poly edge. if the point is greater than the max for an interation then its outside it.
+	for (int edge = 0; edge < GetVertexCount(); edge++)
 	{
 		Vec2 testEdge = GetSurfaceNormal(edge);
 		float max = -FLT_MAX;
-		for (int i = 0; i < m_points.size(); i++)
+		for (int i = 0; i < GetVertexCount(); i++)
 		{
 			float dot = glm::dot(GetVertexInWorldspace(i), testEdge);
 			if (dot > max)
@@ -74,17 +65,19 @@ bool ConvexPolygon::PointInShape(Vec2 point) const
 
 bool ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo)
 {
+	// Test if the cutting line intersects with two edges of our polygon
 	int cutsFound = 0;
 	int cutIndexes[2];
 	Vec2 cutPositions[2];
 
-	for (int i = 0; i < m_points.size(); i++)
+	for (int i = 0; i < GetVertexCount(); i++)
 	{
 		Vec2 vertA = GetVertexInWorldspace(i);
 		Vec2 vertB = GetVertexInWorldspace(i+1);
 
 		Vec2 point;
-		if (Spawner::LineIntersection(lineFrom, lineTo, vertA, vertB, &point))
+		// If there is an intersection then store it and increase our intersection count
+		if (Spawner::LineLineIntersection(lineFrom, lineTo, vertA, vertB, &point))
 		{
 			cutIndexes[cutsFound] = i;
 			cutPositions[cutsFound] = point;
@@ -99,19 +92,23 @@ bool ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo)
 		return false;
 }
 
+// If the Line created by linefrom and lineTo goes all the way through the polygon, i will split the polygon in to two.
+// The current polygon will be modified and a new one will be created and added to shapes.
 void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shapes)
 {
 	int cutsFound = 0;
 	int cutIndexes[2];
 	Vec2 cutPositions[2];
 
+	// Test if the cutting line intersects with two edges of our polygon
 	for (int i = 0; i < m_points.size(); i++)
 	{
 		Vec2 vertA = GetVertexInWorldspace(i);
 		Vec2 vertB = GetVertexInWorldspace(i + 1);
 
 		Vec2 point;
-		if (Spawner::LineIntersection(lineFrom, lineTo, vertA, vertB, &point))
+		// If there is an intersection then store it and increase our intersection count
+		if (Spawner::LineLineIntersection(lineFrom, lineTo, vertA, vertB, &point))
 		{
 			cutIndexes[cutsFound] = i;
 			cutPositions[cutsFound] = point;
@@ -133,7 +130,6 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 		newShape.push_back(cutPositions[1] - m_position);
 		ConvexPolygon* newPoly = new ConvexPolygon(m_position, m_inverseMass, newShape, m_colour);
 		newPoly->m_velocity = m_velocity;
-		newPoly->UpdateAABB();
 		shapes->push_back(newPoly);
 
 		// remove the verts from our current Poly and reprocess.
@@ -141,17 +137,18 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 		m_points.insert(m_points.begin() + cutIndexes[0] + 1, cutPositions[0] - m_position);
 		m_points.insert(m_points.begin() + cutIndexes[0] + 2, cutPositions[1] - m_position);
 		RecalculateCentre();
-		UpdateAABB();
+		RecalculateAABB();
 		CalculateMassFromArea();
 
 		// Send the objects away from each other - looks cool and ninja!
 		Vec2 cutDirection = glm::normalize(lineTo - lineFrom);
 		Vec2 cutPerp = { cutDirection.y, -cutDirection.x };
-		newPoly->ApplyImpulse(cutPerp);
-		ApplyImpulse(-cutPerp);
+		newPoly->ApplyImpulse(cutPerp * newPoly->GetMass());
+		ApplyImpulse(-cutPerp * GetMass());
 	}
 }
 
+// Returns a normalized direction of point vertIndex to vertIndex+1
 Vec2 ConvexPolygon::GetVertexDirection(int vertIndex) const
 {
 	Vec2 a = m_points[vertIndex];
@@ -162,6 +159,7 @@ Vec2 ConvexPolygon::GetVertexDirection(int vertIndex) const
 	return aToB;
 }
 
+// Returns the normal of edge vertIndex to vertIndex+1
 Vec2 ConvexPolygon::GetSurfaceNormal(int vertIndex) const
 {
 	Vec2 vertex = GetVertexDirection(vertIndex);
@@ -169,6 +167,7 @@ Vec2 ConvexPolygon::GetSurfaceNormal(int vertIndex) const
 	return normal;
 }
 
+// returns the point half way between vertIndex and vertIndex+1 in polygon space
 Vec2 ConvexPolygon::GetSurfaceMidPoint(int vertIndex) const
 {
 	Vec2 a = m_points[vertIndex];
@@ -178,6 +177,7 @@ Vec2 ConvexPolygon::GetSurfaceMidPoint(int vertIndex) const
 	return point;
 }
 
+// returns the point vertIndex in worldspace
 Vec2 ConvexPolygon::GetVertexInWorldspace(int vertIndex) const
 {
 	if (vertIndex >= m_points.size())
@@ -185,6 +185,16 @@ Vec2 ConvexPolygon::GetVertexInWorldspace(int vertIndex) const
 	return m_position + m_points[vertIndex];
 }
 
+// Replaces the current set of verticies in this Polygon. Triggers a center, AABB and area recalculation.
+void ConvexPolygon::SetPoints(std::vector<Vec2> points)
+{
+	m_points = points;
+	RecalculateCentre();
+	RecalculateAABB();
+	CalculateMassFromArea();
+}
+
+// Gets the min/max X/Y coordinates of all verts and updates the centre of the polygon to be the mean of the min/max. Updates the worldspace position so there is no jump.
 void ConvexPolygon::RecalculateCentre()
 {
 	float minX = FLT_MAX;
@@ -214,18 +224,17 @@ void ConvexPolygon::RecalculateCentre()
 	m_position -= change;
 }
 
-void ConvexPolygon::UpdateAABB()
+// Recalculates the bounds of the AABB used for broadphase collision.
+void ConvexPolygon::RecalculateAABB()
 {
 	float maxHeight = -FLT_MAX;
 	float maxWidth = -FLT_MAX;
 	for (auto& point : m_points)
 	{
-		//max = glm::max(glm::max(glm::abs(point.y), glm::abs(point.x)), max); // Old ver for kicks
 		maxHeight = glm::max(glm::abs(point.y), maxHeight);
 		maxWidth = glm::max(glm::abs(point.x), maxWidth);
 	}
 
 	aabb.SetHalfHeight(maxHeight);
 	aabb.SetHalfWidth(maxWidth);
-
 }

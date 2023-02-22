@@ -92,10 +92,12 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 			halfHeight = glm::max(halfHeight, 0.5f);
 
 			// Update all points
-			boxPoly->m_points[0] = { halfWidth, halfHeight };
-			boxPoly->m_points[1] = { halfWidth, -halfHeight };
-			boxPoly->m_points[2] = { -halfWidth, -halfHeight };
-			boxPoly->m_points[3] = { -halfWidth, halfHeight };
+			std::vector<Vec2> points;
+			points.push_back({ halfWidth, halfHeight });
+			points.push_back({ halfWidth, -halfHeight });
+			points.push_back({ -halfWidth, -halfHeight });
+			points.push_back({ -halfWidth, halfHeight });
+			boxPoly->SetPoints(points);
 
 		}
 		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
@@ -517,7 +519,7 @@ void Spawner::DoPolygonConstructionUpdate(float delta, Vec2 cursorPos)
 				D = v2;
 
 				Vec2 maxPoint;
-				LineIntersection(A, B, C, D, &maxPoint);
+				LineLineIntersection(A, B, C, D, &maxPoint);
 
 				float dotto = glm::dot(glm::normalize(spawningVerts[0] - maxPoint), firstEdgeNormalized);
 				if (dotto > 0.99f)

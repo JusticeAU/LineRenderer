@@ -247,7 +247,7 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 	// Use SAT to find smallest overlap (or any gap)
 	// Get all poly edge directions and line from circle centre to each vertex
 	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
-	for (int i = 0; i < poly1->m_points.size(); i++)
+	for (int i = 0; i < poly1->GetVertexCount(); i++)
 	{
 		vertexDirections.push_back(poly1->GetVertexDirection(i));
 		Vec2 vertexToCircle = poly1->GetVertexInWorldspace(i) - circle2->m_position;
@@ -273,7 +273,7 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 		float circle2max = -FLT_MAX;
 
 		// project all of poly1s points
-		for (int i = 0; i < poly1->m_points.size(); i++)
+		for (int i = 0; i < poly1->GetVertexCount(); i++)
 		{
 			float point = glm::dot(poly1->GetVertexInWorldspace(i), planePerpendicular);
 			poly1min = glm::min(poly1min, point);
@@ -334,7 +334,7 @@ CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
 	// Use SAT to find smallest overlap (or any gap)
 	// Get all poly points and find which (if any) have the largest penetration in to the Plane
 	float maxDepth = -FLT_MAX;
-	for (int i = 0; i < poly1->m_points.size(); i++)
+	for (int i = 0; i < poly1->GetVertexCount(); i++)
 	{
 		float depth = plane2->DepthInPlane(poly1->GetVertexInWorldspace(i));
 		if (maxDepth < depth)
@@ -360,7 +360,7 @@ CollisionData ConvexPolyOnAABB(Shape* a, Shape* b)
 	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
 
 	// Add the polys verts
-	for (int i = 0; i < poly1->m_points.size(); i++)
+	for (int i = 0; i < poly1->GetVertexCount(); i++)
 		vertexDirections.push_back(-poly1->GetVertexDirection(i));
 
 	// Add cardinal x/y for the AABB
@@ -397,7 +397,7 @@ CollisionData ConvexPolyOnAABB(Shape* a, Shape* b)
 		}
 
 		// check all of the Polyss points
-		for (int polyi = 0; polyi < poly1->m_points.size(); polyi++)
+		for (int polyi = 0; polyi < poly1->GetVertexCount(); polyi++)
 		{
 			float point = glm::dot(poly1->GetVertexInWorldspace(polyi), planePerpendicular);
 			poly2min = glm::min(poly2min, point);
@@ -455,10 +455,10 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 	// Use SAT to find smallest overlap (or any gap)
 	// Get all poly edge directions
 	std::vector<Vec2> vertexDirections;
-	vertexDirections.reserve(poly1->m_points.size() + poly2->m_points.size());
-	for (int i = 0; i < poly1->m_points.size(); i++)
+	vertexDirections.reserve(poly1->GetVertexCount() + poly2->GetVertexCount());
+	for (int i = 0; i < poly1->GetVertexCount(); i++)
 		vertexDirections.push_back(poly1->GetVertexDirection(i));
-	for (int i = 0; i < poly2->m_points.size(); i++)
+	for (int i = 0; i < poly2->GetVertexCount(); i++)
 		vertexDirections.push_back(-poly2->GetVertexDirection(i));
 
 	// Find the minimum overlap
@@ -480,7 +480,7 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 		float poly2max = -FLT_MAX;
 
 		// project all of poly1s points
-		for (int i = 0; i < poly1->m_points.size(); i++)
+		for (int i = 0; i < poly1->GetVertexCount(); i++)
 		{
 			float point = glm::dot(poly1->GetVertexInWorldspace(i), planePerpendicular);
 			poly1min = glm::min(poly1min, point);
@@ -488,7 +488,7 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 		}
 
 		// project all of poly2s points
-		for (int i = 0; i < poly2->m_points.size(); i++)
+		for (int i = 0; i < poly2->GetVertexCount(); i++)
 		{
 			float point = glm::dot(poly2->GetVertexInWorldspace(i), planePerpendicular);
 			poly2min = glm::min(poly2min, point);
