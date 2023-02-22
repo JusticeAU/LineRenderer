@@ -187,7 +187,7 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 		// Check if were selecting an object
 		for (auto* shape : *shapes)
 		{
-			if (shape->PointInShape(cursorPos))
+			if (shape->PointInShape(cursorPos) && shape->GetShape() != SHAPE::PLANE)
 			{
 				grabbed = shape;
 				break;

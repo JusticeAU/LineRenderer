@@ -9,10 +9,9 @@ CollisionFramework::CollisionFramework()
 	spawner = new Spawner(&shapes);
 
 	// Set up world border planes
-	shapes.push_back(new Plane({ 0,1 }, -9, { 1,1,1 }));
-	shapes.push_back(new Plane({ 1,0 }, -16, { 1,1,1 }));
-	shapes.push_back(new Plane({ -1,0 }, -16, { 1,1,1 }));
-
+	shapes.push_back(new Plane({ 0,1 }, -9, { 0,0,0 }));
+	shapes.push_back(new Plane({ 1,0 }, -16, { 0,0,0 }));
+	shapes.push_back(new Plane({ -1,0 }, -16, { 0,0,0 }));
 }
 
 void CollisionFramework::Update(float delta)
