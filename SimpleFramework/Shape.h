@@ -29,22 +29,24 @@ protected:
 
 public:
 	SHAPE GetShape() { return m_type; }
-
-	virtual void Update(float deltaTime);
-	virtual void CalculateMassFromArea() = 0;
-	virtual void Draw(LineRenderer& lines) const = 0;
-	virtual bool PointInShape(Vec2 point) const = 0;
 	
 	virtual void Move(Vec2 displacement);
 	virtual void ApplyImpulse(Vec2 impulse);
 
-	virtual bool LineIntersects(Vec2 a, Vec2 b);
+	virtual void Update(float deltaTime);
+	virtual void Draw(LineRenderer& lines) const = 0;
+	
+	virtual void CalculateMassFromArea() = 0;
+	virtual bool PointInShape(Vec2 point) const = 0;
+	virtual bool LineIntersects(Vec2 a, Vec2 b) const {}
+	virtual void Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes) {}
+	
 	void MarkForDeletion() { m_toBeDeleted = true; };
 	bool IsMarkedForDeletion()  const { return m_toBeDeleted; }
-	virtual void Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes);
 
 	void SetMass(float mass) { m_inverseMass = 1 / mass; }
 	void MakeKinematic() { m_inverseMass = 0.0f; }
-	float GetMass() const { return 1.0f / m_inverseMass; } // may return INFINITY for a kinematic/static object
+	// may return INFINITY for a kinematic/static object
+	float GetMass() const { return 1.0f / m_inverseMass; }
 	float GetInverseMass() const { return m_inverseMass; }
 };

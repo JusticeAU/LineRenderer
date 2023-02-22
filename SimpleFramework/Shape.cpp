@@ -1,30 +1,23 @@
 #include "Shape.h"
 
+// Moves the object by adding its velocity with forward Euler integration
 void Shape::Update(float deltaTime)
 {	
 	m_velocity += m_gravity * deltaTime;
 	Move(m_velocity * deltaTime);
 }
 
+// Applies a displacement to the shapes position
 void Shape::Move(Vec2 displacement)
 {
 	m_position += displacement;
 }
 
+// Applies an Impulse. impulse should be in newtons/s
 void Shape::ApplyImpulse(Vec2 impulse)
 {
 	if (m_inverseMass == 0)
 		return;
 
-	float mass = 1.0f / m_inverseMass;
-	m_velocity += impulse / mass;
-}
-
-bool Shape::LineIntersects(Vec2 a, Vec2 b)
-{
-	return false; // default if not implemented
-}
-void Shape::Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes)
-{
-	// default is not sliceable
+	m_velocity += impulse / GetMass();
 }
