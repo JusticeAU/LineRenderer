@@ -36,12 +36,13 @@ Spawner::Spawner(std::vector<Shape*>* shapes)
 	ConvexPolygon* poly = (ConvexPolygon*)shapeTemplates.back();
 	poly->RecalculateCentre();
 
+	// "Plain" Plane
 	shapeTemplates.push_back(new Plane(Vec2(0), 1, templateColour));
 }
 
 void Spawner::Update(float delta, Vec2 cursorPos)
 {
-	timeSinceStart += delta;
+	oldCursorPos = this->cursorPos;
 	this->cursorPos = cursorPos;
 
 	switch (state)
@@ -49,7 +50,7 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 	case SPAWNER_STATE::IDLE:
 	{
 		// Update our tool
-		if (selectedTool < 3) // circle, aabb, poly
+		if (selectedTool < 3) // Circle, Box, Poly
 		{
 			if (shapeTemplates[selectedTool]->m_position != cursorPos)
 			{
@@ -66,7 +67,7 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 		}
 		else if (selectedTool == (int)SPAWNER_TOOL::LINE_CUTTER)
 		{
-			// some cool shit.
+			// Cutter has no behaviour in update. It it handled entirely in LeftClick and LeftRelease
 		}
 		break;
 	}
@@ -74,6 +75,7 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 	{
 		if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CIRCLE)
 		{
+			// Use cursor pos and circles current position to get a distance which will now be the radius.
 			Circle* circle = (Circle*)shapeTemplates[(int)SHAPE::CIRCLE];
 			if (shapeTemplates[selectedTool]->m_position != cursorPos)
 				circle->SetRadius(glm::distance(shapeTemplates[selectedTool]->m_position, cursorPos));
@@ -84,6 +86,7 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 		}
 		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_AABB) // This is actually a poly now!!
 		{
+			// Use cursor pos and and Boxes position to get a half width and height for our box spawning.
 			ConvexPolygon* boxPoly = (ConvexPolygon*)shapeTemplates[(int)SHAPE::AABB];
 			float halfWidth = glm::abs(cursorPos.x - boxPoly->m_position.x);
 			float halfHeight = glm::abs(cursorPos.y - boxPoly->m_position.y);
@@ -102,10 +105,12 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 		}
 		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
 		{
+			// Tell our slightly more complex poly building process to update.
 			DoPolygonConstructionUpdate(delta, cursorPos);
 		}
 		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_PLANE)
 		{
+			// use cursor pos to define a distance and normal for our plane template
 			Plane* plane = (Plane*)shapeTemplates[(int)SHAPE::PLANE];
 			plane->m_normal = -glm::normalize(cursorPos);
 			plane->m_distance = -glm::length(cursorPos);
@@ -114,10 +119,12 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 	}
 	case SPAWNER_STATE::LAUNCH:
 	{
+		// No action required. All handled in Draw and OnLeftRelease
 		break;
 	}
 	case SPAWNER_STATE::GRAB:
 	{
+		// Move the grabbed object towards the cursor
 		if (grabbed->m_position != cursorPos)
 		{
 			Vec2 shapeToCursor = cursorPos - grabbed->m_position;
@@ -128,7 +135,7 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 	}
 }
 
-void Spawner::Draw(LineRenderer& lines)
+void Spawner::Draw(LineRenderer& lines) const
 {
 	switch (state)
 	{
@@ -136,40 +143,36 @@ void Spawner::Draw(LineRenderer& lines)
 	{
 		if(selectedTool < 4)
 			shapeTemplates[selectedTool]->Draw(lines);
-		else
+		else if (selectedTool == (int)SPAWNER_TOOL::LINE_CUTTER)
 		{
-
+			// Super cool line cutter visual. Looks kind of like a laser pointer.
+			lines.DrawLineSegment(cursorPos, oldCursorPos, {1, 0, 0});
 		}
 		break;
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		if(selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
+		if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
 			DoPolygonConstructionDraw(lines);
 		else if (selectedTool < 3)
 			shapeTemplates[selectedTool]->Draw(lines);
-		else if (selectedTool == (int)SPAWNER_TOOL::LINE_CUTTER)
-		{
-
-		}
 		break;
 	}
 	case SPAWNER_STATE::LAUNCH:
 	{
+		// Draw the object we're spawning and a line from it to our cursor to indicate the velocity we're about to give it when we release.
 		spawn->Draw(lines);
 		lines.DrawLineSegment(spawn->m_position, cursorPos);
 		break;
 	}
 	case SPAWNER_STATE::GRAB:
 	{
-		Vec3 oldColour = grabbed->m_colour;
-		grabbed->m_colour = { 1,1,1 };
-		grabbed->Draw(lines);
-		grabbed->m_colour = oldColour;
+		grabbed->Draw(lines); // This will draw it white because we overrode the colour when we grabbed it, and will assign it back when we release.
 		break;
 	}
 	case SPAWNER_STATE::CUT:
 	{
+		// Draw a line from where our cut will start to the cursor.
 		lines.DrawLineSegment(cursorDownPos, cursorPos, { 1,0,0 });
 		break;
 	}
@@ -190,18 +193,20 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 			if (shape->PointInShape(cursorPos) && shape->GetShape() != SHAPE::PLANE)
 			{
 				grabbed = shape;
+				// Store shapes assigned colour and override it to be white to highlight that we've grabbed it.
+				grabbedColour = shape->m_colour;
+				shape->m_colour = { 1,1,1 };
 				break;
 			}
 		}
 
-		if (grabbed != nullptr)
+		if (grabbed != nullptr)	// Grab the object
 		{
-			// grab object logic
 			state = SPAWNER_STATE::GRAB;
 			grabbedInverseMass = grabbed->GetInverseMass();
 			grabbed->MakeKinematic();
 		}
-		else
+		else // Nothing to grab, have selected tool perform its action.
 		{
 			if (selectedTool < 4) // Spawnables
 			{
@@ -214,21 +219,13 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 				case SHAPE::CIRCLE:
 				{
 					Circle* circle = new Circle(*(Circle*)(shapeTemplates[selectedTool]));
-					circle->m_position = cursorPos;
 					spawn = circle;
 					break;
 				}
 				case SHAPE::AABB:
 				{
 					AABB* aabb = new AABB(*dynamic_cast<AABB*>(shapeTemplates[selectedTool]));
-					aabb->m_position = cursorPos;
 					spawn = aabb;
-					break;
-				}
-				case SHAPE::PLANE:
-				{
-					Plane* plane = new Plane(*static_cast<Plane*>(shapeTemplates[selectedTool]));
-					spawn = plane;
 					break;
 				}
 				case SHAPE::CONVEX_POLY:
@@ -237,10 +234,17 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 					spawn = poly;
 					break;
 				}
+				case SHAPE::PLANE:
+				{
+					Plane* plane = new Plane(*static_cast<Plane*>(shapeTemplates[selectedTool]));
+					spawn = plane;
+					break;
+				}
 				}
 			}
 			else if (selectedTool == (int)SPAWNER_TOOL::LINE_CUTTER)
 			{
+				// begin cut state.
 				cursorDownPos = cursorPos;
 				state = SPAWNER_STATE::CUT;
 			}
@@ -249,34 +253,8 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY)
-		{
-			// Poly spawner stuff
-			if (spawningVerts.size() > 0)
-			{
-				if (glm::distance(potentialVert, spawningVerts.front()) < 0.2f)
-				{
-					state = SPAWNER_STATE::IDLE;
-					// Create the shape
-					ConvexPolygon* poly = new ConvexPolygon({ 0,0 }, 1, spawningVerts, templateColour);
-					spawningVerts.clear();
-					delete shapeTemplates[selectedTool];
-					shapeTemplates[selectedTool] = poly;
-					
-				}
-				else
-				{
-					for (auto& vert : spawningVerts)
-					{
-						if (glm::distance(potentialVert, vert) < 0.2f)
-							return;
-					}
-					spawningVerts.push_back(potentialVert);
-				}
-			}
-			else
-				spawningVerts.push_back(cursorPos);
-		}
+		if (selectedTool == (int)SPAWNER_TOOL::SPAWN_CONVEX_POLY) // Run poly builder logic
+			DoPolygonConstructionLeftClick();
 		break;
 	}
 	default:
@@ -296,7 +274,6 @@ void Spawner::OnLeftRelease()
 	}
 	case SPAWNER_STATE::BUILD:
 	{
-		//state = SPAWNER_STATE::IDLE;
 		break;
 	}
 	case SPAWNER_STATE::LAUNCH:
@@ -332,6 +309,7 @@ void Spawner::OnLeftRelease()
 		if (grabbedInverseMass != 0.0f)
 			grabbed->SetMass(1.0f / grabbedInverseMass);
 
+		grabbed->m_colour = grabbedColour;
 		grabbed = nullptr;
 		break;
 	}
@@ -351,9 +329,6 @@ void Spawner::OnLeftRelease()
 	default:
 		break;
 	}
-
-
-
 }
 
 void Spawner::OnRightClick()
@@ -418,6 +393,7 @@ void Spawner::OnMouseScroll(double delta)
 {
 	if (state == SPAWNER_STATE::IDLE)
 	{
+		// Handle up and down scroll through different tools.
 		if (glm::sign<double>(delta) == 1)
 		{
 			selectedTool += 1;
@@ -436,10 +412,11 @@ void Spawner::OnMouseScroll(double delta)
 
 void Spawner::DoPolygonConstructionUpdate(float delta, Vec2 cursorPos)
 {
-	//Poly Spawner shit
+	// We're going to build a potentialVert position by taking the cursorPos and making sure its not in a place that would break the rules of a convex polygon.
 	potentialVert = cursorPos;
 	if(spawningVerts.size() > 0)
 	{
+		// Set up the various datapoints we're going to need.
 		Vec2 from = spawningVerts.back();
 
 		Vec2 lastEdgeNormalised, lastEdgePerpendicular, fromPos, lastVertToPotentialPos;
@@ -470,13 +447,8 @@ void Spawner::DoPolygonConstructionUpdate(float delta, Vec2 cursorPos)
 		fromPos = spawningVerts[spawningVerts.size() - 1];
 		lastVertToPotentialPos = potentialVert - spawningVerts.back();
 		potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
-			
 
-
-
-		//lines->SetColour({ .5,.5,.5 });
-
-		// check for attempt to make concave polygon in counter clockwise direction
+		// Check for attempt to make concave polygon in counter clockwise direction
 		dot = glm::dot(lastVertToPotentialPos, lastEdgeNormalised);
 		dotPerpendicular = glm::dot(lastVertToPotentialPos, lastEdgePerpendicular);
 		if (dotPerpendicular < 0)
@@ -485,7 +457,7 @@ void Spawner::DoPolygonConstructionUpdate(float delta, Vec2 cursorPos)
 			potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
 		}
 			
-		// check for attempt to make concave polygon in clockwise direction
+		// Check for attempt to make concave polygon in clockwise direction
 		dotToHome = glm::dot(lastVertToPotentialPos, toHome);
 		dotPerpendicularToHome = glm::dot(lastVertToPotentialPos, toHomePerpendicular);
 		if (dotPerpendicularToHome < 0 && spawningVerts.size() > 2)
@@ -494,20 +466,18 @@ void Spawner::DoPolygonConstructionUpdate(float delta, Vec2 cursorPos)
 			potentialVertdistanceToHome = glm::distance(potentialVert, spawningVerts[0]);
 		}
 
-		// check for attemp to make edge going past starting vector
+		// Check for attempt to make edge going past starting vector
 		firstVertToPotentialPos = potentialVert - spawningVerts[0];
 		dotfirstEdge = glm::dot(firstVertToPotentialPos, firstEdgeNormalized);
 		dotfirstEdgePerpendicular = glm::dot(firstVertToPotentialPos, firstEdgePerpendicular);
 		if (spawningVerts.size() > 2 && dotfirstEdgePerpendicular < 0.0f)
 		{
 
-			// check if our poly is closing in on itself so that we can define a max distance along this vector.
+			// Check if our poly is closing in on itself so that we can define a max distance along this vector.
 			float maxDistance = FLT_MAX;
 
 			Vec2 v1 = spawningVerts[0] + (-firstEdgeNormalized * 50.0f);
 			Vec2 v2 = spawningVerts[spawningVerts.size() - 1] + (lastEdgeNormalised * 50.0f);
-
-
 
 			float dot = glm::dot(glm::normalize(v1), glm::normalize(v2));
 			if (dot > 0.0f)
@@ -523,39 +493,26 @@ void Spawner::DoPolygonConstructionUpdate(float delta, Vec2 cursorPos)
 
 				float dotto = glm::dot(glm::normalize(spawningVerts[0] - maxPoint), firstEdgeNormalized);
 				if (dotto > 0.99f)
-				{
-					//lines->DrawCircle(maxPoint, 0.3f);
-					//lines->DrawLineSegment(spawningVerts[spawningVerts.size() - 1], v2, { 1,0,0 });
-					//lines->DrawLineSegment(spawningVerts[0], v1, { 1,0,0 });
 					maxDistance = glm::distance(spawningVerts[0], maxPoint);
-				}
 			}
 
 			potentialVert = spawningVerts[0] + (firstEdgeNormalized * glm::min(0.0f, glm::max(dotfirstEdge, -maxDistance)));
 		}
 
-		// check for closing the loop
+		// Check for closing the loop
 		if (glm::distance(cursorPos, spawningVerts[0]) < 0.2f)
 			potentialVert = spawningVerts[0];
-
-		//lines->DrawLineSegment(from, potentialVert);
-		//lines->DrawCircle(potentialVert, 0.1);
-
-		//lines->SetColour({ .8,.8,.8 });
-	}
-	else
-	{
-		//lines->DrawCircle(cursorPos, 0.1);
-
 	}
 }
 
-void Spawner::DoPolygonConstructionDraw(LineRenderer& lines)
+void Spawner::DoPolygonConstructionDraw(LineRenderer& lines) const
 {
-	//draw current poly progress
+	// Draw current poly progress
 	lines.SetColour(templateColour);
+
 	for (auto& point : spawningVerts)
 		lines.AddPointToLine(point);
+
 	lines.FinishLineStrip();
 
 	// Draw next potential line
@@ -564,4 +521,34 @@ void Spawner::DoPolygonConstructionDraw(LineRenderer& lines)
 
 	// Draw Cursor
 	lines.DrawCircle(potentialVert, 0.2f);
+}
+
+void Spawner::DoPolygonConstructionLeftClick()
+{
+	// Test if we're creating a new polygon or adding to one currently in construction
+	if (spawningVerts.size() > 0)
+	{
+		// check if we're close to the home point and complete the loop if we are.
+		if (glm::distance(potentialVert, spawningVerts.front()) < 0.2f)
+		{
+			state = SPAWNER_STATE::IDLE;
+			// Create the shape
+			ConvexPolygon* poly = new ConvexPolygon({ 0,0 }, 1, spawningVerts, templateColour);
+			spawningVerts.clear();
+			delete shapeTemplates[selectedTool];
+			shapeTemplates[selectedTool] = poly;
+
+		}
+		else // otherwise test that its not too close to another vert (annoying) and if not, push it on to the list of points.
+		{
+			for (auto& vert : spawningVerts)
+			{
+				if (glm::distance(potentialVert, vert) < 0.2f)
+					return;
+			}
+			spawningVerts.push_back(potentialVert);
+		}
+	}
+	else
+		spawningVerts.push_back(cursorPos);
 }

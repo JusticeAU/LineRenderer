@@ -63,7 +63,7 @@ bool ConvexPolygon::PointInShape(Vec2 point) const
 	}
 }
 
-bool ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo)
+bool ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo) const
 {
 	// Test if the cutting line intersects with two edges of our polygon
 	int cutsFound = 0;

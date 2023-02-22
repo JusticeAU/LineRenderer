@@ -15,7 +15,7 @@ public:
 	void CalculateMassFromArea() override;
 	void Draw(LineRenderer& lines) const override;
 
-	bool LineIntersects(Vec2 a, Vec2 b) override;
+	bool LineIntersects(Vec2 a, Vec2 b) const override;
 	bool PointInShape(Vec2 point) const override;
 	void Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes) override;
 

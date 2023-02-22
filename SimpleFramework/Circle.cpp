@@ -23,7 +23,7 @@ bool Circle::PointInShape(Vec2 point) const
 }
 
 // returns true if a line from a to b pass through the circle completely (has two points of intersection)
-bool Circle::LineIntersects(Vec2 a, Vec2 b)
+bool Circle::LineIntersects(Vec2 a, Vec2 b) const
 {
 	Vec2 first, second;
 	float lengthAB = glm::distance(a, b);

@@ -38,7 +38,7 @@ public:
 	
 	virtual void CalculateMassFromArea() = 0;
 	virtual bool PointInShape(Vec2 point) const = 0;
-	virtual bool LineIntersects(Vec2 a, Vec2 b) const {}
+	virtual bool LineIntersects(Vec2 a, Vec2 b) const { return false; } // default behaviour
 	virtual void Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes) {}
 	
 	void MarkForDeletion() { m_toBeDeleted = true; };

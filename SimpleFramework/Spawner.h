@@ -33,7 +33,7 @@ public:
 	Spawner(std::vector<Shape*>* shapes);
 
 	void Update(float delta, Vec2 cursorPos);
-	void Draw(LineRenderer& lines);
+	void Draw(LineRenderer& lines) const;
 	
 	void OnLeftClick(Vec2 cursorPos);
 	void OnLeftRelease();
@@ -42,7 +42,8 @@ public:
 	void OnMouseScroll(double delta);
 
 	void DoPolygonConstructionUpdate(float delta, Vec2 cursorPos);
-	void DoPolygonConstructionDraw(LineRenderer& lines);
+	void DoPolygonConstructionDraw(LineRenderer& lines) const;
+	void DoPolygonConstructionLeftClick();
 
 	// Returns true if the lines intersect, optionally provide a pointer to Vec2 i to get that point of intersection.
 	static bool LineLineIntersection(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, Vec2* i = nullptr)
@@ -73,22 +74,23 @@ protected:
 	Vec3 templateColour = { 0.2f,0.2f,0.2f };
 	std::vector<Shape*>* shapes = nullptr;
 	std::vector<Shape*> shapeTemplates;
-	int selectedTool = 0;
+	int selectedTool = 0; // index of the selected tool we're using. Tools have an enum but we can scroll through them using the mousewheel, so a number we can increment is handy.
 	Shape* spawn = nullptr;
-	float timeSinceStart = 0.0f;
 	SPAWNER_STATE state = SPAWNER_STATE::IDLE;;
 
-	Vec2 cursorPos = Vec2(0);
-	Vec2 cursorDownPos = Vec2(0);
 
-	// Poly Spawner shit
+	Vec2 cursorPos = Vec2(0); // Stored from update rather than passing it in to a bunch of other functions.
+	Vec2 cursorDownPos = Vec2(0); // position where a click started.
+
+	// Poly spawner variableS
 	std::vector<Vec2> spawningVerts;
-	Vec2 potentialVert;
+	Vec2 potentialVert = Vec2(0);
 
-	// Grabbeed Shape
+	// Grabbed Shape
 	Shape* grabbed = nullptr;
+	Vec3 grabbedColour = { 0,0,0 };
 	float grabbedInverseMass = 0.0f;
 
-	// Cutter test
-	ConvexPolygon* testPoly = nullptr;
+	// Slicer
+	Vec2 oldCursorPos = Vec2(0);
 };
