@@ -17,8 +17,4 @@ public:
 	bool IsCollision() const { return depth > 0.0f; }
 
 	void Resolve();
-
-	void DebugDrawCircleInfo(LineRenderer& lines) const;
-	void DebugDrawPlaneInfo(LineRenderer& lines) const;
-
 };
