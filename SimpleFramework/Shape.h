@@ -45,6 +45,6 @@ public:
 
 	void SetMass(float mass) { m_inverseMass = 1 / mass; }
 	void MakeKinematic() { m_inverseMass = 0.0f; }
-	float GetMass() const { return 1.0f / m_inverseMass; }
+	float GetMass() const { return 1.0f / m_inverseMass; } // may return INFINITY for a kinematic/static object
 	float GetInverseMass() const { return m_inverseMass; }
 };
