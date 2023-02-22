@@ -3,8 +3,6 @@
 #include "CollisionFunctions.h"
 #include "Spawner.h"
 
-#include <iostream>
-
 CollisionFramework::CollisionFramework()
 {
 	// Create our spawner tools and give it a reference to the vector of world shapes.
@@ -19,7 +17,7 @@ CollisionFramework::CollisionFramework()
 
 void CollisionFramework::Update(float delta)
 {
-	// Delete any objects that need deleting
+	// Delete any Shapes that need deleting
 	for (int i = 0; i < shapes.size(); i++)
 	{
 		Shape* shape = shapes[i];
@@ -29,10 +27,6 @@ void CollisionFramework::Update(float delta)
 			i--;
 		}
 	}
-
-	// Update all primitives
-	for (auto& shape : shapes)
-		shape->Update(delta);
 
 	// Do whacky gravity stuff ehehe.
 	if (middleMouseDown)
@@ -44,6 +38,10 @@ void CollisionFramework::Update(float delta)
 			shape->ApplyImpulse(toCursor * (1.0f / shape->GetInverseMass()));
 		}
 	}
+
+	// Update all Shapes
+	for (auto& shape : shapes)
+		shape->Update(delta);
 
 	// Perform collision tests and resolution passes against all shapes.
 	for (int i = 0; i < MAX_COLLISION_PASSES; i++)
