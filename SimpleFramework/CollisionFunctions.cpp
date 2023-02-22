@@ -1,5 +1,6 @@
 #include "CollisionFunctions.h"
 
+// Lookup table for collision functions. X and Y corrospond to the SHAPE enum.
 CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
 {
 	{CircleOnCircle, CircleOnAABB, CircleOnConvexPoly, CircleOnPlane},
@@ -8,6 +9,7 @@ CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
 	{PlaneOnCircle, PlaneOnAABB, PlaneOnConvexPoly, PlaneOnPlane},
 };
 
+// Looks up the shape types, performs the required collision check and returns a CollisionData.
 CollisionData TestCollisions(Shape* a, Shape* b)
 {
 	return COLLISION_FUNCTIONS[(int)a->GetShape()][(int)b->GetShape()](a, b);
@@ -15,50 +17,59 @@ CollisionData TestCollisions(Shape* a, Shape* b)
 
 CollisionData CircleOnCircle(Shape* a, Shape* b)
 {
-	Circle* circleA = static_cast<Circle*>(a);
-	Circle* circleB = static_cast<Circle*>(b);
+	Circle* circleA = (Circle*)a;
+	Circle* circleB = (Circle*)b;
 
 	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
+
+	
 	float distanceFromAToB = glm::distance(circleA->m_position, circleB->m_position);
 	if (distanceFromAToB < circleA->GetRadius() + circleB->GetRadius())
 	{
 		Vec2 displacement = b->m_position - circleA->m_position;
-		if (distanceFromAToB == 0) displacement = Vec2(1, 0); // if the circles are on top of each other, we just decide that they will move away from each other on the X plane.
+
+		// if the circles are on top of each other, we just decide that they will move away from each other on the X plane.
+		if (distanceFromAToB == 0) displacement = Vec2(1, 0);
+		
 		col.depth = circleA->GetRadius() + circleB->GetRadius() - distanceFromAToB;
 		col.normal = glm::normalize(displacement);
-		col.worldPosition = a->m_position + col.normal * (circleA->GetRadius() - col.depth / 2);
+		col.worldPosition = (a->m_position + b->m_position) * 0.5f; // half way between the two centre points
 	}
-	col.shapeA = a;
-	col.shapeB = b;
 	return col;
 }
 CollisionData CircleOnPlane(Shape* a, Shape* b)
 {
-	Circle* circleA = static_cast<Circle*>(a);
-	Plane* planeB = static_cast<Plane*>(b);
+	Circle* circleA = (Circle*)a;
+	Plane* planeB = (Plane*)b;
 
 	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
+
+	// Project circle pos on to plane normal and subtract plane distance
 	float distance = glm::dot(circleA->m_position, planeB->m_normal) - planeB->m_distance;
+
 	col.normal = -planeB->m_normal;
 	col.depth = -(distance - circleA->GetRadius());
 	col.worldPosition = circleA->m_position - (planeB->m_normal * distance);
-	col.shapeA = a;
-	col.shapeB = b;
 	return col;
 }
 CollisionData CircleOnAABB(Shape* a, Shape* b)
 {
-	Circle* circleA = static_cast<Circle*>(a);
-	AABB* aabbB = static_cast<AABB*>(b);
+	Circle* circleA = (Circle*)a;
+	AABB* aabbB = (AABB*)b;
 
 	CollisionData col;
+	col.shapeA = a;
+	col.shapeB = b;
+	
 	// Get the closest point
 	Vec2 closestPoint = aabbB->GetClosestPoint(circleA->m_position);
 	col.worldPosition = closestPoint;
-	col.shapeA = a;
-	col.shapeB = b;
 
-	// test if the circle centre is inside the AABB
+	// Test if the circle centre is inside the AABB
 	if (closestPoint == circleA->m_position)
 	{
 		// Circle centre is inside box so we will calculate normal differently
@@ -73,7 +84,6 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 		float distToDown = circleA->m_position.y - aabbMinY;
 		float distToRight = glm::abs(circleA->m_position.x - aabbMaxX);
 		float distToLeft = circleA->m_position.x - aabbMinX;
-
 		if (distToUp < distToDown && distToUp < distToRight && distToUp < distToLeft)
 		{
 			col.depth = distToUp + circleA->GetRadius();
@@ -114,6 +124,7 @@ CollisionData PlaneOnCircle(Shape* a, Shape* b)
 }
 CollisionData PlaneOnPlane(Shape* a, Shape* b)
 {
+	// Planes are kinematic and don't collide
 	CollisionData col;
 	col.shapeA = a;
 	col.shapeA = b;
@@ -123,20 +134,22 @@ CollisionData PlaneOnPlane(Shape* a, Shape* b)
 }
 CollisionData PlaneOnAABB(Shape* a, Shape* b)
 {
-	Plane* planeA = static_cast<Plane*>(a);
-	AABB* aabbB = static_cast<AABB*>(b);
+	Plane* planeA = (Plane*)a;
+	AABB* aabbB = (AABB*)b;
+
 	CollisionData col;
 	col.shapeA = a;
 	col.shapeB = b;
-	col.normal = planeA->m_normal;
 
-	// for each aabb point, get depth
+	col.normal = planeA->m_normal; // Normal will just be the plane normal
+
+	// For each aabb point, get depth
 	Vec2* points = aabbB->GetCorners();
 	float depths[4];
 	for (int i = 0; i < 4; i++)
 		depths[i] = planeA->DepthInPlane(points[i]);
 
-	// find greatest depths - 0-3 will be TopRight, BottomRight, Bottom Left, TopLeft
+	// Find greatest depths - 0-3 will be TopRight, BottomRight, Bottom Left, TopLeft
 	if (depths[0] > depths[1] && depths[0] > depths[2] && depths[0] > depths[3])
 	{
 		col.depth = depths[0];
@@ -159,7 +172,6 @@ CollisionData PlaneOnAABB(Shape* a, Shape* b)
 	}
 	
 	delete points;
-	// get the greatest depth and push out on the reverse normal of the plane
 	return col;
 }
 CollisionData PlaneOnConvexPoly(Shape* a, Shape* b)
@@ -177,8 +189,9 @@ CollisionData AABBOnPlane(Shape* a, Shape* b)
 }
 CollisionData AABBOnAABB(Shape* a, Shape* b)
 {
-	AABB* aabbA = static_cast<AABB*>(a);
-	AABB* aabbB = static_cast<AABB*>(b);
+	AABB* aabbA = (AABB*)a;
+	AABB* aabbB = (AABB*)b;
+
 	CollisionData col;
 	col.shapeA = a;
 	col.shapeB = b;
@@ -219,20 +232,21 @@ CollisionData AABBOnConvexPoly(Shape* a, Shape* b)
 
 CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 {
+	ConvexPolygon* poly1 = (ConvexPolygon*)a;
+	Circle* circle2 = (Circle*)b;
+
 	CollisionData col;
 	col.shapeA = a;
 	col.shapeB = b;
 
-	ConvexPolygon* poly1 = (ConvexPolygon*)a;
-	Circle* circle2 = (Circle*)b;
-
-	// Check AABB first
+	// Check AABB first as more performant and likely not close enough.
 	CollisionData broadCollision = AABBOnCircle(&poly1->aabb, b);
 	if (broadCollision.IsCollision() == false)
 		return broadCollision;
 
+	// Use SAT to find smallest overlap (or any gap)
+	// Get all poly edge directions and line from circle centre to each vertex
 	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
-
 	for (int i = 0; i < poly1->m_points.size(); i++)
 	{
 		vertexDirections.push_back(poly1->GetVertexDirection(i));
@@ -240,11 +254,10 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 		Vec2 perpendicular = { vertexToCircle.y, -vertexToCircle.x };
 		vertexDirections.push_back(-glm::normalize(perpendicular));
 	}
-
+	// Find the minimum overlap - if any edge has a gap then there is no collision and we can bail out.
 	float minOverlap = FLT_MAX;
 	int minOverlapIndex;
 	Vec2 vertexDirection;
-	bool gap = false;
 	for (int i = 0; i < vertexDirections.size(); i++)
 	{
 		// Set up the plane we're projecting on to.
@@ -273,7 +286,7 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 		circle2max = point + circle2->GetRadius();
 
 
-		// Get the overlap for this iteration
+		// Get the overlap for this iteration. If there's a gap when can bail out.
 		float overlapA = poly1max - circle2min;
 		float overlapB = circle2max - poly1min;
 		float overlap = glm::min(overlapA, overlapB);
@@ -296,36 +309,30 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 			}
 		}
 		else
-		{
-			//std::cout << "found a gap on axis" << i << " early outing" << std::endl;
-			gap = true;
-			break;
-		}
+			return col;
 
 	}
-
-	if (!gap)
-	{
-		col.depth = minOverlap;
-		col.normal = -vertexDirection;
-	}
-
+	// Wasn't a gap - there is a collision.
+	col.depth = minOverlap;
+	col.normal = -vertexDirection;
 	return col;
 }
 CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
 {
+	ConvexPolygon* poly1 = (ConvexPolygon*)a;
+	Plane* plane2 = (Plane*)b;
+
 	CollisionData col;
 	col.shapeA = a;
 	col.shapeB = b;
 
-	ConvexPolygon* poly1 = (ConvexPolygon*)a;
-	Plane* plane2 = (Plane*)b;
-
-	// Check AABB first
+	// Check AABB first as more performant (assuming polys have large number of points) and likely not close enough.
 	CollisionData broadCollision = AABBOnPlane(&poly1->aabb, b);
 	if (broadCollision.IsCollision() == false)
 		return broadCollision;
 
+	// Use SAT to find smallest overlap (or any gap)
+	// Get all poly points and find which (if any) have the largest penetration in to the Plane
 	float maxDepth = -FLT_MAX;
 	for (int i = 0; i < poly1->m_points.size(); i++)
 	{
@@ -342,12 +349,12 @@ CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
 }
 CollisionData ConvexPolyOnAABB(Shape* a, Shape* b)
 {
+	ConvexPolygon* poly1 = (ConvexPolygon*)a;
+	AABB* aabb2 = (AABB*)b;
+
 	CollisionData col;
 	col.shapeA = a;
 	col.shapeB = b;
-
-	ConvexPolygon* poly1 = (ConvexPolygon*)a;
-	AABB* aabb2 = (AABB*)b;
 
 	// Build a list of verts to test
 	std::vector<Vec2> vertexDirections = std::vector<Vec2>();
@@ -433,31 +440,31 @@ CollisionData ConvexPolyOnAABB(Shape* a, Shape* b)
 }
 CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 {
+	ConvexPolygon* poly1 = (ConvexPolygon*)a;
+	ConvexPolygon* poly2 = (ConvexPolygon*)b;
+
 	CollisionData col;
 	col.shapeA = a;
 	col.shapeB = b;
 
-	ConvexPolygon* poly1 = (ConvexPolygon*)a;
-	ConvexPolygon* poly2 = (ConvexPolygon*)b;
-
-	// Check AABB first
+	// Check AABB first as more performant and likely not close enough.
 	CollisionData broadCollision = AABBOnAABB(&poly1->aabb, &poly2->aabb);
 	if (broadCollision.IsCollision() == false)
 		return broadCollision;
 
-
+	// Use SAT to find smallest overlap (or any gap)
+	// Get all poly edge directions
 	std::vector<Vec2> vertexDirections;
 	vertexDirections.reserve(poly1->m_points.size() + poly2->m_points.size());
-
 	for (int i = 0; i < poly1->m_points.size(); i++)
 		vertexDirections.push_back(poly1->GetVertexDirection(i));
 	for (int i = 0; i < poly2->m_points.size(); i++)
 		vertexDirections.push_back(-poly2->GetVertexDirection(i));
 
+	// Find the minimum overlap
 	float minOverlap = FLT_MAX;
 	int minOverlapIndex;
 	Vec2 vertexDirection;
-	bool gap = false;
 	for (int i = 0; i < vertexDirections.size(); i++)
 	{
 		// Set up the plane we're projecting on to.
@@ -507,18 +514,12 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 			}
 		}
 		else
-		{
-			gap = true;
-			break;
-		}
+			return col; // There was a gap so we can bail out of the collision test
 
 	}
 
-	if (!gap)
-	{
-		col.depth = minOverlap;
-		col.normal = -vertexDirection;
-	}
-
+	// There wasn't a gap so we have a collision
+	col.depth = minOverlap;
+	col.normal = -vertexDirection;
 	return col;
 }
