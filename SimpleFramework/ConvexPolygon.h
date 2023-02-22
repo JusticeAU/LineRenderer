@@ -15,13 +15,12 @@ public:
 
 	std::vector<Vec2> m_points;
 	AABB aabb;
-	Vec2 aabbOffset;
 
 	void Update(float deltaTime) override;
 	void Draw(LineRenderer& lines) const override;
 
 	void CalculateMassFromArea() override;
-	bool PointInShape(Vec2 point);
+	bool PointInShape(Vec2 point) const;
 	bool LineIntersects(Vec2 lineFrom, Vec2 lineTo) override;
 	void Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shapes) override;
 

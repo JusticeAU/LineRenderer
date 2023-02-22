@@ -37,6 +37,15 @@ void Plane::Draw(LineRenderer& lines) const
 
 }
 
+bool Plane::PointInShape(Vec2 point) const
+{
+	float distance = m_distance - glm::dot(point, m_normal);
+	if (distance > 0)
+		return true;
+	else
+		return false;
+}
+
 float Plane::DepthInPlane(Vec2 point)
 {
 	float distance = m_distance - glm::dot(point, m_normal);

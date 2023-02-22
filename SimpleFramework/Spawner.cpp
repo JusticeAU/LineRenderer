@@ -76,10 +76,10 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 		{
 			Circle* circle = (Circle*)shapeTemplates[(int)SHAPE::CIRCLE];
 			if (shapeTemplates[selectedTool]->m_position != cursorPos)
-				circle->m_radius = glm::distance(shapeTemplates[selectedTool]->m_position, cursorPos);
+				circle->SetRadius(glm::distance(shapeTemplates[selectedTool]->m_position, cursorPos));
 
-			if (circle->m_radius <= 0.3f)
-				circle->m_radius = 0.3f;
+			if (circle->GetRadius() <= 0.3f)
+				circle->SetRadius(0.3f);
 
 		}
 		else if (selectedTool == (int)SPAWNER_TOOL::SPAWN_AABB) // This is actually a poly now!!
@@ -196,8 +196,8 @@ void Spawner::OnLeftClick(Vec2 cursorPos)
 		{
 			// grab object logic
 			state = SPAWNER_STATE::GRAB;
-			grabbedInverseMass = grabbed->m_inverseMass;
-			grabbed->m_inverseMass = 0;
+			grabbedInverseMass = grabbed->GetInverseMass();
+			grabbed->MakeKinematic();
 		}
 		else
 		{
@@ -324,9 +324,13 @@ void Spawner::OnLeftRelease()
 	}
 	case SPAWNER_STATE::GRAB:
 	{
-		grabbed->m_inverseMass = grabbedInverseMass;
-		grabbed = nullptr;
 		state = SPAWNER_STATE::IDLE;
+
+		// If the thing we grabbed wasn't originally kinematic then we need to set its mass back.
+		if (grabbedInverseMass != 0.0f)
+			grabbed->SetMass(1.0f / grabbedInverseMass);
+
+		grabbed = nullptr;
 		break;
 	}
 	case SPAWNER_STATE::CUT:
@@ -373,7 +377,7 @@ void Spawner::OnRightClick()
 		state = SPAWNER_STATE::IDLE;
 		
 		// Delete grabbed object
-		grabbed->toBeDeleted = true;
+		grabbed->MarkForDeletion();
 		grabbed = nullptr;
 	}
 	default:

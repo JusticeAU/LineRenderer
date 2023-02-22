@@ -16,15 +16,16 @@ void Circle::Draw(LineRenderer& lines) const
 	lines.DrawCircle(m_position, m_radius, 18);
 }
 
-bool Circle::PointInShape(Vec2 point)
+// Returns true if the position supplied is inside the circle
+bool Circle::PointInShape(Vec2 point) const
 {
 	return glm::distance(m_position, point) < m_radius;
 }
 
+// returns true if a line from a to b pass through the circle completely (has two points of intersection)
 bool Circle::LineIntersects(Vec2 a, Vec2 b)
 {
 	Vec2 first, second;
-
 	float lengthAB = glm::distance(a, b);
 
 	// Compute direction vector from A to B
@@ -66,22 +67,15 @@ bool Circle::LineIntersects(Vec2 a, Vec2 b)
 
 		return true;
 	}
-	else if (lengthEC == m_radius)
-	{
-		// Tangent point to circle is E
+	else // line doesnt touch circle
 		return false;
-	}
-	else
-	{
-		// line doesnt touch circle
-		return false;
-	}
 }
-
+// Converts the Circle to a Polygon and calls the Polygon Slice function on it.
+// If the line from a to B does not intersect the circle, this will still convert the Circle to a Polygon.
 void Circle::Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes)
 {
+	// Create a circle polygon based on current circle
 	const int segmentCount = 18;
-	// Create a circle polygon based on current circle, then call slice on it.
 	float cosAngle = cos(2 * 3.14159f / segmentCount);
 	float sinAngle = sin(2 * 3.14159f / segmentCount);
 
@@ -95,10 +89,10 @@ void Circle::Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes)
 		plotPoint = rotMat * plotPoint;
 		points.push_back(plotPoint);
 	}
-
+	// Construct the Polygon instances from the points, mark this circle for deletion and push the new Polygon on to the shapes vector.
 	ConvexPolygon* poly = new ConvexPolygon(m_position, m_inverseMass, points, m_colour);
 	poly->m_velocity = m_velocity;
 	shapes->push_back(poly);
 	poly->Slice(a, b, shapes);
-	toBeDeleted = true;
+	m_toBeDeleted = true;
 }

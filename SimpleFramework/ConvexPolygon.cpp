@@ -22,7 +22,7 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 	// Draw its centrepoint
 	lines.DrawCircle(m_position, 0.1f);
 
-	aabb.Draw(lines);
+	//aabb.Draw(lines);
 }
 
 void ConvexPolygon::CalculateMassFromArea()
@@ -49,7 +49,7 @@ void ConvexPolygon::CalculateMassFromArea()
 	m_inverseMass = 1 / totalArea;
 }
 
-bool ConvexPolygon::PointInShape(Vec2 point)
+bool ConvexPolygon::PointInShape(Vec2 point) const
 {
 	// Get
 	//Vec2 testPlane = glm::normalize(m_position - point);
@@ -225,7 +225,7 @@ void ConvexPolygon::UpdateAABB()
 		maxWidth = glm::max(glm::abs(point.x), maxWidth);
 	}
 
-	aabb.m_halfHeight = maxHeight;
-	aabb.m_halfWidth = maxWidth;
+	aabb.SetHalfHeight(maxHeight);
+	aabb.SetHalfWidth(maxWidth);
 
 }

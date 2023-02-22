@@ -17,27 +17,34 @@ enum class SHAPE
 class Shape
 {
 public:
-	SHAPE m_type;
-	Vec2 m_position = { 0,0 };
-	Vec2 m_velocity = { 0,0 };
-	Vec2 m_gravityForNow = { 0, -9.81 };
-	float m_inverseMass = 0.0f;
-	Vec3 m_colour = { 1,1,1 };
-	bool toBeDeleted = false;
-
 	Shape(SHAPE shape, Vec2 position, float inverseMass, Vec3 colour = {1, 1, 1}) : m_type(shape), m_position(position), m_inverseMass(inverseMass), m_colour(colour) {}
+	Vec2 m_velocity = { 0,0 };
+	Vec2 m_position = { 0,0 };
+	Vec3 m_colour = { 1,1,1 };
+protected:
+	SHAPE m_type;
+	Vec2 m_gravity = { 0, -9.81 };
+	float m_inverseMass = 0.0f;
+	bool m_toBeDeleted = false;
 
+public:
 	SHAPE GetShape() { return m_type; }
 
 	virtual void Update(float deltaTime);
-	virtual void Draw(LineRenderer& lines) const = 0;
-	
 	virtual void CalculateMassFromArea() = 0;
+	virtual void Draw(LineRenderer& lines) const = 0;
+	virtual bool PointInShape(Vec2 point) const = 0;
+	
 	virtual void Move(Vec2 displacement);
 	virtual void ApplyImpulse(Vec2 impulse);
 
-	virtual bool PointInShape(Vec2 point);
-
 	virtual bool LineIntersects(Vec2 a, Vec2 b);
+	void MarkForDeletion() { m_toBeDeleted = true; };
+	bool IsMarkedForDeletion()  const { return m_toBeDeleted; }
 	virtual void Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes);
+
+	void SetMass(float mass) { m_inverseMass = 1 / mass; }
+	void MakeKinematic() { m_inverseMass = 0.0f; }
+	float GetMass() const { return 1.0f / m_inverseMass; }
+	float GetInverseMass() const { return m_inverseMass; }
 };

@@ -23,7 +23,7 @@ void CollisionFramework::Update(float delta)
 	for (int i = 0; i < shapes.size(); i++)
 	{
 		Shape* shape = shapes[i];
-		if (shape->toBeDeleted)
+		if (shape->IsMarkedForDeletion())
 		{
 			shapes.erase(shapes.begin() + i);
 			i--;
@@ -41,7 +41,7 @@ void CollisionFramework::Update(float delta)
 		{
 			Vec2 toCursor = cursorPos - shape->m_position;
 			toCursor = glm::normalize(toCursor);
-			shape->ApplyImpulse(toCursor * (1.0f / shape->m_inverseMass));
+			shape->ApplyImpulse(toCursor * (1.0f / shape->GetInverseMass()));
 		}
 	}
 

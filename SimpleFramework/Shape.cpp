@@ -2,7 +2,7 @@
 
 void Shape::Update(float deltaTime)
 {	
-	m_velocity += m_gravityForNow * deltaTime;
+	m_velocity += m_gravity * deltaTime;
 	Move(m_velocity * deltaTime);
 }
 
@@ -18,11 +18,6 @@ void Shape::ApplyImpulse(Vec2 impulse)
 
 	float mass = 1.0f / m_inverseMass;
 	m_velocity += impulse / mass;
-}
-
-bool Shape::PointInShape(Vec2 point)
-{
-	return false;
 }
 
 bool Shape::LineIntersects(Vec2 a, Vec2 b)

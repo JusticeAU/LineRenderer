@@ -1,14 +1,5 @@
 #include "AABB.h"
 #include "LineRenderer.h"
-#include <iostream>
-#include <string>
-
-void AABB::CalculateMassFromArea()
-{
-	float mass = (m_halfWidth * 2) * (m_halfHeight * 2);
-	std::cout << "Setting AABB mass to: " + std::to_string(mass) << std::endl;
-	m_inverseMass = 1 / mass;
-}
 
 void AABB::Draw(LineRenderer& lines) const
 {
@@ -25,7 +16,15 @@ void AABB::Draw(LineRenderer& lines) const
 	lines.FinishLineLoop();
 }
 
-bool AABB::PointInShape(Vec2 point)
+// Calculates the area of the the AABB and sets the mass accordingly.
+void AABB::CalculateMassFromArea()
+{
+	float mass = (m_halfWidth * 2) * (m_halfHeight * 2);
+	m_inverseMass = 1 / mass;
+}
+
+// Returns true if the point is within the bounds of the AABB.
+bool AABB::PointInShape(Vec2 point) const
 {
 	if (point.x > Left() && point.x < Right()
 		&&
@@ -36,6 +35,7 @@ bool AABB::PointInShape(Vec2 point)
 		return false;
 }
 
+// Returns the closest point on the AABB to point. If point is inside the AABB, it will return the same Vec2.
 Vec2 AABB::GetClosestPoint(Vec2 point)
 {
 	float minX, minY, maxX, maxY;
@@ -45,15 +45,15 @@ Vec2 AABB::GetClosestPoint(Vec2 point)
 	maxY = m_position.y + m_halfHeight;
 
 	Vec2 closestPoint;
-
+	// Clamp to bounds of AABB.
 	closestPoint.x = point.x < minX ? minX : point.x > maxX ? maxX : point.x;
 	closestPoint.y = point.y < minY ? minY : point.y > maxY ? maxY : point.y;
 
 	return closestPoint;
 }
 
-// 0-3 will be TopRight, BottomRight, Bottom Left, TopLeft
-Vec2* AABB::GetCorners()
+// Returns a pointer to an array of 4 Vec2s for each corner in worldspace. 0-3 will be TopRight, BottomRight, Bottom Left, TopLeft
+Vec2* AABB::GetCorners() const
 {
 	Vec2* depths = new Vec2[4];
 	depths[0] = m_position + Vec2(m_halfWidth, m_halfHeight);

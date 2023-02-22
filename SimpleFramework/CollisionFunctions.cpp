@@ -1,5 +1,4 @@
 #include "CollisionFunctions.h"
-#include <iostream>
 
 CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
 {
@@ -21,13 +20,13 @@ CollisionData CircleOnCircle(Shape* a, Shape* b)
 
 	CollisionData col;
 	float distanceFromAToB = glm::distance(circleA->m_position, circleB->m_position);
-	if (distanceFromAToB < circleA->m_radius + circleB->m_radius)
+	if (distanceFromAToB < circleA->GetRadius() + circleB->GetRadius())
 	{
 		Vec2 displacement = b->m_position - circleA->m_position;
 		if (distanceFromAToB == 0) displacement = Vec2(1, 0); // if the circles are on top of each other, we just decide that they will move away from each other on the X plane.
-		col.depth = circleA->m_radius + circleB->m_radius - distanceFromAToB;
+		col.depth = circleA->GetRadius() + circleB->GetRadius() - distanceFromAToB;
 		col.normal = glm::normalize(displacement);
-		col.worldPosition = a->m_position + col.normal * (circleA->m_radius - col.depth / 2);
+		col.worldPosition = a->m_position + col.normal * (circleA->GetRadius() - col.depth / 2);
 	}
 	col.shapeA = a;
 	col.shapeB = b;
@@ -41,7 +40,7 @@ CollisionData CircleOnPlane(Shape* a, Shape* b)
 	CollisionData col;
 	float distance = glm::dot(circleA->m_position, planeB->m_normal) - planeB->m_distance;
 	col.normal = -planeB->m_normal;
-	col.depth = -(distance - circleA->m_radius);
+	col.depth = -(distance - circleA->GetRadius());
 	col.worldPosition = circleA->m_position - (planeB->m_normal * distance);
 	col.shapeA = a;
 	col.shapeB = b;
@@ -64,10 +63,10 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 	{
 		// Circle centre is inside box so we will calculate normal differently
 		// get min and max coords
-		float aabbMaxY = aabbB->m_position.y + aabbB->m_halfHeight;
-		float aabbMinY = aabbB->m_position.y - aabbB->m_halfHeight;
-		float aabbMaxX = aabbB->m_position.x + aabbB->m_halfWidth;
-		float aabbMinX = aabbB->m_position.x - aabbB->m_halfWidth;
+		float aabbMaxY = aabbB->m_position.y + aabbB->HalfHeight();
+		float aabbMinY = aabbB->m_position.y - aabbB->HalfHeight();
+		float aabbMaxX = aabbB->m_position.x + aabbB->HalfWidth();
+		float aabbMinX = aabbB->m_position.x - aabbB->HalfWidth();
 
 		// find the smallest direction
 		float distToUp = glm::abs(circleA->m_position.y - aabbMaxY);
@@ -77,28 +76,28 @@ CollisionData CircleOnAABB(Shape* a, Shape* b)
 
 		if (distToUp < distToDown && distToUp < distToRight && distToUp < distToLeft)
 		{
-			col.depth = distToUp + circleA->m_radius;
+			col.depth = distToUp + circleA->GetRadius();
 			col.normal = { 0, 1 };
 		}
 		else if (distToDown < distToRight && distToDown < distToLeft)
 		{
-			col.depth = distToDown + circleA->m_radius;
+			col.depth = distToDown + circleA->GetRadius();
 			col.normal = { 0, -1 };
 		}
 		else if (distToRight < distToLeft)
 		{
-			col.depth = distToRight + circleA->m_radius;
+			col.depth = distToRight + circleA->GetRadius();
 			col.normal = { 1, 0 };
 		}
 		else
 		{
-			col.depth = distToLeft + circleA->m_radius;
+			col.depth = distToLeft + circleA->GetRadius();
 			col.normal = { -1, 0 };
 		}
 	}
 	else
 	{
-		col.depth = circleA->m_radius - glm::distance(closestPoint, circleA->m_position);
+		col.depth = circleA->GetRadius() - glm::distance(closestPoint, circleA->m_position);
 		col.normal = -glm::normalize(circleA->m_position - closestPoint);
 	}
 	
@@ -270,8 +269,8 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 
 		// project circle2s points (min and max are position - + radius
 		float point = glm::dot(circle2->m_position, planePerpendicular);
-		circle2min = point - circle2->m_radius;
-		circle2max = point + circle2->m_radius;
+		circle2min = point - circle2->GetRadius();
+		circle2max = point + circle2->GetRadius();
 
 
 		// Get the overlap for this iteration

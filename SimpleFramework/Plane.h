@@ -13,6 +13,7 @@ public:
 	void Update(float deltaTime) override {}
 	void CalculateMassFromArea();
 	void Draw(LineRenderer& lines) const override;
+	bool PointInShape(Vec2 point) const override;
 
 	float DepthInPlane(Vec2 point);
 

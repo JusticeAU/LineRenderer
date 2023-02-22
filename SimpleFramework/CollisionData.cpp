@@ -9,12 +9,12 @@ void CollisionData::Resolve()
 		return;
 
 	// check for two static items colliding.
-	if (shapeA->m_inverseMass == 0.0f && shapeB->m_inverseMass == 0.0f)
+	if (shapeA->GetInverseMass() == 0.0f && shapeB->GetInverseMass() == 0.0f)
 		return;
 
 
-	float massA = 1.0f / shapeA->m_inverseMass;
-	float massB = 1.0f / shapeB->m_inverseMass;
+	float massA = 1.0f / shapeA->GetInverseMass();
+	float massB = 1.0f / shapeB->GetInverseMass();
 
 	if (massA == INFINITY)
 		massA = 0.0f;
@@ -36,7 +36,7 @@ void CollisionData::Resolve()
 	if(k < 0.0f)
 		return;
 	//float j =  k / (shapeB->m_inverseMass + shapeA->m_inverseMass);
-	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / (shapeA->m_inverseMass + (shapeB->m_inverseMass));
+	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / (shapeA->GetInverseMass() + (shapeB->GetInverseMass()));
 
 	float EkPre = 0.5f * (
 		massA * (glm::dot(shapeA->m_velocity,shapeA->m_velocity)) +
