@@ -41,33 +41,6 @@
       <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
     <ClCompile Include="EntryPoint.cpp" />
-    <ClCompile Include="Example.cpp">
-      <Filter>Game\Examples</Filter>
-    </ClCompile>
-    <ClCompile Include="DotClicker.cpp">
-      <Filter>Game\Examples</Filter>
-    </ClCompile>
-    <ClCompile Include="Projectile.cpp">
-      <Filter>Game\Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsScene.cpp">
-      <Filter>Game\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Sphere.cpp">
-      <Filter>Game\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="RigidBody.cpp">
-      <Filter>Game\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsApplication.cpp">
-      <Filter>Game\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsObject.cpp">
-      <Filter>Game\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleApp.cpp">
-      <Filter>Game\Particles</Filter>
-    </ClCompile>
     <ClCompile Include="CollisionFramework.cpp">
       <Filter>Game\CollisionFramework</Filter>
     </ClCompile>
@@ -154,41 +127,8 @@
     <ClInclude Include="..\imgui\imstb_truetype.h">
       <Filter>ThirdParty\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Example.h">
-      <Filter>Game\Examples</Filter>
-    </ClInclude>
-    <ClInclude Include="DotClicker.h">
-      <Filter>Game\Examples</Filter>
-    </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Projectile.h">
-      <Filter>Game\Tests</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsScene.h">
-      <Filter>Game\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.h">
-      <Filter>Game\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="RigidBody.h">
-      <Filter>Game\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsApplication.h">
-      <Filter>Game\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsObject.h">
-      <Filter>Game\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleApp.h">
-      <Filter>Game\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Particle.h">
-      <Filter>Game\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Repulser.h">
-      <Filter>Game\Particles</Filter>
     </ClInclude>
     <ClInclude Include="CollisionFramework.h">
       <Filter>Game\CollisionFramework</Filter>
@@ -233,18 +173,6 @@
     </Filter>
     <Filter Include="ThirdParty\imgui">
       <UniqueIdentifier>{af08b8df-298e-486a-bd88-f49c10c0050b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Examples">
-      <UniqueIdentifier>{777b1260-7118-49ab-b296-237fdabebca0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Physics">
-      <UniqueIdentifier>{26781aeb-3ce5-48fc-a890-6b7387f783c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Tests">
-      <UniqueIdentifier>{93caa5d2-d738-44d9-9cf5-eb0be315b52e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Particles">
-      <UniqueIdentifier>{e9fd3ca3-c32c-41ff-9026-3bec69a8fbcc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\CollisionFramework">
       <UniqueIdentifier>{2aa2367d-b489-4f53-80ae-b9e885e523b7}</UniqueIdentifier>
