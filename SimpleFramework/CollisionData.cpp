@@ -14,18 +14,27 @@ void CollisionData::Resolve()
 	float massA = shapeA->GetMass();
 	float massB = shapeB->GetMass();
 
-	if (massA == INFINITY)
-		massA = 0.0f;
-
-	if (massB == INFINITY)
-		massB = 0.0f;
 
 	// Calculate the mass ratio between the two objects to minamize visual jitter when depenetrating little objects from big objects.
+	float shapeARatio, shapeBRatio;
 	float totalMass = massA + massB;
-	float shapeARatio = massA / totalMass;
-	float shapeBRatio = massB / totalMass;
+	if (massA == INFINITY)
+	{
+		shapeARatio = 0.0f;
+		shapeBRatio = 1.0f;
+	}
+	else if (massB == INFINITY)
+	{
+		shapeARatio = 1.0f;
+		shapeBRatio = 0.0f;
+	}
+	else
+	{
+		shapeARatio = massB / totalMass;
+		shapeBRatio = massA / totalMass;
+	}
 
-	// Perform depetration
+	// Perform depenetration
 	shapeA->Move(-normal * depth * shapeARatio);
 	shapeB->Move(normal * depth * shapeBRatio);
 
