@@ -23,7 +23,7 @@ public:
 	Vec3 m_colour = { 1,1,1 };
 	float m_rotation = 0.0f; // Stored in degrees for human reading - will convert to radians for most operations.
 	float m_rotationalVelocity = 30.0f;
-	float m_momentOfInertia = 0.0f;
+	float m_momentOfInertia = 1.0f;
 protected:
 	SHAPE m_type;
 	Vec2 m_gravity = { 0, -9.81 };

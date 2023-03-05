@@ -1,4 +1,5 @@
 #include "Shape.h"
+#include <iostream>
 
 // Moves the object by adding its velocity with forward Euler integration
 void Shape::Update(float deltaTime)
@@ -7,7 +8,7 @@ void Shape::Update(float deltaTime)
 	Rotate(m_rotationalVelocity * deltaTime);
 	
 	m_velocity += m_gravity * deltaTime;
-	
+	std::cout << GetMoment() << std::endl;
 }
 
 // Applies a displacement to the shapes position

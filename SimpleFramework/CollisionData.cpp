@@ -50,7 +50,7 @@ void CollisionData::Resolve()
 
 	float j =  k / (shapeB->GetInverseMass() + shapeA->GetInverseMass()); // Calcualate the Impulse magnitude (j)
 
-	shapeA->ApplyImpulse(normal * -j, Vec2(0));
-	shapeB->ApplyImpulse(normal * j, Vec2(0));
+	shapeA->ApplyImpulse(normal * -j, worldPosition - shapeA->m_position);
+	shapeB->ApplyImpulse(normal * j, worldPosition - shapeB->m_position);
 
 }
