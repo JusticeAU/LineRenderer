@@ -11,7 +11,8 @@ public:
 	float m_distance;
 
 	void Update(float deltaTime) override {}
-	void CalculateMassFromArea();
+	void CalculateMassFromArea() override;
+	void CalculateMomentOfInertia() override;
 	void Draw(LineRenderer& lines) const override;
 	bool PointInShape(Vec2 point) const override;
 

@@ -10,6 +10,11 @@ void Circle::CalculateMassFromArea()
 	m_inverseMass = 1.0f / mass;
 }
 
+void Circle::CalculateMomentOfInertia()
+{
+	m_momentOfInertia = 0.5f * GetMass() * m_radius * m_radius;
+}
+
 void Circle::Draw(LineRenderer& lines) const
 {
 	lines.SetColour(m_colour);

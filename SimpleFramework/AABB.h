@@ -15,6 +15,7 @@ protected:
 public:
 	void Draw(LineRenderer& lines) const override;
 	void CalculateMassFromArea() override;
+	void CalculateMomentOfInertia() override;
 	bool PointInShape(Vec2 point) const override;
 
 	Vec2* GetCorners() const;

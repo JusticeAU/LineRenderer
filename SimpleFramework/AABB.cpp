@@ -23,6 +23,11 @@ void AABB::CalculateMassFromArea()
 	m_inverseMass = 1 / mass;
 }
 
+void AABB::CalculateMomentOfInertia()
+{
+	// Stubbity.
+}
+
 // Returns true if the point is within the bounds of the AABB.
 bool AABB::PointInShape(Vec2 point) const
 {

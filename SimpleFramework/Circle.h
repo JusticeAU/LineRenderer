@@ -6,13 +6,18 @@ class Circle : public Shape
 {
 public:
 	Circle(Vec2 position, float radius, float inverseMass, Vec3 colour = { 1,1,1 })
-		: Shape(SHAPE::CIRCLE, position, inverseMass, colour) { SetRadius(radius); }
+		: Shape(SHAPE::CIRCLE, position, inverseMass, colour) {
+		SetRadius(radius);
+		CalculateMassFromArea();
+		CalculateMomentOfInertia();
+	}
 
 protected:
 	float m_radius;
 
 public:
 	void CalculateMassFromArea() override;
+	void CalculateMomentOfInertia() override;
 	void Draw(LineRenderer& lines) const override;
 
 	bool LineIntersects(Vec2 a, Vec2 b) const override;

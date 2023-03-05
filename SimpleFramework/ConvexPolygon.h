@@ -24,6 +24,7 @@ public:
 	void Draw(LineRenderer& lines) const override;
 
 	void CalculateMassFromArea() override;
+	void CalculateMomentOfInertia() override;
 	bool PointInShape(Vec2 point) const;
 	bool LineIntersects(Vec2 lineFrom, Vec2 lineTo) const override;
 	void Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shapes) override;

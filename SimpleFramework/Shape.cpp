@@ -6,8 +6,6 @@ void Shape::Update(float deltaTime)
 	m_velocity += m_gravity * deltaTime;
 	Move(m_velocity * deltaTime);
 	Rotate(m_rotationalVelocity * deltaTime);
-
-	
 }
 
 // Applies a displacement to the shapes position

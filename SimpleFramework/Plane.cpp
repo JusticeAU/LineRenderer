@@ -13,6 +13,11 @@ void Plane::CalculateMassFromArea()
 	m_inverseMass = 0; // Planes do not have a mass.
 }
 
+void Plane::CalculateMomentOfInertia()
+{
+	// Stubbity
+}
+
 void Plane::Draw(LineRenderer& lines) const
 {
 	float virtualLength = 50.0f; // line will be twice this as it is drawn from 'origin' in both direction

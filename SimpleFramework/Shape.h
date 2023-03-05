@@ -23,6 +23,7 @@ public:
 	Vec3 m_colour = { 1,1,1 };
 	float m_rotation = 0.0f; // Stored in degrees for human reading - will convert to radians for most operations.
 	float m_rotationalVelocity = 30.0f;
+	float m_momentOfInertia = 0.0f;
 protected:
 	SHAPE m_type;
 	Vec2 m_gravity = { 0, -9.81 };
@@ -40,6 +41,7 @@ public:
 	virtual void Draw(LineRenderer& lines) const = 0;
 	
 	virtual void CalculateMassFromArea() = 0;
+	virtual void CalculateMomentOfInertia() = 0;
 	virtual bool PointInShape(Vec2 point) const = 0;
 	virtual bool LineIntersects(Vec2 a, Vec2 b) const { return false; } // default behaviour
 	virtual void Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes) {}

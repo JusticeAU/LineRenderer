@@ -67,6 +67,11 @@ void ConvexPolygon::CalculateMassFromArea()
 	m_inverseMass = 1 / totalArea;
 }
 
+void ConvexPolygon::CalculateMomentOfInertia()
+{
+	m_momentOfInertia = 100.0f;
+}
+
 bool ConvexPolygon::PointInShape(Vec2 point) const
 {
 	// project all poly points and our test point on to every poly edge. if the point is greater than the max for an interation then its outside it.
