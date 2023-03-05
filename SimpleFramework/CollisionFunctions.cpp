@@ -1,4 +1,5 @@
 #include "CollisionFunctions.h"
+#include <iostream>
 
 // Lookup table for collision functions. X and Y corrospond to the SHAPE enum.
 CollisionFunction COLLISION_FUNCTIONS[(int)SHAPE::COUNT][(int)SHAPE::COUNT]
@@ -53,7 +54,8 @@ CollisionData CircleOnPlane(Shape* a, Shape* b)
 
 	col.normal = -planeB->m_normal;
 	col.depth = -(distance - circleA->GetRadius());
-	col.worldPosition = circleA->m_position - (planeB->m_normal * distance);
+	col.worldPosition = circleA->m_position + (col.normal * -circleA->GetRadius());
+	//std::cout << col.worldPosition.x << "\t" << col.worldPosition.y << std::endl;
 	return col;
 }
 CollisionData CircleOnAABB(Shape* a, Shape* b)

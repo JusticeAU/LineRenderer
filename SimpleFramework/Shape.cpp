@@ -7,8 +7,8 @@ void Shape::Update(float deltaTime)
 	Move(m_velocity * deltaTime);
 	Rotate(m_rotationalVelocity * deltaTime);
 	
-	m_velocity += m_gravity * deltaTime;
-	std::cout << GetMoment() << std::endl;
+	//m_velocity += m_gravity * deltaTime;
+	//std::cout << GetMoment() << std::endl;
 }
 
 // Applies a displacement to the shapes position

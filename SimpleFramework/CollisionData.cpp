@@ -1,8 +1,11 @@
 #include "CollisionData.h"
 #include "Shape.h"
+#include <iostream>
 
 void CollisionData::Resolve()
 {
+	
+
 	// We should not be peforming this routine where a collision hasn't happened.
 	if (IsCollision() != true)
 		return;
@@ -34,23 +37,40 @@ void CollisionData::Resolve()
 		shapeBRatio = massA / totalMass;
 	}
 
+	// Check of the objects are moving toward each other
+	Vec2 perp = Vec2(normal.y, -normal.x);
+	// Determine total velocity of contact points for two objects, both linear and rotaiton.
+
+	// r is radius from axis to application of force
+	float r1 = glm::dot(worldPosition - shapeA->m_position, -perp);
+	float r2 = glm::dot(worldPosition - shapeB->m_position, perp);
+
+	// v is velocity of the contact point on this object
+	float v1 = glm::dot(shapeA->m_velocity, normal) - r1 * shapeA->m_rotationalVelocity;
+	float v2 = glm::dot(shapeB->m_velocity, normal) + r2 * shapeB->m_rotationalVelocity;
+
 	// Perform depenetration
 	shapeA->Move(-normal * depth * shapeARatio);
 	shapeB->Move(normal * depth * shapeBRatio);
 
-	// Calculate the transfer of energy between the two colliding objects. We will generate an Impulse to apply along the collision normal using Newton's Law of Restituion
-	Vec2 relativeVelocity = shapeB->m_velocity - shapeA->m_velocity;
+	if (v1 > v2) // moving closer
+	{
+		// calculate effective mass at contact point for each object
+		// ie how much the contact point will move due to the force applied
+		float mass1 = shapeA->GetMass() + (r1 * r1) / shapeA->GetMoment();
+		float mass2 = shapeB->GetMass() + (r2 * r2) / shapeB->GetMoment();
 
-	float elasticity = 0.5f; // This is a hardcoded value to lose some energy on collision so that things will eventually settle.
+		// temporary work around for infinity mass objects
+		if (mass1 == INFINITY)
+			mass1 = 10.0f;
+		if (mass2 == INFINITY)
+			mass2 = 10.0f;
 
-	float k = -(1 + elasticity) * glm::dot(relativeVelocity, normal); // Calculate direction the objects should be moving based on their relative velocity and the collision normal
-	
-	if(k < 0.0f) // If they are already moving away from each other then bail out of this collision
-		return;
+		float elasticity = 0.5f; // This is a hardcoded value to lose some energy on collision so that things will eventually settle.
+		Vec2 force = (1.0f + elasticity) * mass1 * mass2 / (mass1 + mass2) * (v1 - v2) * normal;
 
-	float j =  k / (shapeB->GetInverseMass() + shapeA->GetInverseMass()); // Calcualate the Impulse magnitude (j)
-
-	shapeA->ApplyImpulse(normal * -j, worldPosition - shapeA->m_position);
-	shapeB->ApplyImpulse(normal * j, worldPosition - shapeB->m_position);
+		shapeA->ApplyImpulse(-force, worldPosition - shapeA->m_position);
+		shapeB->ApplyImpulse(force, worldPosition - shapeB->m_position);
+	}	
 
 }
