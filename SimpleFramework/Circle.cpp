@@ -14,6 +14,10 @@ void Circle::Draw(LineRenderer& lines) const
 {
 	lines.SetColour(m_colour);
 	lines.DrawCircle(m_position, m_radius, 18);
+
+	// Draw rotation line
+	Vec2 rotatedPoint = Vec2(cos(glm::radians(m_rotation)), sin(glm::radians(m_rotation)));
+	lines.DrawLineSegment(m_position, m_position + rotatedPoint);
 }
 
 // Returns true if the position supplied is inside the circle

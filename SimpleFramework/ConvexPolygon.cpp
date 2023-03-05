@@ -1,6 +1,24 @@
 #include "ConvexPolygon.h"
 #include "LineRenderer.h"
 #include "Spawner.h"
+#include "Maths.h"
+
+void ConvexPolygon::Rotate(float degrees)
+{
+	// Call base function to do normal rotation.
+	Shape::Rotate(degrees);
+
+	// Rotate the poly points.
+	
+	// Create a rotation matrix
+	float cosAngle = cos(glm::radians(degrees));
+	float sinAngle = sin(glm::radians(degrees));
+	glm::mat2 rotMat = { {cosAngle, -sinAngle},{sinAngle, cosAngle} };
+	
+	// Apply matrix to all points
+	for (auto& point : m_points)
+		point = point * rotMat;
+}
 
 void ConvexPolygon::Update(float deltaTime)
 {
@@ -17,6 +35,13 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 		lines.AddPointToLine(m_position + point);
 
 	lines.FinishLineLoop();
+
+
+	// Draw rotation line
+	Vec2 rotatedPoint = Vec2(cos(glm::radians(m_rotation)), sin(glm::radians(m_rotation)));
+	lines.DrawLineSegment(m_position, m_position + rotatedPoint);
+
+	aabb.Draw(lines);
 }
 
 void ConvexPolygon::CalculateMassFromArea()
@@ -227,14 +252,13 @@ void ConvexPolygon::RecalculateCentre()
 // Recalculates the bounds of the AABB used for broadphase collision.
 void ConvexPolygon::RecalculateAABB()
 {
-	float maxHeight = -FLT_MAX;
-	float maxWidth = -FLT_MAX;
+	// We get the max distance of a point from shape origin so that its big enough to cover the shape in any of its rotations and doesnt need to be recalculated all the time.
+	float maxDistance = -FLT_MAX;
 	for (auto& point : m_points)
-	{
-		maxHeight = glm::max(glm::abs(point.y), maxHeight);
-		maxWidth = glm::max(glm::abs(point.x), maxWidth);
-	}
+		maxDistance = glm::max(glm::distance2(Vec2(0), point), maxDistance);
 
-	aabb.SetHalfHeight(maxHeight);
-	aabb.SetHalfWidth(maxWidth);
+	maxDistance = sqrt(maxDistance);
+
+	aabb.SetHalfHeight(maxDistance);
+	aabb.SetHalfWidth(maxDistance);
 }

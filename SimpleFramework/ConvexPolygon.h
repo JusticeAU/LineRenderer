@@ -2,6 +2,7 @@
 #include "Shape.h"
 #include "AABB.h"
 #include <vector>
+#include <iostream>
 
 class ConvexPolygon : public Shape
 {
@@ -18,6 +19,7 @@ protected:
 public:
 	AABB aabb;
 
+	void Rotate(float degrees) override;
 	void Update(float deltaTime) override;
 	void Draw(LineRenderer& lines) const override;
 
