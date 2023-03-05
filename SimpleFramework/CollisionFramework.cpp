@@ -9,6 +9,11 @@ CollisionFramework::CollisionFramework()
 	spawner = new Spawner(&shapes);
 
 	// Set up world border planes
+	/*Vec2 planeNormal = Vec2(1, 0);
+	planeNormal = glm::normalize(planeNormal);
+	testPlane = new Plane(planeNormal, -4, { 1,1,1 });
+	testCircle = (Shape*)new Circle(Vec2(0), 1.0f, 1.0f);*/
+
 	shapes.push_back(new Plane({ 0,1 }, -9, { 0,0,0 }));
 	shapes.push_back(new Plane({ 1,0 }, -16, { 0,0,0 }));
 	shapes.push_back(new Plane({ -1,0 }, -16, { 0,0,0 }));
@@ -16,6 +21,14 @@ CollisionFramework::CollisionFramework()
 
 void CollisionFramework::Update(float delta)
 {
+	// test Collsiion world post testing
+	/*testCircle->m_position = cursorPos;
+	testCircle->Draw(*lines);
+	testPlane->Draw(*lines);
+	CollisionData colTest = CircleOnPlane(testCircle, testPlane);
+	lines->DrawCross(colTest.worldPosition, 1.0f);*/
+
+
 	// Delete any Shapes that need deleting
 	for (int i = 0; i < shapes.size(); i++)
 	{

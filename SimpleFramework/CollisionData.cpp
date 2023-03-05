@@ -49,22 +49,29 @@ void CollisionData::Resolve()
 	float v1 = glm::dot(shapeA->m_velocity, normal) - r1 * shapeA->m_rotationalVelocity;
 	float v2 = glm::dot(shapeB->m_velocity, normal) + r2 * shapeB->m_rotationalVelocity;
 
+	float mag1 = glm::length(shapeA->m_velocity);
+	float mag2 = glm::length(shapeB->m_velocity);
+
+
+
 	// Perform depenetration
 	shapeA->Move(-normal * depth * shapeARatio);
 	shapeB->Move(normal * depth * shapeBRatio);
 
 	if (v1 > v2) // moving closer
 	{
+		std::cout << "collision" << std::endl;
 		// calculate effective mass at contact point for each object
 		// ie how much the contact point will move due to the force applied
-		float mass1 = shapeA->GetMass() + (r1 * r1) / shapeA->GetMoment();
-		float mass2 = shapeB->GetMass() + (r2 * r2) / shapeB->GetMoment();
+		float mass1 = 1.0f / (1.0f / shapeA->GetMass() + (r1 * r1) / shapeA->GetMoment());
+		float mass2 = 1.0f / (1.0f / shapeB->GetMass() + (r2 * r2) / shapeB->GetMoment());
 
 		// temporary work around for infinity mass objects
 		if (mass1 == INFINITY)
-			mass1 = 10.0f;
+			mass1 = mass2;
 		if (mass2 == INFINITY)
-			mass2 = 10.0f;
+			mass2 = mass1;
+
 
 		float elasticity = 0.5f; // This is a hardcoded value to lose some energy on collision so that things will eventually settle.
 		Vec2 force = (1.0f + elasticity) * mass1 * mass2 / (mass1 + mass2) * (v1 - v2) * normal;

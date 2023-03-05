@@ -54,8 +54,8 @@ CollisionData CircleOnPlane(Shape* a, Shape* b)
 
 	col.normal = -planeB->m_normal;
 	col.depth = -(distance - circleA->GetRadius());
-	col.worldPosition = circleA->m_position + (col.normal * -circleA->GetRadius());
-	//std::cout << col.worldPosition.x << "\t" << col.worldPosition.y << std::endl;
+	//col.worldPosition = circleA->m_position + (col.normal * circleA->GetRadius()) + (col.normal*(-col.depth*0.5f)); // half way between plane edge and circle edge
+	col.worldPosition = circleA->m_position + (col.normal * circleA->GetRadius()); // Circle edge
 	return col;
 }
 CollisionData CircleOnAABB(Shape* a, Shape* b)
@@ -523,5 +523,7 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 	// There wasn't a gap so we have a collision
 	col.depth = minOverlap;
 	col.normal = -vertexDirection;
+
+	col.worldPosition = (poly1->m_position + poly2->m_position) * 0.5f;
 	return col;
 }

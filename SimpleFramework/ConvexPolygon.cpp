@@ -41,7 +41,7 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 	Vec2 rotatedPoint = Vec2(cos(glm::radians(m_rotation)), sin(glm::radians(m_rotation)));
 	lines.DrawLineSegment(m_position, m_position + rotatedPoint);
 
-	aabb.Draw(lines);
+	//aabb.Draw(lines);
 }
 
 void ConvexPolygon::CalculateMassFromArea()

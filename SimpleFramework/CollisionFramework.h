@@ -9,6 +9,9 @@ class CollisionFramework : public Application
 public:
 	CollisionFramework();
 
+	Shape* testPlane = nullptr;
+	Shape* testCircle = nullptr;
+
 protected:
 	std::vector<Shape*> shapes;
 	Spawner* spawner;
