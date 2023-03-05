@@ -19,5 +19,5 @@ public:
 	float DepthInPlane(Vec2 point);
 
 	void Move(Vec2 displacement) override { } // just overrides move to do nothing.
-	void ApplyImpulse(Vec2 impulse) override { }
+	void ApplyImpulse(Vec2 impulse, Vec2 position) override { }
 };

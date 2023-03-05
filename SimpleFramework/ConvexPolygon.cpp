@@ -173,8 +173,8 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 		// Send the objects away from each other - looks cool and ninja!
 		Vec2 cutDirection = glm::normalize(lineTo - lineFrom);
 		Vec2 cutPerp = { cutDirection.y, -cutDirection.x };
-		newPoly->ApplyImpulse(cutPerp * newPoly->GetMass());
-		ApplyImpulse(-cutPerp * GetMass());
+		newPoly->ApplyImpulse(cutPerp * newPoly->GetMass(), Vec2(0));
+		ApplyImpulse(-cutPerp * GetMass(), Vec2(0));
 	}
 }
 

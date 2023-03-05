@@ -34,7 +34,7 @@ void CollisionFramework::Update(float delta)
 		{
 			Vec2 toCursor = cursorPos - shape->m_position;
 			toCursor = glm::normalize(toCursor);
-			shape->ApplyImpulse(toCursor * (1.0f / shape->GetInverseMass()));
+			shape->ApplyImpulse(toCursor * (1.0f / shape->GetInverseMass()), Vec2(0));
 		}
 	}
 

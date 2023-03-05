@@ -35,7 +35,7 @@ public:
 	
 	virtual void Move(Vec2 displacement);
 	virtual void Rotate(float degrees);
-	virtual void ApplyImpulse(Vec2 impulse);
+	virtual void ApplyImpulse(Vec2 impulse, Vec2 position);
 
 	virtual void Update(float deltaTime);
 	virtual void Draw(LineRenderer& lines) const = 0;
@@ -54,4 +54,5 @@ public:
 	// may return INFINITY for a kinematic/static object
 	float GetMass() const { return 1.0f / m_inverseMass; }
 	float GetInverseMass() const { return m_inverseMass; }
+	float GetMoment() const { return m_momentOfInertia; }
 };
