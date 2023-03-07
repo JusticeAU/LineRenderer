@@ -13,6 +13,7 @@ void Circle::CalculateMassFromArea()
 void Circle::CalculateMomentOfInertia()
 {
 	m_momentOfInertia = 0.5f * GetMass() * m_radius * m_radius;
+	m_inverseMomentOfInertia = 1.0f / m_momentOfInertia;
 }
 
 void Circle::Draw(LineRenderer& lines) const

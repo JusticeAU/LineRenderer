@@ -114,6 +114,7 @@ void Spawner::Update(float delta, Vec2 cursorPos)
 			Plane* plane = (Plane*)shapeTemplates[(int)SHAPE::PLANE];
 			plane->m_normal = -glm::normalize(cursorPos);
 			plane->m_distance = -glm::length(cursorPos);
+			plane->m_inverseMomentOfInertia = 0.0f;
 		}
 		break;
 	}

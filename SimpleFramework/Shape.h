@@ -22,8 +22,9 @@ public:
 	Vec2 m_position = { 0,0 };
 	Vec3 m_colour = { 1,1,1 };
 	float m_rotation = 0.0f; // Stored in degrees for human reading - will convert to radians for most operations.
-	float m_rotationalVelocity = 30.0f;
-	float m_momentOfInertia = 4.0f;
+	float m_rotationalVelocity = 0.0f;
+	float m_momentOfInertia = 4.5f;
+	float m_inverseMomentOfInertia = 5.2222f;
 protected:
 	SHAPE m_type;
 	Vec2 m_gravity = { 0, -9.81 };
@@ -55,4 +56,6 @@ public:
 	float GetMass() const { return 1.0f / m_inverseMass; }
 	float GetInverseMass() const { return m_inverseMass; }
 	float GetMoment() const { return m_momentOfInertia; }
+	float GetInverseMoment() const { return m_inverseMomentOfInertia; }
+
 };

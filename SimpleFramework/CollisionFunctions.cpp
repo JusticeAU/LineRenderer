@@ -288,7 +288,7 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 		circle2max = point + circle2->GetRadius();
 
 
-		// Get the overlap for this iteration. If there's a gap when can bail out.
+		// Get the overlap for this iteration. If there's a gap then we can bail out.
 		float overlapA = poly1max - circle2min;
 		float overlapB = circle2max - poly1min;
 		float overlap = glm::min(overlapA, overlapB);
@@ -317,6 +317,7 @@ CollisionData ConvexPolyOnCircle(Shape* a, Shape* b)
 	// Wasn't a gap - there is a collision.
 	col.depth = minOverlap;
 	col.normal = -vertexDirection;
+	col.worldPosition = circle2->m_position + (-col.normal * (circle2->GetRadius() - col.depth * 0.5f)); // This is not right but a quick approximation
 	return col;
 }
 CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
@@ -343,10 +344,11 @@ CollisionData ConvexPolyOnPlane(Shape* a, Shape* b)
 		{
 			maxDepth = depth;
 			col.depth = maxDepth;
+			col.worldPosition = poly1->GetVertexInWorldspace(i);
 		}
 	}
+	
 	col.normal = -plane2->m_normal;
-
 	return col;
 }
 CollisionData ConvexPolyOnAABB(Shape* a, Shape* b)
@@ -514,6 +516,8 @@ CollisionData ConvexPolyOnConvexPoly(Shape* a, Shape* b)
 
 				vertexDirection = { vertexDirection.y, -vertexDirection.x };
 			}
+
+
 		}
 		else
 			return col; // There was a gap so we can bail out of the collision test

@@ -69,7 +69,7 @@ void ConvexPolygon::CalculateMassFromArea()
 
 void ConvexPolygon::CalculateMomentOfInertia()
 {
-	m_momentOfInertia = 100.0f;
+	m_momentOfInertia = 1.0f;
 }
 
 bool ConvexPolygon::PointInShape(Vec2 point) const
@@ -91,6 +91,7 @@ bool ConvexPolygon::PointInShape(Vec2 point) const
 		if (pointDot > max)
 			return false;
 	}
+	return true;
 }
 
 bool ConvexPolygon::LineIntersects(Vec2 lineFrom, Vec2 lineTo) const

@@ -46,13 +46,13 @@ void CollisionData::Resolve()
 	float r2 = glm::dot(worldPosition - shapeB->m_position, perp);
 
 	// v is velocity of the contact point on this object
-	float v1 = glm::dot(shapeA->m_velocity, normal) - r1 * shapeA->m_rotationalVelocity;
-	float v2 = glm::dot(shapeB->m_velocity, normal) + r2 * shapeB->m_rotationalVelocity;
+	float v1 = glm::dot(shapeA->m_velocity, normal) - r1 * glm::radians(shapeA->m_rotationalVelocity);
+	float v2 = glm::dot(shapeB->m_velocity, normal) + r2 * glm::radians(shapeB->m_rotationalVelocity);
+	
+
 
 	float mag1 = glm::length(shapeA->m_velocity);
 	float mag2 = glm::length(shapeB->m_velocity);
-
-
 
 	// Perform depenetration
 	shapeA->Move(-normal * depth * shapeARatio);
@@ -60,21 +60,19 @@ void CollisionData::Resolve()
 
 	if (v1 > v2) // moving closer
 	{
-		std::cout << "collision" << std::endl;
+		//std::cout << "collision" << std::endl;
 		// calculate effective mass at contact point for each object
 		// ie how much the contact point will move due to the force applied
-		float mass1 = 1.0f / (1.0f / shapeA->GetMass() + (r1 * r1) / shapeA->GetMoment());
-		float mass2 = 1.0f / (1.0f / shapeB->GetMass() + (r2 * r2) / shapeB->GetMoment());
-
-		// temporary work around for infinity mass objects
-		if (mass1 == INFINITY)
-			mass1 = mass2;
-		if (mass2 == INFINITY)
-			mass2 = mass1;
-
+		float eMass1 = 1.0f / (shapeA->GetInverseMass() + ((r1 * r1) * shapeA->GetInverseMoment()));
+		float eMass2 = 1.0f / (shapeB->GetInverseMass() + ((r2 * r2) * shapeB->GetInverseMoment()));
 
 		float elasticity = 0.5f; // This is a hardcoded value to lose some energy on collision so that things will eventually settle.
-		Vec2 force = (1.0f + elasticity) * mass1 * mass2 / (mass1 + mass2) * (v1 - v2) * normal;
+		Vec2 force = (1.0f + elasticity) * eMass1 * eMass2 / (eMass1 + eMass2) * (v1 - v2) * normal;
+		Vec2 vAP = worldPosition - shapeA->m_position;
+		Vec2 vBP = worldPosition - shapeB->m_position;
+		Vec2 vAB = vBP - vAP;
+		//supplementaryPoints.push_back(vAB);
+		//Vec2 force = -((1.0f + elasticity) * glm::dot(vAB, normal) / glm::dot(normal, normal) * (eMass1 + eMass2)) * normal;
 
 		shapeA->ApplyImpulse(-force, worldPosition - shapeA->m_position);
 		shapeB->ApplyImpulse(force, worldPosition - shapeB->m_position);

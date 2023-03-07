@@ -1,5 +1,6 @@
 #pragma once
 #include "Maths.h"
+#include <vector>
 
 class Shape;
 class LineRenderer;
@@ -13,6 +14,8 @@ public:
 
 	Shape* shapeA = nullptr;
 	Shape* shapeB = nullptr;
+
+	std::vector<Vec2> supplementaryPoints;
 
 	bool IsCollision() const { return depth > 0.0f; }
 	// Performs depenetration, calculates and applies an impulse to bound the colliding objects off each other. Should only be called if IsCollision returns true;

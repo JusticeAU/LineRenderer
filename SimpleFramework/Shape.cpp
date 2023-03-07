@@ -29,5 +29,5 @@ void Shape::ApplyImpulse(Vec2 impulse, Vec2 position)
 		return;
 
 	m_velocity += impulse / GetMass();
-	m_rotationalVelocity += (impulse.y * position.x - impulse.x * position.y) / GetMoment();
+	m_rotationalVelocity += (impulse.y * position.x - impulse.x * position.y) * GetInverseMoment();
 }

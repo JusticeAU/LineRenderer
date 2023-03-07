@@ -76,7 +76,23 @@ void CollisionFramework::Update(float delta)
 		else
 		{
 			for (auto& col : collisions)
+			{
+				// Disable Collisions for now
 				col.Resolve();
+
+				// Draw dose contact point velocities if they exist
+				/*for (auto& point : col.supplementaryPoints)
+				{
+					lines->DrawLineSegment(col.worldPosition, col.worldPosition + col.supplementaryPoints[0], { 1,1,1 });
+				}*/
+
+
+				// Lets draw the collisions
+				//lines->DrawCircle(col.worldPosition, 0.1f, {0,1,1});
+				//lines->DrawLineSegment(col.worldPosition, col.worldPosition + col.normal * col.depth, {0,1,1});
+			}
+
+
 		}
 	}
 
