@@ -2,11 +2,13 @@
 #include "CollisionData.h"
 #include "CollisionFunctions.h"
 #include "Spawner.h"
+#include "Toolbox.h"
 
 CollisionFramework::CollisionFramework()
 {
 	// Create our spawner tools and give it a reference to the vector of world shapes.
-	spawner = new Spawner(&shapes);
+	//spawner = new Spawner(&shapes);
+	toolbox = new Toolbox(&shapes, cursorPos);
 
 	// Set up world border planes
 	shapes.push_back(new Plane({ 0,1 }, -9, { 0,0,0 }));
@@ -77,34 +79,56 @@ void CollisionFramework::Update(float delta)
 		spawner->Update(delta, cursorPos);
 		spawner->Draw(*lines);
 	}
+
+	// Handle Toolbox if we've created it.
+	if (toolbox != nullptr)
+	{
+		toolbox->Update(delta);
+		toolbox->Draw(*lines);
+	}
 }
 
 void CollisionFramework::OnLeftClick()
 {
 	if(spawner != nullptr)
 		spawner->OnLeftClick(cursorPos);
+
+	if (toolbox != nullptr)
+		toolbox->OnLeftClick();
 }
 
 void CollisionFramework::OnLeftRelease()
 {
 	if (spawner != nullptr)
 		spawner->OnLeftRelease();
+
+	if (toolbox != nullptr)
+		toolbox->OnLeftUp();
 }
 
 void CollisionFramework::OnRightClick()
 {
 	if (spawner != nullptr)
 		spawner->OnRightClick();
+
+	if (toolbox != nullptr)
+		toolbox->OnRightClick();
 }
 
 void CollisionFramework::OnRightRelease()
 {
 	if (spawner != nullptr)
 		spawner->OnRightRelease();
+
+	if (toolbox != nullptr)
+		toolbox->OnRightUp();
 }
 
 void CollisionFramework::OnMouseScroll(double delta)
 {
 	if (spawner != nullptr)
 		spawner->OnMouseScroll(delta);
+
+	if (toolbox != nullptr)
+		toolbox->OnMouseScroll(delta);
 }

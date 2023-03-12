@@ -3,6 +3,7 @@
 #include <vector>
 
 class Spawner;
+class Toolbox;
 
 class CollisionFramework : public Application
 {
@@ -12,6 +13,7 @@ public:
 protected:
 	std::vector<Shape*> shapes;
 	Spawner* spawner;
+	Toolbox* toolbox;
 
 	const int MAX_COLLISION_PASSES = 6;
 

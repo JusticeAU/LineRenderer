@@ -168,6 +168,8 @@
     <ClCompile Include="ApplicationHarness.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Spawner.cpp" />
+    <ClCompile Include="SpawnerTool.cpp" />
+    <ClCompile Include="Toolbox.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +201,9 @@
     <ClInclude Include="ApplicationHarness.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Spawner.h" />
+    <ClInclude Include="SpawnerTool.h" />
+    <ClInclude Include="Tool.h" />
+    <ClInclude Include="Toolbox.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

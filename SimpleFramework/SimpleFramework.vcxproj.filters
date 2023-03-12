@@ -68,6 +68,12 @@
     <ClCompile Include="ConvexPolygon.cpp">
       <Filter>Game\CollisionFramework</Filter>
     </ClCompile>
+    <ClCompile Include="Toolbox.cpp">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnerTool.cpp">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFWCallbacks.h">
@@ -157,6 +163,15 @@
     <ClInclude Include="ConvexPolygon.h">
       <Filter>Game\CollisionFramework</Filter>
     </ClInclude>
+    <ClInclude Include="Toolbox.h">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnerTool.h">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -176,6 +191,9 @@
     </Filter>
     <Filter Include="Game\CollisionFramework">
       <UniqueIdentifier>{2aa2367d-b489-4f53-80ae-b9e885e523b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\CollisionFramework\Toolbox">
+      <UniqueIdentifier>{6ff95956-049f-4375-9dd8-a93e86b24a4f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
