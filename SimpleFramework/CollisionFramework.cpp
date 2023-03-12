@@ -14,9 +14,9 @@ CollisionFramework::CollisionFramework()
 	testPlane = new Plane(planeNormal, -4, { 1,1,1 });
 	testCircle = (Shape*)new Circle(Vec2(0), 1.0f, 1.0f);*/
 
-	shapes.push_back(new Plane({ 0,1 }, -9, { 0,0,0 }));
-	shapes.push_back(new Plane({ 1,0 }, -16, { 0,0,0 }));
-	shapes.push_back(new Plane({ -1,0 }, -16, { 0,0,0 }));
+	//shapes.push_back(new Plane({ 0,1 }, -9, { 0,0,0 }));
+	//shapes.push_back(new Plane({ 1,0 }, -16, { 0,0,0 }));
+	//shapes.push_back(new Plane({ -1,0 }, -16, { 0,0,0 }));
 }
 
 void CollisionFramework::Update(float delta)
@@ -28,6 +28,44 @@ void CollisionFramework::Update(float delta)
 	CollisionData colTest = CircleOnPlane(testCircle, testPlane);
 	lines->DrawCross(colTest.worldPosition, 1.0f);*/
 
+	//for (auto& shape : shapes)
+	//{
+	//	if (shape->GetShape() != SHAPE::CONVEX_POLY)
+	//		continue;
+
+	//	ConvexPolygon* poly = (ConvexPolygon*)shape;
+	//	//Get min and max extents
+	//	float minX = -poly->aabb.HalfWidth() + shape->m_position.x;
+	//	float maxX = poly->aabb.HalfWidth() + shape->m_position.x;
+	//	float minY = -poly->aabb.HalfHeight() + shape->m_position.y;
+	//	float maxY = poly->aabb.HalfHeight() + shape->m_position.y;
+
+	//	int hits = 0;
+	//	double areaUnit = 0.1f;
+	//	double moment = 0.0f;
+	//	for (float x = minX; x <= maxX; x += areaUnit)
+	//	{
+	//		for (float y = minY; y <= maxY; y += areaUnit)
+	//		{
+	//			Vec2 castPos(x, y);
+
+	//			if (shape->PointInShape(castPos))
+	//			{
+	//				lines->DrawCross(castPos, 0.1f, { 0,1,0 });
+	//				double distance = glm::distance(castPos, shape->m_position);
+	//				moment += distance * distance * areaUnit * areaUnit;
+	//				hits++;
+	//			}
+	//			else
+	//			{
+	//				//lines->DrawCross(castPos, 0.1f, { 1,1,0 });
+	//			}
+	//		}
+	//	}
+	//	std::cout << "Approximated Area: " << (float)hits * areaUnit * areaUnit << std::endl;
+	//	std::cout << "Approximated Moment: " << moment << std::endl;
+
+	//}
 
 	// Delete any Shapes that need deleting
 	for (int i = 0; i < shapes.size(); i++)
@@ -88,7 +126,7 @@ void CollisionFramework::Update(float delta)
 
 
 				// Lets draw the collisions
-				//lines->DrawCircle(col.worldPosition, 0.1f, {0,1,1});
+				lines->DrawCircle(col.worldPosition, 0.1f, {0,1,1});
 				//lines->DrawLineSegment(col.worldPosition, col.worldPosition + col.normal * col.depth, {0,1,1});
 			}
 
@@ -98,7 +136,14 @@ void CollisionFramework::Update(float delta)
 
 	// Draw all shapes in simulation.
 	for (auto s : shapes)
+	{
 		s->Draw(*lines);
+		if (s->GetShape() == SHAPE::CONVEX_POLY)
+		{
+			ConvexPolygon* poly = (ConvexPolygon*)s;
+			poly->CalculateMomentOfInertia(*lines);
+		}
+	}
 
 	// Handle spawner if we've created it.
 	if (spawner != nullptr)

@@ -18,6 +18,8 @@ void Circle::CalculateMomentOfInertia()
 
 void Circle::Draw(LineRenderer& lines) const
 {
+	std::cout << "Actual Area: " << 1.0f / m_inverseMass << std::endl;
+	std::cout << "Actual Moment: " << m_momentOfInertia << std::endl;
 	lines.SetColour(m_colour);
 	lines.DrawCircle(m_position, m_radius, 18);
 

@@ -4,8 +4,6 @@
 
 void CollisionData::Resolve()
 {
-	
-
 	// We should not be peforming this routine where a collision hasn't happened.
 	if (IsCollision() != true)
 		return;

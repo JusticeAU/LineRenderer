@@ -2,6 +2,8 @@
 #include "LineRenderer.h"
 #include "Spawner.h"
 #include "Maths.h"
+#include "imgui.h"
+#include <string>
 
 void ConvexPolygon::Rotate(float degrees)
 {
@@ -25,6 +27,19 @@ void ConvexPolygon::Update(float deltaTime)
 	// We override this because we need to keep updating our AABBs position aswell.
 	Shape::Update(deltaTime);
 	aabb.m_position = m_position;
+
+
+	ImGui::Begin("Polygons");
+	ImGui::BeginDisabled();
+	ImGui::InputFloat2("Position", &m_position.x);
+	ImGui::InputFloat("Inverse Mass", &m_inverseMass);
+	ImGui::InputFloat("Moment of Inertia", &m_momentOfInertia);
+	ImGui::InputFloat("Inverse of Inertia", &m_inverseMomentOfInertia);
+	ImGui::EndDisabled();
+	ImGui::End();
+
+
+
 }
 
 void ConvexPolygon::Draw(LineRenderer& lines) const
@@ -70,6 +85,7 @@ void ConvexPolygon::CalculateMassFromArea()
 void ConvexPolygon::CalculateMomentOfInertia()
 {
 	m_momentOfInertia = 1.0f;
+	m_momentOfInertia = 0.1f;
 }
 
 bool ConvexPolygon::PointInShape(Vec2 point) const
@@ -170,6 +186,7 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 		RecalculateCentre();
 		RecalculateAABB();
 		CalculateMassFromArea();
+		//CalculateMomentOfInertia();
 
 		// Send the objects away from each other - looks cool and ninja!
 		Vec2 cutDirection = glm::normalize(lineTo - lineFrom);
@@ -223,6 +240,7 @@ void ConvexPolygon::SetPoints(std::vector<Vec2> points)
 	RecalculateCentre();
 	RecalculateAABB();
 	CalculateMassFromArea();
+	//CalculateMomentOfInertia();
 }
 
 // Gets the min/max X/Y coordinates of all verts and updates the centre of the polygon to be the mean of the min/max. Updates the worldspace position so there is no jump.
@@ -267,4 +285,36 @@ void ConvexPolygon::RecalculateAABB()
 
 	aabb.SetHalfHeight(maxDistance);
 	aabb.SetHalfWidth(maxDistance);
+}
+
+void ConvexPolygon::CalculateMomentOfInertia(LineRenderer& lines)
+{
+	// Estimate with a point mass scan. Not performant, but simple.
+	// First generate a grid that encompasses the shape (uses the AABB so this function must run after the AABB has been recalculated)
+	//  Get min and max extents
+	float minX = -aabb.HalfWidth() + m_position.x;
+	float maxX = aabb.HalfWidth() + m_position.x;
+	float minY = -aabb.HalfHeight() + m_position.y;
+	float maxY = aabb.HalfHeight() + m_position.y;
+	float step = glm::min(aabb.HalfWidth() / 10.0f, aabb.HalfHeight() / 10.0f);
+	// then for each gridpoint, do a point in shape test.
+	int hits = 0;
+	bool oddStep = false;
+	m_momentOfInertia = 0.0f;
+	for (float x = minX + step*0.5f; x <= maxX; x += step)
+	{
+		for (float y = minY + step * 0.5f; y <= maxY; y += step)
+		{
+			float offset = oddStep ? step * 0.5f : 0.0f;
+			if (PointInShape({ x,y + offset }))
+			{
+				lines.DrawCross({ x,y + offset }, 0.1f, {1,1,1});
+				double distance = glm::distance({ x ,y + offset }, m_position);
+				m_momentOfInertia += distance * distance * step * step;
+				hits++;
+			}
+		}
+		oddStep = !oddStep;
+	}
+	m_inverseMomentOfInertia = 1.0f / m_momentOfInertia;
 }
