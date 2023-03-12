@@ -14,9 +14,9 @@ CollisionFramework::CollisionFramework()
 	testPlane = new Plane(planeNormal, -4, { 1,1,1 });
 	testCircle = (Shape*)new Circle(Vec2(0), 1.0f, 1.0f);*/
 
-	//shapes.push_back(new Plane({ 0,1 }, -9, { 0,0,0 }));
-	//shapes.push_back(new Plane({ 1,0 }, -16, { 0,0,0 }));
-	//shapes.push_back(new Plane({ -1,0 }, -16, { 0,0,0 }));
+	shapes.push_back(new Plane({ 0,1 }, -9, { 0,0,0 }));
+	shapes.push_back(new Plane({ 1,0 }, -16, { 0,0,0 }));
+	shapes.push_back(new Plane({ -1,0 }, -16, { 0,0,0 }));
 }
 
 void CollisionFramework::Update(float delta)
@@ -138,11 +138,11 @@ void CollisionFramework::Update(float delta)
 	for (auto s : shapes)
 	{
 		s->Draw(*lines);
-		if (s->GetShape() == SHAPE::CONVEX_POLY)
+		/*if (s->GetShape() == SHAPE::CONVEX_POLY)
 		{
 			ConvexPolygon* poly = (ConvexPolygon*)s;
 			poly->CalculateMomentOfInertia(*lines);
-		}
+		}*/
 	}
 
 	// Handle spawner if we've created it.

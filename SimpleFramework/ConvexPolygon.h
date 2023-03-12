@@ -12,7 +12,7 @@ public:
 		RecalculateCentre();
 		RecalculateAABB();
 		CalculateMassFromArea();
-		//CalculateMomentOfInertia();
+		CalculateMomentOfInertia();
 	}
 protected:
 	std::vector<Vec2> m_points;
@@ -40,5 +40,5 @@ public:
 
 	void RecalculateCentre();
 	void RecalculateAABB();
-	void CalculateMomentOfInertia(LineRenderer& lines);
+	//void CalculateMomentOfInertia(LineRenderer& lines);
 };

@@ -37,9 +37,6 @@ void ConvexPolygon::Update(float deltaTime)
 	ImGui::InputFloat("Inverse of Inertia", &m_inverseMomentOfInertia);
 	ImGui::EndDisabled();
 	ImGui::End();
-
-
-
 }
 
 void ConvexPolygon::Draw(LineRenderer& lines) const
@@ -82,11 +79,11 @@ void ConvexPolygon::CalculateMassFromArea()
 	m_inverseMass = 1 / totalArea;
 }
 
-void ConvexPolygon::CalculateMomentOfInertia()
-{
-	m_momentOfInertia = 1.0f;
-	m_momentOfInertia = 0.1f;
-}
+//void ConvexPolygon::CalculateMomentOfInertia()
+//{
+//	m_momentOfInertia = 1.0f;
+//	m_momentOfInertia = 0.1f;
+//}
 
 bool ConvexPolygon::PointInShape(Vec2 point) const
 {
@@ -186,7 +183,7 @@ void ConvexPolygon::Slice(Vec2 lineFrom, Vec2 lineTo, std::vector<Shape*>* shape
 		RecalculateCentre();
 		RecalculateAABB();
 		CalculateMassFromArea();
-		//CalculateMomentOfInertia();
+		CalculateMomentOfInertia();
 
 		// Send the objects away from each other - looks cool and ninja!
 		Vec2 cutDirection = glm::normalize(lineTo - lineFrom);
@@ -240,7 +237,7 @@ void ConvexPolygon::SetPoints(std::vector<Vec2> points)
 	RecalculateCentre();
 	RecalculateAABB();
 	CalculateMassFromArea();
-	//CalculateMomentOfInertia();
+	CalculateMomentOfInertia();
 }
 
 // Gets the min/max X/Y coordinates of all verts and updates the centre of the polygon to be the mean of the min/max. Updates the worldspace position so there is no jump.
@@ -287,7 +284,7 @@ void ConvexPolygon::RecalculateAABB()
 	aabb.SetHalfWidth(maxDistance);
 }
 
-void ConvexPolygon::CalculateMomentOfInertia(LineRenderer& lines)
+void ConvexPolygon::CalculateMomentOfInertia()
 {
 	// Estimate with a point mass scan. Not performant, but simple.
 	// First generate a grid that encompasses the shape (uses the AABB so this function must run after the AABB has been recalculated)
@@ -308,7 +305,7 @@ void ConvexPolygon::CalculateMomentOfInertia(LineRenderer& lines)
 			float offset = oddStep ? step * 0.5f : 0.0f;
 			if (PointInShape({ x,y + offset }))
 			{
-				lines.DrawCross({ x,y + offset }, 0.1f, {1,1,1});
+				//lines.DrawCross({ x,y + offset }, 0.1f, {1,1,1});
 				double distance = glm::distance({ x ,y + offset }, m_position);
 				m_momentOfInertia += distance * distance * step * step;
 				hits++;

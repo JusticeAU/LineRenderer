@@ -61,19 +61,21 @@ void CollisionData::Resolve()
 		//std::cout << "collision" << std::endl;
 		// calculate effective mass at contact point for each object
 		// ie how much the contact point will move due to the force applied
-		float eMass1 = 1.0f / (shapeA->GetInverseMass() + ((r1 * r1) * shapeA->GetInverseMoment()));
-		float eMass2 = 1.0f / (shapeB->GetInverseMass() + ((r2 * r2) * shapeB->GetInverseMoment()));
+		float eIM1 = (shapeA->GetInverseMass() + ((r1 * r1) * shapeA->GetInverseMoment()));
+		float eIM2 = (shapeB->GetInverseMass() + ((r2 * r2) * shapeB->GetInverseMoment()));
 
 		float elasticity = 0.5f; // This is a hardcoded value to lose some energy on collision so that things will eventually settle.
-		Vec2 force = (1.0f + elasticity) * eMass1 * eMass2 / (eMass1 + eMass2) * (v1 - v2) * normal;
+		//Vec2 force = (1.0f + elasticity) * eIM1 * eIM2 / (eIM1 + eIM2) * (v1 - v2) * normal;
 		Vec2 vAP = worldPosition - shapeA->m_position;
 		Vec2 vBP = worldPosition - shapeB->m_position;
 		Vec2 vAB = vBP - vAP;
+		float force = (-(1.0f + elasticity) * glm::dot(vAB, normal))
+			/ glm::dot(normal, normal) * (shapeA->GetInverseMass() + shapeB->GetInverseMass()) + (eIM1) + (eIM2);
 		//supplementaryPoints.push_back(vAB);
 		//Vec2 force = -((1.0f + elasticity) * glm::dot(vAB, normal) / glm::dot(normal, normal) * (eMass1 + eMass2)) * normal;
 
-		shapeA->ApplyImpulse(-force, worldPosition - shapeA->m_position);
-		shapeB->ApplyImpulse(force, worldPosition - shapeB->m_position);
+		shapeA->ApplyImpulse(-force * normal, worldPosition - shapeA->m_position);
+		shapeB->ApplyImpulse(force * normal, worldPosition - shapeB->m_position);
 	}	
 
 }
