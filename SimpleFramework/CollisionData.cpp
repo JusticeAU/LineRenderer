@@ -44,8 +44,8 @@ void CollisionData::Resolve()
 	float r2 = glm::dot(worldPosition - shapeB->m_position, perp);
 
 	// v is velocity of the contact point on this object
-	float v1 = glm::dot(shapeA->m_velocity, normal) - r1 * glm::radians(shapeA->m_rotationalVelocity);
-	float v2 = glm::dot(shapeB->m_velocity, normal) + r2 * glm::radians(shapeB->m_rotationalVelocity);
+	float v1 = glm::dot(shapeA->m_velocity, normal) - r1 * shapeA->m_rotationalVelocity;
+	float v2 = glm::dot(shapeB->m_velocity, normal) + r2 * shapeB->m_rotationalVelocity;
 	
 
 
@@ -64,7 +64,7 @@ void CollisionData::Resolve()
 		float eIM1 = (shapeA->GetInverseMass() + ((r1 * r1) * shapeA->GetInverseMoment()));
 		float eIM2 = (shapeB->GetInverseMass() + ((r2 * r2) * shapeB->GetInverseMoment()));
 
-		float elasticity = 0.5f; // This is a hardcoded value to lose some energy on collision so that things will eventually settle.
+		float elasticity = 1.0f; // This is a hardcoded value to lose some energy on collision so that things will eventually settle.
 		//Vec2 force = (1.0f + elasticity) * eIM1 * eIM2 / (eIM1 + eIM2) * (v1 - v2) * normal;
 		Vec2 vAP = worldPosition - shapeA->m_position;
 		Vec2 vBP = worldPosition - shapeB->m_position;

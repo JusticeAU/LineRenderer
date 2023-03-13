@@ -5,16 +5,16 @@
 #include "imgui.h"
 #include <string>
 
-void ConvexPolygon::Rotate(float degrees)
+void ConvexPolygon::Rotate(float radians)
 {
 	// Call base function to do normal rotation.
-	Shape::Rotate(degrees);
+	Shape::Rotate(radians);
 
 	// Rotate the poly points.
 	
 	// Create a rotation matrix
-	float cosAngle = cos(glm::radians(degrees));
-	float sinAngle = sin(glm::radians(degrees));
+	float cosAngle = cos(radians);
+	float sinAngle = sin(radians);
 	glm::mat2 rotMat = { {cosAngle, -sinAngle},{sinAngle, cosAngle} };
 	
 	// Apply matrix to all points
@@ -50,7 +50,7 @@ void ConvexPolygon::Draw(LineRenderer& lines) const
 
 
 	// Draw rotation line
-	Vec2 rotatedPoint = Vec2(cos(glm::radians(m_rotation)), sin(glm::radians(m_rotation)));
+	Vec2 rotatedPoint = Vec2(cos(m_rotation), sin(m_rotation));
 	lines.DrawLineSegment(m_position, m_position + rotatedPoint);
 
 	//aabb.Draw(lines);

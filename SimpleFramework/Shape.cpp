@@ -17,9 +17,9 @@ void Shape::Move(Vec2 displacement)
 	m_position += displacement;
 }
 
-void Shape::Rotate(float degrees)
+void Shape::Rotate(float radians)
 {
-	m_rotation += degrees;
+	m_rotation += radians;
 }
 
 // Applies an Impulse. impulse should be in newtons/s
