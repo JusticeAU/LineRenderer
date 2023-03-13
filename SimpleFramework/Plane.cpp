@@ -45,3 +45,9 @@ float Plane::DepthInPlane(Vec2 point)
 {
 	return m_distance - glm::dot(point, m_normal);
 }
+
+Shape* Plane::Clone()
+{
+	Plane* clone = new Plane(m_normal, m_distance, m_colour);
+	return (Shape*)clone;
+}

@@ -49,4 +49,6 @@ public:
 	// may return INFINITY for a kinematic/static object
 	float GetMass() const { return 1.0f / m_inverseMass; }
 	float GetInverseMass() const { return m_inverseMass; }
+
+	virtual Shape* Clone() = 0;
 };

@@ -164,6 +164,8 @@
     <ClCompile Include="GLFWCallbacks.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="PlaneDrawerTool.cpp" />
+    <ClCompile Include="PlaneDrawerTool.h" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ApplicationHarness.cpp" />
     <ClCompile Include="Shape.cpp" />
@@ -185,7 +187,9 @@
     <ClInclude Include="..\imgui\imstb_truetype.h" />
     <ClInclude Include="AABB.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="BoxSpawnerTool.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="CircleSpawnerTool.h" />
     <ClInclude Include="CollisionFramework.h" />
     <ClInclude Include="CollisionData.h" />
     <ClInclude Include="CollisionFunctions.h" />
@@ -197,6 +201,7 @@
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Maths.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="PolySpawnerTool.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="ApplicationHarness.h" />
     <ClInclude Include="Shape.h" />

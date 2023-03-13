@@ -1,6 +1,11 @@
+#pragma once
 #include "Maths.h"
 #include <vector>
-#include "SpawnerTool.h"
+#include "CircleSpawnerTool.h"
+#include "BoxSpawnerTool.h"
+#include "PolySpawnerTool.h"
+#include "PlaneDrawerTool.h"
+
 
 class Shape;
 class Tool;
@@ -11,8 +16,10 @@ class Toolbox
 public:
 	Toolbox(std::vector<Shape*>* shapes, Vec2& cursorPos) : m_shapes(shapes), m_cursorPos(cursorPos)
 	{
-		// Add tools here?
-		m_tools.push_back(new SpawnerTool(this));
+		m_tools.push_back(new CircleSpawnerTool(this));
+		m_tools.push_back(new BoxSpawnerTool(this));
+		m_tools.push_back(new PolySpawnerTool(this));
+		m_tools.push_back(new PlaneDrawerTool(this));
 	}
 
 	void Update(float delta);

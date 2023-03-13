@@ -62,3 +62,9 @@ Vec2* AABB::GetCorners() const
 	depths[3] = m_position + Vec2(-m_halfWidth, m_halfHeight);
 	return depths;
 }
+
+Shape* AABB::Clone()
+{
+	AABB* clone = new AABB(m_position, m_halfWidth * 2.0f, m_halfHeight * 2.0f, m_inverseMass, m_colour);
+	return (Shape*)clone;
+}

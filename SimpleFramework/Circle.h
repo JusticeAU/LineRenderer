@@ -22,4 +22,6 @@ public:
 	float GetRadius() const { return m_radius; }
 	// Ensures radius is a positive number
 	void SetRadius(float radius) { m_radius = radius < 0.0f ? radius * -1.0f : radius; }
+
+	Shape* Clone() override;
 };

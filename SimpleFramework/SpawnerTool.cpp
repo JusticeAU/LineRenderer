@@ -3,11 +3,6 @@
 #include "Toolbox.h"
 #include "LineRenderer.h"
 
-SpawnerTool::SpawnerTool(Toolbox* toolbox) : Tool(toolbox)
-{
-	m_shape = new Circle({ 0,0 }, 1.0f, 1.0f);
-}
-
 void SpawnerTool::Update(float delta)
 {
 	if(m_idle)
@@ -32,7 +27,9 @@ void SpawnerTool::OnLeftClick()
 void SpawnerTool::OnLeftUp()
 {
 	m_idle = true;
-	Circle* spawn = new Circle(*(Circle*)m_shape);
+	
+	// Clone the template
+	Shape* spawn = m_shape->Clone();
 
 	// Random Colour
 	float r = static_cast<float>(rand()) / (float)(RAND_MAX);
@@ -40,8 +37,10 @@ void SpawnerTool::OnLeftUp()
 	float b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 	spawn->m_colour = { r,g,b };
 	
+	// Set velocity of new shape based on cursor slingshot.
 	spawn->m_velocity = (m_cursorDownPos - m_toolbox->m_cursorPos) * 5.0f;
 	
+	// add to physics simulation.
 	m_toolbox->SpawnShape(spawn);
 }
 

@@ -32,5 +32,5 @@ public:
 	// Will enforce positive values
 	void SetHalfHeight(float halfHeight) { m_halfHeight = halfHeight < 0.0f ? halfHeight * -1.0f : halfHeight; } 
 
-
+	Shape* Clone() override;
 };

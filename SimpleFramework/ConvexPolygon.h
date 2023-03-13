@@ -36,4 +36,6 @@ public:
 
 	void RecalculateCentre();
 	void RecalculateAABB();
+
+	Shape* Clone() override;
 };

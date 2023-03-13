@@ -7,7 +7,7 @@ class Toolbox;
 class SpawnerTool : public Tool
 {
 public:
-	SpawnerTool(Toolbox* toolbox);
+	SpawnerTool(Toolbox* toolbox) : Tool(toolbox) {}
 	virtual void Update(float delta) override;
 	virtual void Draw(LineRenderer& lines)override;
 

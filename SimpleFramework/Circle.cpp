@@ -96,3 +96,9 @@ void Circle::Slice(Vec2 a, Vec2 b, std::vector<Shape*>* shapes)
 	poly->Slice(a, b, shapes);
 	m_toBeDeleted = true;
 }
+
+Shape* Circle::Clone()
+{
+	Circle* clone = new Circle(m_position, m_radius, m_inverseMass, m_colour);
+	return (Shape*)clone;
+}

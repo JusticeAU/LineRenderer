@@ -19,4 +19,6 @@ public:
 
 	void Move(Vec2 displacement) override { } // just overrides move to do nothing.
 	void ApplyImpulse(Vec2 impulse) override { }
+
+	Shape* Clone() override;
 };

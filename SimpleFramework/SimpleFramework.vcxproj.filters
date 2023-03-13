@@ -74,6 +74,12 @@
     <ClCompile Include="SpawnerTool.cpp">
       <Filter>Game\CollisionFramework\Toolbox</Filter>
     </ClCompile>
+    <ClCompile Include="PlaneDrawerTool.h">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaneDrawerTool.cpp">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFWCallbacks.h">
@@ -170,6 +176,15 @@
       <Filter>Game\CollisionFramework\Toolbox</Filter>
     </ClInclude>
     <ClInclude Include="SpawnerTool.h">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleSpawnerTool.h">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxSpawnerTool.h">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="PolySpawnerTool.h">
       <Filter>Game\CollisionFramework\Toolbox</Filter>
     </ClInclude>
   </ItemGroup>

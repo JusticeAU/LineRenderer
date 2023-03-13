@@ -238,3 +238,9 @@ void ConvexPolygon::RecalculateAABB()
 	aabb.SetHalfHeight(maxHeight);
 	aabb.SetHalfWidth(maxWidth);
 }
+
+Shape* ConvexPolygon::Clone()
+{
+	ConvexPolygon* clone = new ConvexPolygon(m_position, m_inverseMass, m_points, m_colour);
+	return (Shape*)clone;
+}
