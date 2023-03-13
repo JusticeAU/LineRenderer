@@ -16,7 +16,7 @@ protected:
 	std::vector<Shape*> shapes;
 	Spawner* spawner;
 
-	const int MAX_COLLISION_PASSES = 6;
+	const int MAX_COLLISION_PASSES = 1;
 
 public:
 	void Update(float delta) override;

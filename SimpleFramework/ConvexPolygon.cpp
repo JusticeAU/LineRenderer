@@ -30,12 +30,13 @@ void ConvexPolygon::Update(float deltaTime)
 
 
 	ImGui::Begin("Polygons");
-	ImGui::BeginDisabled();
+	//ImGui::BeginDisabled();
 	ImGui::InputFloat2("Position", &m_position.x);
-	ImGui::InputFloat("Inverse Mass", &m_inverseMass);
-	ImGui::InputFloat("Moment of Inertia", &m_momentOfInertia);
-	ImGui::InputFloat("Inverse of Inertia", &m_inverseMomentOfInertia);
-	ImGui::EndDisabled();
+	ImGui::InputFloat("invMass", &m_inverseMass);
+	ImGui::InputFloat("invInertia", &m_inverseMomentOfInertia);
+	ImGui::InputFloat2("linVelocity", &m_velocity.x);
+	ImGui::InputFloat("rotVelocity", &m_rotationalVelocity);
+	//ImGui::EndDisabled();
 	ImGui::End();
 }
 

@@ -12,10 +12,9 @@ void CollisionData::Resolve()
 	if (shapeA->GetInverseMass() == 0.0f && shapeB->GetInverseMass() == 0.0f)
 		return;
 
+
 	float massA = shapeA->GetMass();
 	float massB = shapeB->GetMass();
-
-
 	// Calculate the mass ratio between the two objects to minamize visual jitter when depenetrating little objects from big objects.
 	float shapeARatio, shapeBRatio;
 	float totalMass = massA + massB;
@@ -34,48 +33,34 @@ void CollisionData::Resolve()
 		shapeARatio = massB / totalMass;
 		shapeBRatio = massA / totalMass;
 	}
-
-	// Check of the objects are moving toward each other
-	Vec2 perp = Vec2(normal.y, -normal.x);
-	// Determine total velocity of contact points for two objects, both linear and rotaiton.
-
-	// r is radius from axis to application of force
-	float r1 = glm::dot(worldPosition - shapeA->m_position, -perp);
-	float r2 = glm::dot(worldPosition - shapeB->m_position, perp);
-
-	// v is velocity of the contact point on this object
-	float v1 = glm::dot(shapeA->m_velocity, normal) - r1 * shapeA->m_rotationalVelocity;
-	float v2 = glm::dot(shapeB->m_velocity, normal) + r2 * shapeB->m_rotationalVelocity;
-	
-
-
-	float mag1 = glm::length(shapeA->m_velocity);
-	float mag2 = glm::length(shapeB->m_velocity);
-
-	// Perform depenetration
 	shapeA->Move(-normal * depth * shapeARatio);
 	shapeB->Move(normal * depth * shapeBRatio);
+	
+	// https://www.chrishecker.com/images/e/e7/Gdmphys3.pdf
+	Vec2 perp(normal.y, -normal.x);
 
-	if (v1 > v2) // moving closer
+	Vec2 rAP = worldPosition - shapeA->m_position;
+	if (shapeA->GetShape() == SHAPE::PLANE)
+		rAP = worldPosition;
+	Vec2 rBP = worldPosition - shapeB->m_position;
+	if (shapeB->GetShape() == SHAPE::PLANE)
+		rBP = worldPosition;
+
+
+	Vec2 vAP = shapeB->m_velocity + rAP + shapeA->m_rotationalVelocity*-perp;
+	Vec2 vBP = shapeB->m_velocity + rBP + shapeB->m_rotationalVelocity*perp;;
+	Vec2 vAB = vBP - vAP;
+
+	std::cout << glm::dot(vAB, normal) << std::endl;
+	if (glm::dot(vAB, normal) < 0.0f)
 	{
-		//std::cout << "collision" << std::endl;
-		// calculate effective mass at contact point for each object
-		// ie how much the contact point will move due to the force applied
-		float eIM1 = (shapeA->GetInverseMass() + ((r1 * r1) * shapeA->GetInverseMoment()));
-		float eIM2 = (shapeB->GetInverseMass() + ((r2 * r2) * shapeB->GetInverseMoment()));
-
 		float elasticity = 1.0f; // This is a hardcoded value to lose some energy on collision so that things will eventually settle.
-		//Vec2 force = (1.0f + elasticity) * eIM1 * eIM2 / (eIM1 + eIM2) * (v1 - v2) * normal;
-		Vec2 vAP = worldPosition - shapeA->m_position;
-		Vec2 vBP = worldPosition - shapeB->m_position;
-		Vec2 vAB = vBP - vAP;
 		float force = (-(1.0f + elasticity) * glm::dot(vAB, normal))
-			/ glm::dot(normal, normal) * (shapeA->GetInverseMass() + shapeB->GetInverseMass()) + (eIM1) + (eIM2);
-		//supplementaryPoints.push_back(vAB);
-		//Vec2 force = -((1.0f + elasticity) * glm::dot(vAB, normal) / glm::dot(normal, normal) * (eMass1 + eMass2)) * normal;
+			/ glm::dot(normal, normal) * (shapeA->GetInverseMass() + shapeB->GetInverseMass()) + ((glm::dot(rAP, normal) * glm::dot(rAP, normal)) / shapeA->GetMoment()) + ((glm::dot(rBP, normal) * glm::dot(rBP, normal) / shapeB->GetMoment()));
 
 		shapeA->ApplyImpulse(-force * normal, worldPosition - shapeA->m_position);
 		shapeB->ApplyImpulse(force * normal, worldPosition - shapeB->m_position);
-	}	
 
+		std::cout << force << std::endl;
+	}
 }
