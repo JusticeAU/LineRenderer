@@ -5,6 +5,7 @@
 #include "BoxSpawnerTool.h"
 #include "PolySpawnerTool.h"
 #include "PlaneDrawerTool.h"
+#include "SlicerTool.h"
 
 
 class Shape;
@@ -20,6 +21,7 @@ public:
 		m_tools.push_back(new BoxSpawnerTool(this));
 		m_tools.push_back(new PolySpawnerTool(this));
 		m_tools.push_back(new PlaneDrawerTool(this));
+		m_tools.push_back(new SlicerTool(this));
 	}
 
 	void Update(float delta);

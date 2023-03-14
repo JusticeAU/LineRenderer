@@ -80,6 +80,9 @@
     <ClCompile Include="PlaneDrawerTool.cpp">
       <Filter>Game\CollisionFramework\Toolbox</Filter>
     </ClCompile>
+    <ClCompile Include="SlicerTool.cpp">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLFWCallbacks.h">
@@ -185,6 +188,9 @@
       <Filter>Game\CollisionFramework\Toolbox</Filter>
     </ClInclude>
     <ClInclude Include="PolySpawnerTool.h">
+      <Filter>Game\CollisionFramework\Toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="SlicerTool.h">
       <Filter>Game\CollisionFramework\Toolbox</Filter>
     </ClInclude>
   </ItemGroup>
